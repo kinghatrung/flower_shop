@@ -10,6 +10,7 @@ import authRouter from './routes/authRouter.js';
 
 const app = express();
 const __dirname = path.resolve();
+const PORT = process.env.PORT || 2708;
 
 // cache from disk in expressjs
 app.use((req, res, next) => {
@@ -43,6 +44,6 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-app.listen(process.env.PORT_URL, () => {
-  console.log(`App listening on port ${process.env.PORT_URL}`);
+app.listen(PORT, () => {
+  console.log(`App listening on port ${PORT}`);
 });
