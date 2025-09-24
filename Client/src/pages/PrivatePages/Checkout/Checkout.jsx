@@ -10,11 +10,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { Separator } from '~/components/ui/separator'
 import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group'
 import { useCart } from '~/context'
-import { ROUTES } from '~/constants/routesPath'
+import { ROUTES } from '~/constants'
 
 function Checkout() {
   const router = useNavigate()
-  const { state, dispatch } = useCart()
+  const { state: cartState, dispatch: cartDispatch } = useCart()
   const [isLoading, setIsLoading] = useState(false)
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState({
@@ -91,13 +91,13 @@ function Checkout() {
     const orderId = `BL${Date.now().toString().slice(-6)}`
 
     // Clear cart
-    dispatch({ type: 'CLEAR_CART' })
+    cartDispatch({ type: 'CLEAR_CART' })
 
     // Redirect to success page
     router.push(`/checkout/success?orderId=${orderId}`)
   }
 
-  if (state.items.length === 0) {
+  if (cartState.items.length === 0) {
     return (
       <div className='pt-24 pb-16 px-4'>
         <div className='max-w-4xl mx-auto text-center'>
@@ -372,7 +372,7 @@ function Checkout() {
               <CardContent className='space-y-4'>
                 {/* Order Items */}
                 <div className='space-y-3'>
-                  {state.items.map((item) => (
+                  {cartState.items.map((item) => (
                     <div key={item.id} className='flex gap-3'>
                       <div className='w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0'>
                         <img
@@ -401,7 +401,7 @@ function Checkout() {
                 <div className='space-y-2'>
                   <div className='flex justify-between text-sm'>
                     <span>Tạm tính</span>
-                    <span>{formatPrice(state.total)}</span>
+                    <span>{formatPrice(cartState.total)}</span>
                   </div>
                   <div className='flex justify-between text-sm'>
                     <span>Phí vận chuyển</span>
@@ -413,7 +413,7 @@ function Checkout() {
 
                 <div className='flex justify-between font-bold text-lg'>
                   <span>Tổng cộng</span>
-                  <span>{formatPrice(state.total)}</span>
+                  <span>{formatPrice(cartState.total)}</span>
                 </div>
               </CardContent>
             </Card>

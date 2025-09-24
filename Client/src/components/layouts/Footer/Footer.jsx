@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Heart, Phone, Mail, MapPin } from 'lucide-react'
 
-import { ROUTES } from '~/constants/routesPath'
+import { ROUTES } from '~/constants'
 
 function Footer() {
   return (

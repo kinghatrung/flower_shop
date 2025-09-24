@@ -1,12 +1,20 @@
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
-import { ROUTES } from '~/constants/routesPath'
+import { ROUTES } from '~/constants'
+import { selectCurrentUser } from '~/redux/slices/authSlice'
 
 function ForgotPassword() {
+  const currentUser = useSelector(selectCurrentUser)
+
+  if (currentUser) {
+    return <Navigate to={ROUTES.HOME} replace />
+  }
+
   return (
     <div className='min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 flex items-center justify-center p-4'>
       <div className='w-full max-w-md animate-fade-in-up mt-[80px]'>

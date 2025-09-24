@@ -5,38 +5,8 @@ import { Link } from 'react-router-dom'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent } from '~/components/ui/card'
 import { Badge } from '~/components/ui/badge'
-import { ROUTES } from '~/constants/routesPath'
-
-const featuredProducts = [
-  {
-    id: 1,
-    name: 'Bó Hoa Hồng Đỏ Cao Cấp',
-    price: '1,200,000',
-    originalPrice: '1,500,000',
-    image: '/elegant-red-roses-bouquet.png',
-    rating: 4.9,
-    reviews: 128,
-    badge: 'Bán chạy'
-  },
-  {
-    id: 2,
-    name: 'Hoa Cưới Trắng Tinh Khôi',
-    price: '2,800,000',
-    image: '/white-wedding-bouquet.png',
-    rating: 5.0,
-    reviews: 89,
-    badge: 'Cao cấp'
-  },
-  {
-    id: 3,
-    name: 'Bó Hoa Sinh Nhật Rực Rỡ',
-    price: '850,000',
-    image: '/colorful-birthday-bouquet.png',
-    rating: 4.8,
-    reviews: 156,
-    badge: 'Mới'
-  }
-]
+import { ROUTES } from '~/constants/'
+import { featuredProducts } from '~/data'
 
 function FeaturedProducts() {
   const [isVisible, setIsVisible] = useState(false)
@@ -85,12 +55,13 @@ function FeaturedProducts() {
             >
               <CardContent className='p-0'>
                 <div className='relative overflow-hidden'>
-                  <img
-                    // src={product.image || '/placeholder.svg'}
-                    src='../src/assets/icons/placeholder.svg'
-                    alt={product.name}
-                    className='w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500'
-                  />
+                  <Link to={`${ROUTES.PRODUCTS}/product/${product.id}`}>
+                    <img
+                      src={product.image || '../src/assets/icons/placeholder.svg'}
+                      alt={product.name}
+                      className='w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500'
+                    />
+                  </Link>
                   <Badge className='absolute top-4 left-4 bg-secondary text-secondary-foreground'>
                     {product.badge}
                   </Badge>
@@ -119,7 +90,7 @@ function FeaturedProducts() {
                   </div>
 
                   <h3 className='font-serif text-xl font-semibold text-foreground mb-3'>
-                    {product.name}
+                    <Link to={`${ROUTES.PRODUCTS}/product/${product.id}`}>{product.name}</Link>
                   </h3>
 
                   <div className='flex items-center justify-between mb-4'>

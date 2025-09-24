@@ -1,12 +1,44 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
-import { ROUTES } from '~/constants/routesPath'
+import { ROUTES } from '~/constants'
+import { registerUser } from '~/api'
+import { selectCurrentUser } from '~/redux/slices/authSlice'
 
 function Register() {
+  const currentUser = useSelector(selectCurrentUser)
+  const navigate = useNavigate()
+  const [name, setName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [password, setPassword] = useState('')
+  const [rePassword, setRePassword] = useState('')
+  const [isConfirmed, setIsConfirmed] = useState(false)
+
+  if (currentUser) {
+    return <Navigate to={ROUTES.HOME} replace />
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const newUser = {
+      name,
+      lastName,
+      email,
+      phone,
+      password,
+      rePassword
+    }
+    await registerUser(newUser)
+    navigate(ROUTES.LOGIN)
+  }
+
   return (
     <div className='min-h-screen bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center p-4'>
       <div className='w-full max-w-md animate-fade-in-up mt-[80px]'>
@@ -23,14 +55,15 @@ function Register() {
             </CardDescription>
           </CardHeader>
           <CardContent className='space-y-6'>
-            <form className='space-y-4'>
+            <form className='space-y-4' onSubmit={(e) => handleSubmit(e)}>
               <div className='grid grid-cols-2 gap-4'>
                 <div className='space-y-2'>
                   <Label htmlFor='firstName' className='text-sm font-medium text-gray-700'>
                     Tên
                   </Label>
                   <Input
-                    id='firstName'
+                    onChange={(e) => setName(e.target.value)}
+                    id='name'
                     type='text'
                     placeholder='Tên của bạn'
                     className='h-11 border-gray-200 focus:border-rose-400 focus:ring-rose-400'
@@ -42,6 +75,7 @@ function Register() {
                     Họ
                   </Label>
                   <Input
+                    onChange={(e) => setLastName(e.target.value)}
                     id='lastName'
                     type='text'
                     placeholder='Họ của bạn'
@@ -55,6 +89,7 @@ function Register() {
                   Email
                 </Label>
                 <Input
+                  onChange={(e) => setEmail(e.target.value)}
                   id='email'
                   type='email'
                   placeholder='your@email.com'
@@ -67,6 +102,7 @@ function Register() {
                   Số điện thoại
                 </Label>
                 <Input
+                  onChange={(e) => setPhone(e.target.value)}
                   id='phone'
                   type='tel'
                   placeholder='0123 456 789'
@@ -79,6 +115,7 @@ function Register() {
                   Mật khẩu
                 </Label>
                 <Input
+                  onChange={(e) => setPassword(e.target.value)}
                   id='password'
                   type='password'
                   placeholder='••••••••'
@@ -91,6 +128,7 @@ function Register() {
                   Xác nhận mật khẩu
                 </Label>
                 <Input
+                  onChange={(e) => setRePassword(e.target.value)}
                   id='confirmPassword'
                   type='password'
                   placeholder='••••••••'
@@ -100,6 +138,7 @@ function Register() {
               </div>
               <div className='flex items-center space-x-2'>
                 <input
+                  onChange={() => setIsConfirmed(!isConfirmed)}
                   id='terms'
                   type='checkbox'
                   className='w-4 h-4 text-rose-600 border-gray-300 rounded focus:ring-rose-500'
@@ -117,8 +156,9 @@ function Register() {
                 </Label>
               </div>
               <Button
+                disabled={!isConfirmed ? true : false}
                 type='submit'
-                className='w-full h-11 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300'
+                className='w-full h-11 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer'
               >
                 Tạo tài khoản
               </Button>

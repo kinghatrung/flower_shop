@@ -3,36 +3,7 @@ import { Star, Quote } from 'lucide-react'
 
 import { Card, CardContent } from '~/components/ui/card'
 import { Badge } from '~/components/ui/badge'
-
-const testimonials = [
-  {
-    id: 1,
-    name: 'Nguyễn Thị Lan',
-    role: 'Khách hàng thân thiết',
-    content:
-      'Nuvexa đã giúp tôi tạo nên một đám cưới hoàn hảo. Những bó hoa cưới tuyệt đẹp và dịch vụ chuyên nghiệp. Tôi sẽ luôn giới thiệu Nuvexa cho bạn bè.',
-    rating: 5,
-    image: '/happy-asian-woman.png'
-  },
-  {
-    id: 2,
-    name: 'Trần Văn Minh',
-    role: 'Doanh nhân',
-    content:
-      'Tôi thường xuyên đặt hoa tại Nuvexa cho các sự kiện công ty. Chất lượng hoa luôn tươi mới và thiết kế rất sáng tạo. Dịch vụ giao hàng cũng rất nhanh chóng.',
-    rating: 5,
-    image: '/professional-asian-man-portrait.png'
-  },
-  {
-    id: 3,
-    name: 'Lê Thị Hương',
-    role: 'Giáo viên',
-    content:
-      'Mỗi tháng tôi đều đặt hoa để trang trí lớp học. Nuvexa luôn mang đến những bó hoa tươi đẹp với giá cả hợp lý. Các em học sinh rất thích!',
-    rating: 5,
-    image: '/friendly-asian-teacher-portrait.png'
-  }
-]
+import { testimonials } from '~/data'
 
 function Testimonials() {
   const [isVisible, setIsVisible] = useState(false)
@@ -92,8 +63,7 @@ function Testimonials() {
 
                 <div className='flex items-center'>
                   <img
-                    // src={testimonial.image || '/placeholder.svg'}
-                    src='../src/assets/icons/placeholder.svg'
+                    src={testimonial.image || '../src/assets/icons/placeholder.svg'}
                     alt={testimonial.name}
                     className='w-12 h-12 rounded-full object-cover mr-4'
                   />

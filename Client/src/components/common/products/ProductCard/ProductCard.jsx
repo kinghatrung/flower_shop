@@ -6,16 +6,16 @@ import { Button } from '~/components/ui/button'
 import { Badge } from '~/components/ui/badge'
 import { Card, CardContent } from '~/components/ui/card'
 import { useCart } from '~/context'
-import { ROUTES } from '~/constants/routesPath'
+import { ROUTES } from '~/constants'
 
 function ProductCard({ product }) {
   const [isLiked, setIsLiked] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const { dispatch } = useCart()
+  const { dispatch: cartDispatch } = useCart()
 
   const handleAddToCart = async () => {
     setIsLoading(true)
-    dispatch({ type: 'ADD_ITEM', payload: product })
+    cartDispatch({ type: 'ADD_ITEM', payload: product })
     await new Promise((resolve) => setTimeout(resolve, 500))
     setIsLoading(false)
   }
@@ -32,8 +32,7 @@ function ProductCard({ product }) {
       <div className='relative aspect-square overflow-hidden'>
         <Link to={`${ROUTES.PRODUCTS}/product/${product.id}`}>
           <img
-            // src={product.image || '../src/assets/icons/placeholder.svg'}
-            src='../src/assets/icons/placeholder.svg'
+            src={product.image || '../src/assets/icons/placeholder.svg'}
             alt={product.name}
             className='object-cover group-hover:scale-105 transition-transform duration-300'
           />

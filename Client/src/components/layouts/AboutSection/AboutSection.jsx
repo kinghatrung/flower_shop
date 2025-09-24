@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 import { Button } from '~/components/ui/button'
 import { Badge } from '~/components/ui/badge'
-import { ROUTES } from '~/constants/routesPath'
+import { ROUTES } from '~/constants'
 
 function AboutSection() {
   const [isVisible, setIsVisible] = useState(false)

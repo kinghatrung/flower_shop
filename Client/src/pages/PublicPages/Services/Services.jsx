@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { Badge } from '~/components/ui/badge'
 import { additionalServices, services } from '~/data'
 import { useScrollAnimation } from '~/hooks/useScrollAnimationOptions'
-import { ROUTES } from '~/constants/routesPath'
+import { ROUTES } from '~/constants'
 
 function Services() {
   const { isVisible: headerVisible, ref: headerRef } = useScrollAnimation()

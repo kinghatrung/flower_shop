@@ -1,12 +1,35 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
 
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
-import { ROUTES } from '~/constants/routesPath'
+import { ROUTES } from '~/constants'
+import { selectCurrentUser, loginUser } from '~/redux/slices/authSlice'
 
 function Login() {
+  const currentUser = useSelector(selectCurrentUser)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  if (currentUser) {
+    return <Navigate to={ROUTES.HOME} replace />
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const user = {
+      email,
+      password
+    }
+    await dispatch(loginUser(user)).unwrap()
+    navigate(ROUTES.HOME)
+  }
+
   return (
     <div className='min-h-screen bg-gradient-to-br from-pink-50 to-rose-100 flex items-center justify-center p-4'>
       <div className='w-full max-w-md animate-fade-in-up mt-[80px]'>
@@ -23,12 +46,13 @@ function Login() {
             </CardDescription>
           </CardHeader>
           <CardContent className='space-y-6'>
-            <form className='space-y-4'>
+            <form className='space-y-4' onSubmit={(e) => handleSubmit(e)}>
               <div className='space-y-2'>
                 <Label htmlFor='email' className='text-sm font-medium text-gray-700'>
                   Email
                 </Label>
                 <Input
+                  onChange={(e) => setEmail(e.target.value)}
                   id='email'
                   type='email'
                   placeholder='your@email.com'
@@ -41,6 +65,7 @@ function Login() {
                   Mật khẩu
                 </Label>
                 <Input
+                  onChange={(e) => setPassword(e.target.value)}
                   id='password'
                   type='password'
                   placeholder='••••••••'
@@ -48,17 +73,7 @@ function Login() {
                   required
                 />
               </div>
-              <div className='flex items-center justify-between'>
-                <div className='flex items-center space-x-2'>
-                  <input
-                    id='remember'
-                    type='checkbox'
-                    className='w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500'
-                  />
-                  <Label htmlFor='remember' className='text-sm text-gray-600'>
-                    Ghi nhớ đăng nhập
-                  </Label>
-                </div>
+              <div className='flex items-center justify-end'>
                 <Link
                   to={ROUTES.FORGOT_PASSWORD}
                   className='text-sm text-pink-600 hover:text-pink-700 font-medium'
@@ -68,7 +83,7 @@ function Login() {
               </div>
               <Button
                 type='submit'
-                className='w-full h-11 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300'
+                className='cursor-pointer w-full h-11 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300'
               >
                 Đăng nhập
               </Button>

@@ -5,10 +5,10 @@ import { Button } from '~/components/ui/button'
 import { Card, CardContent } from '~/components/ui/card'
 import { Separator } from '~/components/ui/separator'
 import { useCart } from '~/context'
-import { ROUTES } from '~/constants/routesPath'
+import { ROUTES } from '~/constants'
 
 function Cart() {
-  const { state, dispatch } = useCart()
+  const { state: cartState, dispatch: cartDispatch } = useCart()
 
   const navigate = useNavigate()
 
@@ -20,14 +20,14 @@ function Cart() {
   }
 
   const updateQuantity = (id, quantity) => {
-    dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } })
+    cartDispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } })
   }
 
   const removeItem = (id) => {
-    dispatch({ type: 'REMOVE_ITEM', payload: id })
+    cartDispatch({ type: 'REMOVE_ITEM', payload: id })
   }
 
-  if (state.items.length === 0) {
+  if (cartState.items.length === 0) {
     return (
       <div className='min-h-screen bg-background'>
         <div className='pt-24 pb-16 px-4'>
@@ -59,14 +59,14 @@ function Cart() {
             </Button>
           </Link>
           <h1 className='font-serif text-3xl font-bold text-foreground'>
-            Giỏ hàng ({state.itemCount})
+            Giỏ hàng ({cartState.itemCount})
           </h1>
         </div>
 
         <div className='grid lg:grid-cols-3 gap-8'>
           {/* Cart Items */}
           <div className='lg:col-span-2 space-y-4'>
-            {state.items.map((item) => (
+            {cartState.items.map((item) => (
               <Card key={item.id}>
                 <CardContent className='p-6'>
                   <div className='flex gap-4'>
@@ -146,8 +146,8 @@ function Cart() {
 
                 <div className='space-y-2'>
                   <div className='flex justify-between text-sm'>
-                    <span>Tạm tính ({state.itemCount} sản phẩm)</span>
-                    <span>{formatPrice(state.total)}</span>
+                    <span>Tạm tính ({cartState.itemCount} sản phẩm)</span>
+                    <span>{formatPrice(cartState.total)}</span>
                   </div>
                   <div className='flex justify-between text-sm'>
                     <span>Phí vận chuyển</span>
@@ -159,7 +159,7 @@ function Cart() {
 
                 <div className='flex justify-between font-bold text-lg'>
                   <span>Tổng cộng</span>
-                  <span>{formatPrice(state.total)}</span>
+                  <span>{formatPrice(cartState.total)}</span>
                 </div>
 
                 <Link to={ROUTES.CHECKOUT} className='block'>

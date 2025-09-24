@@ -4,7 +4,7 @@ import { Star } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
 import { Badge } from '~/components/ui/badge'
-import { ROUTES } from '~/constants/routesPath'
+import { ROUTES } from '~/constants'
 
 function Hero() {
   const [isVisible, setIsVisible] = useState(false)

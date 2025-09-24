@@ -7,13 +7,13 @@ import { Badge } from '~/components/ui/badge'
 import ProductCard from '~/components/common/products/ProductCard'
 import { products } from '~/data'
 import { useCart } from '~/context'
-import { ROUTES } from '~/constants/routesPath'
+import { ROUTES } from '~/constants'
 
 function Product({ params }) {
   const [quantity, setQuantity] = useState(1)
   const [isLiked, setIsLiked] = useState(false)
   const [selectedImage, setSelectedImage] = useState(0)
-  const { dispatch } = useCart()
+  const { dispatch: cartDispatch } = useCart()
   const { id } = useParams()
 
   const product = products.find((p) => p.id === id)
@@ -31,7 +31,7 @@ function Product({ params }) {
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
-      dispatch({ type: 'ADD_ITEM', payload: product })
+      cartDispatch({ type: 'ADD_ITEM', payload: product })
     }
   }
 

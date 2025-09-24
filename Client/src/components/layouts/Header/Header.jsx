@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Link, NavLink } from 'react-router-dom'
-import { Search, Phone, ShoppingCart, Menu, X, Heart, User } from 'lucide-react'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Search, ShoppingCart, Menu, X, Heart, User } from 'lucide-react'
 import clsx from 'clsx'
+import { useSelector, useDispatch } from 'react-redux'
 
 import { Button } from '~/components/ui/button'
 import { useCart } from '~/context'
@@ -12,15 +13,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
-import { ROUTES } from '~/constants/routesPath'
+import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
+import { ROUTES } from '~/constants'
+import { selectCurrentUser, logoutUser } from '~/redux/slices/authSlice'
 
 function Header() {
+  const user = useSelector(selectCurrentUser)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isHeaderVisible, setIsHeaderVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
-  const { state } = useCart()
-  const isUser = true
+  const { state: cartState } = useCart()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,6 +46,11 @@ function Header() {
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [lastScrollY])
+
+  const handleLogout = async () => {
+    await dispatch(logoutUser())
+    navigate(ROUTES.LOGIN)
+  }
 
   return (
     <header
@@ -72,7 +83,7 @@ function Header() {
               to={ROUTES.HOME}
             >
               Trang chủ
-              <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full'></span>
+              <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full group-focus-within:w-full'></span>
             </NavLink>
             <NavLink
               to={ROUTES.PRODUCTS}
@@ -84,7 +95,7 @@ function Header() {
               }
             >
               Bộ sưu tập
-              <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full'></span>
+              <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full group-focus-within:w-full'></span>
             </NavLink>
             <NavLink
               to={ROUTES.SERVICES}
@@ -96,7 +107,7 @@ function Header() {
               }
             >
               Dịch vụ
-              <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full'></span>
+              <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full group-focus-within:w-full'></span>
             </NavLink>
             <NavLink
               to={ROUTES.CONTACT}
@@ -108,7 +119,7 @@ function Header() {
               }
             >
               Liên hệ
-              <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full'></span>
+              <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full group-focus-within:w-full'></span>
             </NavLink>
           </nav>
 
@@ -121,77 +132,85 @@ function Header() {
             >
               <Search className='h-5 w-5' />
             </Button>
-            <Button
-              variant='ghost'
-              size='icon'
-              className='hover:bg-accent/10 hover:text-primary hover:scale-110 transition-all duration-300 cursor-pointer'
-              aria-label='Liên hệ'
-            >
-              <Phone className='h-5 w-5' />
-            </Button>
             <Link to={ROUTES.CART}>
               <Button
                 variant='ghost'
                 size='icon'
                 className='hover:bg-accent/10 hover:text-primary hover:scale-110 transition-all duration-300 relative cursor-pointer'
-                aria-label={`Giỏ hàng (${state.itemCount} sản phẩm)`}
+                aria-label={`Giỏ hàng (${cartState.itemCount} sản phẩm)`}
               >
                 <ShoppingCart className='h-5 w-5' />
-                {state.itemCount > 0 && (
+                {cartState.itemCount > 0 && (
                   <span className='absolute -top-1 -right-1 bg-secondary text-secondary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse cursor-pointer'>
-                    {state.itemCount}
+                    {cartState.itemCount}
                   </span>
                 )}
               </Button>
             </Link>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant='ghost'
-                  size='icon'
-                  className='hover:bg-accent/10 hover:text-primary hover:scale-110 transition-all duration-300 cursor-pointer'
-                  aria-label='Tài khoản'
-                >
-                  <User className='h-5 w-5' />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align='end' className='w-48'>
-                {!isUser && (
-                  <>
-                    <DropdownMenuItem asChild>
-                      <Link to={ROUTES.LOGIN} className='cursor-pointer'>
-                        Đăng nhập
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to={ROUTES.REGISTER} className='cursor-pointer'>
-                        Đăng ký
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                  </>
-                )}
-                <DropdownMenuItem asChild>
-                  <Link to={ROUTES.PROFILE} className='cursor-pointer'>
-                    Hồ sơ cá nhân
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href='/orders' className='cursor-pointer'>
-                    Đơn hàng của tôi
-                  </Link>
-                </DropdownMenuItem>
-                {isUser && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link className='cursor-pointer'>Đăng xuất</Link>
-                    </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className='hidden sm:block'>
+              <DropdownMenu modal={false}>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant='ghost'
+                    size='icon'
+                    className='hover:bg-accent/10 hover:text-primary hover:scale-110 transition-all duration-300 cursor-pointer'
+                    aria-label='Tài khoản'
+                  >
+                    {user?.isauth ? (
+                      <Avatar>
+                        <AvatarImage src='https://github.com/shadcn.png' />
+                        <AvatarFallback>CN</AvatarFallback>
+                      </Avatar>
+                    ) : (
+                      <User className='h-5 w-5' />
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align='end' className='w-48'>
+                  {!user?.isauth && (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link to={ROUTES.LOGIN} className='cursor-pointer'>
+                          Đăng nhập
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to={ROUTES.REGISTER} className='cursor-pointer'>
+                          Đăng ký
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  <DropdownMenuItem asChild>
+                    <Link to={ROUTES.PROFILE} className='cursor-pointer'>
+                      Hồ sơ cá nhân
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href='/orders' className='cursor-pointer'>
+                      Đơn hàng của tôi
+                    </Link>
+                  </DropdownMenuItem>
+                  {user?.isauth && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link
+                          onClick={() => {
+                            handleLogout()
+                          }}
+                          className='cursor-pointer'
+                        >
+                          Đăng xuất
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
 
             <Button
               variant='ghost'
@@ -257,20 +276,48 @@ function Header() {
                 Liên hệ
               </NavLink>
               <div className='border-t border-border pt-4 mt-4'>
-                <Link
-                  to={ROUTES.LOGIN}
-                  className='text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-2 block'
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Đăng nhập
-                </Link>
-                <Link
-                  to={ROUTES.REGISTER}
-                  className='text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-2 block mt-4'
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Đăng ký
-                </Link>
+                {!user?.isauth ? (
+                  <>
+                    <Link
+                      to={ROUTES.LOGIN}
+                      className='text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-2 block'
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Đăng nhập
+                    </Link>
+                    <Link
+                      to={ROUTES.REGISTER}
+                      className='text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-2 block mt-4'
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Đăng ký
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      className='text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-2 block mt-4'
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Hồ sơ cá nhân
+                    </Link>
+                    <Link
+                      className='text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-2 block mt-4'
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Đơn hàng của tôi
+                    </Link>
+                    <Link
+                      className='text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-2 block mt-4'
+                      onClick={() => {
+                        setIsMobileMenuOpen(false)
+                        handleLogout()
+                      }}
+                    >
+                      Đăng xuất
+                    </Link>
+                  </>
+                )}
               </div>
             </nav>
           </div>

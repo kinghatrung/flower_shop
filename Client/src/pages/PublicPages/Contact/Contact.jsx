@@ -182,9 +182,7 @@ function Contact() {
                   <MapPin className='h-6 w-6 text-primary flex-shrink-0 mt-1' />
                   <div>
                     <h3 className='font-semibold mb-1'>Địa chỉ cửa hàng</h3>
-                    <p className='text-muted-foreground'>
-                      123 Đường Hoa, Phường 1, Quận 1, TP. Hồ Chí Minh
-                    </p>
+                    <p className='text-muted-foreground'>Cổ Nhuế, Bắc Từ Liêm, Hà Nội, Việt Nam</p>
                   </div>
                 </div>
 
@@ -225,11 +223,17 @@ function Contact() {
                 <CardTitle>Vị trí cửa hàng</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className='aspect-video bg-muted rounded-lg flex items-center justify-center'>
-                  <div className='text-center space-y-2'>
-                    <MapPin className='h-12 w-12 text-muted-foreground mx-auto' />
-                    <p className='text-muted-foreground'>Bản đồ Google Maps</p>
-                    <p className='text-sm text-muted-foreground'>123 Đường Hoa, Q.1, TP.HCM</p>
+                <div className='aspect-video bg-muted rounded-lg'>
+                  <div className='size-full rounded-lg overflow-hidden bg-muted'>
+                    <iframe
+                      src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3723.5480634679684!2d105.7743210457505!3d21.05076168905049!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab50c984ecdd%3A0x77d10bdffe7a625d!2zQ8O0bmcgVmnDqm4gSOG7kyBBbiBCw6xuaCBUUCBHaWFvIEzGsHU!5e0!3m2!1svi!2s!4v1756095504535!5m2!1svi!2s'
+                      width='100%'
+                      height='100%'
+                      style={{ border: 0 }}
+                      allowFullScreen
+                      loading='lazy'
+                      referrerPolicy='no-referrer-when-downgrade'
+                    ></iframe>
                   </div>
                 </div>
               </CardContent>
@@ -241,7 +245,10 @@ function Contact() {
                 <div className='text-center space-y-4'>
                   <h3 className='font-semibold text-lg'>Cần tư vấn ngay?</h3>
                   <p className='text-muted-foreground'>Gọi hotline để được hỗ trợ trực tiếp</p>
-                  <Button className='bg-secondary hover:bg-secondary/90 text-secondary-foreground'>
+                  <Button
+                    onClick={() => (window.location.href = 'tel:0123456789')}
+                    className='bg-secondary hover:bg-secondary/90 text-secondary-foreground cursor-pointer'
+                  >
                     <Phone className='h-4 w-4 mr-2' />
                     Gọi ngay: 0123 456 789
                   </Button>
