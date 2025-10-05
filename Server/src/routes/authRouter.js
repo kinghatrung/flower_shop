@@ -22,7 +22,7 @@ authRouter.delete('/logout', authController.logoutUser);
 // GET /api/auth/refresh-token - Refresh access token
 authRouter.get('/refresh-token', authController.refreshToken);
 
-// POST /api/auth/forgot-password - Initiate password reset
-authRouter.post('/forgot-password', authController.forgotPasswordUser);
+// POST /api/auth/reset-password - Initiate password reset
+authRouter.post('/reset-password', authController.resetPasswordUser);
 
 export default authRouter;

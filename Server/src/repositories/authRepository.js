@@ -40,6 +40,16 @@ const authRepository = {
       throw err;
     }
   },
+
+  updatePasswordUser: async (email, newPassword) => {
+    const query = 'UPDATE users SET password_hash = $1 WHERE email = $2';
+    try {
+      const result = await pool.query(query, [newPassword, email]);
+      return result.rows[0];
+    } catch (err) {
+      throw err;
+    }
+  },
 };
 
 export default authRepository;

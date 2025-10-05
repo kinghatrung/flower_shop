@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import { OAuth2Client } from 'google-auth-library';
 import axios from 'axios';
 
+import { getRedis } from '../config/redis.js';
 import authRepository from '../repositories/authRepository.js';
 import { generateToken, verifyToken } from '../providers/JwtProvider.js';
 
@@ -190,8 +191,31 @@ const authService = {
     }
   },
 
-  forgotPasswordUser: async (email, newPassword, otp) => {
+  resetPasswordUser: async (email, password, otp) => {
     try {
+      const redisClient = getRedis();
+      const otpKey = `otp:email:${email}`;
+      const storedOtp = await redisClient.get(otpKey);
+      if (!storedOtp || storedOtp !== otp) {
+        throw new Error('Otp không hợp lệ hoặc đã hết hạn');
+      }
+
+      const user = await authRepository.findUserByEmail(email);
+      if (!user) {
+        throw new Error('Yêu cầu không thể xử lý');
+      }
+
+      if (password.length < 8)
+        throw new Error('Mật khẩu phải có ít nhất 8 ký tự!');
+
+      const hashPassword = await bcrypt.hash(password, 10);
+
+      const result = await authRepository.updatePasswordUser(
+        email,
+        hashPassword
+      );
+
+      return result;
     } catch (err) {
       throw err;
     }

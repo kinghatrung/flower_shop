@@ -139,19 +139,17 @@ const authController = {
         .status(200)
         .json({ message: 'Làm mới token thành công', data: result });
     } catch (err) {
-      res.status(401).json(err.message);
+      res.status(401).json({ message: err.message });
     }
   },
 
-  forgotPasswordUser: async (req, res) => {
+  resetPasswordUser: async (req, res) => {
     try {
-      const { email, otp } = req.body;
-      await authService.forgotPasswordUser(email, newPassword, otp);
-      res
-        .status(200)
-        .json({ message: 'Vui lòng kiểm tra email để đặt lại mật khẩu!' });
+      const { email, otp, password } = req.body;
+      await authService.resetPasswordUser(email, password, otp);
+      res.status(200).json({ message: 'Đặt lại mật khẩu thành công' });
     } catch (err) {
-      res.status(500).json(err.message);
+      req.status(500).json({ message: err.message });
     }
   },
 };

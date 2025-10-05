@@ -1,36 +1,23 @@
+import crypto from 'crypto';
+
+import authRepository from '../repositories/authRepository.js';
+import { sendOtpEmail } from '../utils/mailer.js';
 import { getRedis } from '../config/redis.js';
 
-function generateOtp() {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
-const requestOtp = async (email) => {
-  const otp = generateOtp();
-  const redis = getRedis();
-
-  await redis.set(`reset:otp:${email}`, otp, { EX: 300 });
-
-  // TODO: gửi email thật (ví dụ: nodemailer)
-  return otp;
+const generateOtp = () => {
+  return crypto.randomInt(100000, 999999).toString();
 };
 
-const verifyOtpAndResetPassword = async (email, otp, newPassword) => {
-  const redis = getRedis();
-  const storedOtp = await redis.get(`reset:otp:${email}`);
+const otpService = {
+  sendOtp: async (email) => {
+    const otp = generateOtp();
+    const redisClient = getRedis();
+    const otpKey = `otp:email:${email}`;
+    await redisClient.set(otpKey, otp, { EX: 300 }); // Hết hạn sau 5 phút// Gửi OTP qua email
+    await sendOtpEmail(email, otp);
 
-  if (!storedOtp) {
-    throw new Error('OTP hết hạn hoặc chưa được tạo');
-  }
-
-  if (storedOtp !== otp) {
-    throw new Error('OTP không chính xác');
-  }
-
-  // Xoá OTP khi xác thực thành công
-  await redis.del(`reset:otp:${email}`);
-
-  // TODO: hash password và update DB
-  return true;
+    return { message: 'OTP đã được gửi đến email của bạn' };
+  },
 };
 
-export { requestOtp, verifyOtpAndResetPassword };
+export default otpService;

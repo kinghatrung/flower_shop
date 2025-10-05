@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 import { initRedis, closeRedis } from './config/redis.js';
 import userRouter from './routes/userRouter.js';
 import authRouter from './routes/authRouter.js';
+import otpRouter from './routes/otpRouter.js';
 
 dotenv.config();
 const app = express();
@@ -40,6 +41,7 @@ if (process.env.NODE_ENV !== 'production') {
 // ROUTES
 app.use('/api/users', userRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/otp', otpRouter);
 
 // if (process.env.NODE_ENV === 'production') {
 //   app.use(express.static(path.join(__dirname, '../Client/dist')));

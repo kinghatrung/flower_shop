@@ -1,5 +1,7 @@
-import { Link, Navigate } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { useForm } from 'react-hook-form'
 
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
@@ -7,12 +9,48 @@ import { Label } from '~/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
 import { ROUTES } from '~/constants'
 import { selectCurrentUser } from '~/redux/slices/authSlice'
+import { otpSend, resetPasswordUser } from '~/api'
+import { toast } from 'sonner'
 
 function ForgotPassword() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch
+  } = useForm({
+    mode: 'onChange'
+  })
+
+  const navigate = useNavigate()
+  const [countdown, setCountdown] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
+
   const currentUser = useSelector(selectCurrentUser)
 
   if (currentUser) {
     return <Navigate to={ROUTES.HOME} replace />
+  }
+
+  const password = watch('password')
+
+  const handleSendOtp = async (email) => {
+    setIsLoading(true)
+    await otpSend(email)
+    setTimeout(() => {
+      setIsLoading(false)
+      setCountdown(30)
+      const timer = setInterval(() => {
+        setCountdown((prev) => (prev <= 1 ? (clearInterval(timer), 0) : prev - 1))
+      }, 1000)
+    }, 1000)
+  }
+
+  const onSubmitForgotPassword = async (data) => {
+    const { email, otp, password } = data
+    await resetPasswordUser(email, otp, password)
+    toast.success('Đổi mật khẩu thành công! Vui lòng đăng nhập lại.')
+    navigate(ROUTES.LOGIN)
   }
 
   return (
@@ -41,7 +79,7 @@ function ForgotPassword() {
             </CardDescription>
           </CardHeader>
           <CardContent className='space-y-6'>
-            <form className='space-y-4'>
+            <form onSubmit={handleSubmit(onSubmitForgotPassword)} className='space-y-4'>
               <div className='space-y-2'>
                 <Label htmlFor='email' className='text-sm font-medium text-gray-700'>
                   Email đã đăng ký
@@ -51,12 +89,20 @@ function ForgotPassword() {
                   type='email'
                   placeholder='your@email.com'
                   className='h-11 border-gray-200 focus:border-purple-400 focus:ring-purple-400'
-                  required
+                  {...register('email', {
+                    required: 'Vui lòng nhập email',
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: 'Email không đúng định dạng'
+                    }
+                  })}
                 />
+                {errors.email && <p className='text-sm text-red-500'>{errors.email.message}</p>}
               </div>
+
               <div className='space-y-2'>
                 <Label htmlFor='otp' className='text-sm font-medium text-gray-700'>
-                  Mã Otp
+                  Mã OTP
                 </Label>
                 <div className='flex gap-2'>
                   <Input
@@ -64,20 +110,66 @@ function ForgotPassword() {
                     type='text'
                     placeholder='xxxxxx'
                     className='h-11 border-gray-200 focus:border-purple-400 focus:ring-purple-400'
-                    required
+                    {...register('otp', { required: 'Vui lòng nhập mã OTP' })}
                   />
-                  <Button className='h-11 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer'>
-                    Nhận mã
+                  <Button
+                    type='button'
+                    onClick={() => handleSendOtp(watch('email'))}
+                    disabled={countdown > 0 || isLoading || errors.email || !watch('email')}
+                    className='h-11 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg whitespace-nowrap cursor-pointer'
+                  >
+                    {countdown > 0 ? `Đợi ${countdown}s` : isLoading ? 'Đang gửi...' : 'Nhận mã'}
                   </Button>
                 </div>
+                {errors.otp && <p className='text-sm text-red-500'>{errors.otp.message}</p>}
               </div>
+
+              <div className='space-y-2'>
+                <Label htmlFor='password' className='text-sm font-medium text-gray-700'>
+                  Mật khẩu mới
+                </Label>
+                <Input
+                  id='password'
+                  type='password'
+                  placeholder='••••••••'
+                  className='h-11 border-gray-200 focus:border-rose-400 focus:ring-rose-400'
+                  {...register('password', {
+                    required: 'Vui lòng nhập mật khẩu',
+                    minLength: { value: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự' }
+                  })}
+                />
+                {errors.password && (
+                  <p className='text-sm text-red-500'>{errors.password.message}</p>
+                )}
+              </div>
+
+              <div className='space-y-2'>
+                <Label htmlFor='confirmPassword' className='text-sm font-medium text-gray-700'>
+                  Xác nhận mật khẩu
+                </Label>
+                <Input
+                  id='confirmPassword'
+                  type='password'
+                  placeholder='••••••••'
+                  className='h-11 border-gray-200 focus:border-rose-400 focus:ring-rose-400'
+                  {...register('confirmPassword', {
+                    required: 'Vui lòng xác nhận mật khẩu',
+                    validate: (value) => value === password || 'Mật khẩu không khớp'
+                  })}
+                />
+                {errors.confirmPassword && (
+                  <p className='text-sm text-red-500'>{errors.confirmPassword.message}</p>
+                )}
+              </div>
+
               <Button
                 type='submit'
-                className='w-full h-11 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer'
+                className='cursor-pointer w-full h-11 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300'
               >
-                Gửi liên kết đặt lại
+                Đặt lại mật khẩu
               </Button>
             </form>
+
             <div className='text-center space-y-4'>
               <div className='relative'>
                 <div className='absolute inset-0 flex items-center'>

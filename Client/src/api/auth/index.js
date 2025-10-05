@@ -9,3 +9,15 @@ export const registerUser = async (newUser) => {
 export const refreshToken = async () => {
   return await authorizedAxiosInstance.get(`${API_URL}/api/auth/refresh-token`)
 }
+
+export const otpSend = async (email) => {
+  return await authorizedAxiosInstance.post(`${API_URL}/api/otp/send`, { email })
+}
+
+export const resetPasswordUser = async (email, otp, password) => {
+  return await authorizedAxiosInstance.post(`${API_URL}/api/auth/reset-password`, {
+    email,
+    otp,
+    password
+  })
+}
