@@ -5,6 +5,10 @@ import authMiddleware from '../middleware/authMiddleware.js';
 const userRouter = Router();
 
 // GET /api/users - Retrieve all users
-userRouter.get('/', authMiddleware.isAuthorized, userController.getAllUsers);
+userRouter.get(
+  '/',
+  //  authMiddleware.isAuthorized
+  userController.getUsers
+);
 
 export default userRouter;

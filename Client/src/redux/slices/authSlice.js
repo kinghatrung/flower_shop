@@ -11,6 +11,21 @@ export const loginUser = createAsyncThunk('auth/loginUser', async (user) => {
   return res.data.data.user
 })
 
+export const loginUserByGoogle = createAsyncThunk('auth/loginUserByGoogle', async (tokenId) => {
+  const res = await authorizedAxiosInstance.post(`${API_URL}/api/auth/google`, { tokenId: tokenId })
+  return res.data.data.user
+})
+
+export const loginUserByFacebook = createAsyncThunk(
+  'auth/loginUserByFacebook',
+  async (accessToken) => {
+    const res = await authorizedAxiosInstance.post(`${API_URL}/api/auth/facebook`, {
+      accessToken: accessToken
+    })
+    return res.data.data.user
+  }
+)
+
 export const logoutUser = createAsyncThunk('auth/logoutUser', async (showSuccessMessage = true) => {
   const res = await authorizedAxiosInstance.delete(`${API_URL}/api/auth/logout`)
   if (showSuccessMessage) toast.success(res.data.message)
@@ -30,6 +45,12 @@ export const authSlice = createSlice({
     // Nếu không thành công Api sẽ chết ở tầng axios, nên không cần bắt các trường hợp khác
     builder.addCase(loginUser.fulfilled, (state, action) => {
       // action.payload chính là dữ liệu trả về từ Api ở trên
+      state.currentUser = action.payload
+    })
+    builder.addCase(loginUserByGoogle.fulfilled, (state, action) => {
+      state.currentUser = action.payload
+    })
+    builder.addCase(loginUserByFacebook.fulfilled, (state, action) => {
       state.currentUser = action.payload
     })
     builder.addCase(logoutUser.fulfilled, (state) => {

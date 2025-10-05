@@ -1,127 +1,42 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MoreVertical } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow
 } from '~/components/ui/table'
 import { Badge } from '~/components/ui/badge'
+import { getUsers } from '~/api'
 
 function CustomersManagement() {
   const [search, setSearch] = useState('')
-  const data = [
-    {
-      id: 1,
-      lastname: 'Nguyễn',
-      name: 'A',
-      email: 'a@example.com',
-      verified: true,
-      phone: '0123456789',
-      status: false,
-      role: 'Người dùng',
-      created: '11/09/2025'
-    },
-    {
-      id: 2,
-      lastname: 'Nguyễn',
-      name: 'B',
-      email: 'b@example.com',
-      verified: false,
-      phone: '0123456789',
-      status: true,
-      role: 'Người dùng',
-      created: '11/09/2025'
-    },
-    {
-      id: 3,
-      lastname: 'Nguyễn',
-      name: 'B',
-      email: 'b@example.com',
-      verified: false,
-      phone: '0123456789',
-      status: true,
-      role: 'Người dùng',
-      created: '11/09/2025'
-    },
-    {
-      id: 4,
-      lastname: 'Nguyễn',
-      name: 'B',
-      email: 'b@example.com',
-      verified: false,
-      phone: '0123456789',
-      status: true,
-      role: 'Người dùng',
-      created: '11/09/2025'
-    },
-    {
-      id: 5,
-      lastname: 'Nguyễn',
-      name: 'B',
-      email: 'b@example.com',
-      verified: false,
-      phone: '0123456789',
-      status: true,
-      role: 'Người dùng',
-      created: '11/09/2025'
-    },
-    {
-      id: 6,
-      lastname: 'Nguyễn',
-      name: 'B',
-      email: 'b@example.com',
-      verified: false,
-      phone: '0123456789',
-      status: true,
-      role: 'Người dùng',
-      created: '11/09/2025'
-    },
-    {
-      id: 7,
-      lastname: 'Nguyễn',
-      name: 'B',
-      email: 'b@example.com',
-      verified: false,
-      phone: '0123456789',
-      status: true,
-      role: 'Người dùng',
-      created: '11/09/2025'
-    },
-    {
-      id: 8,
-      lastname: 'Nguyễn',
-      name: 'B',
-      email: 'b@example.com',
-      verified: false,
-      phone: '0123456789',
-      status: true,
-      role: 'Người dùng',
-      created: '11/09/2025'
-    }
-  ]
+  const [users, setUsers] = useState([])
 
-  const filteredData = data.filter((item) => item.name.toLowerCase().includes(search.toLowerCase()))
+  useEffect(() => {
+    const fetchDataUsers = async () => {
+      const res = await getUsers()
+      setUsers(res.data.reverse())
+    }
+
+    fetchDataUsers()
+  }, [])
+
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(search.toLowerCase())
+  )
 
   return (
     <div className='space-y-4'>
@@ -146,7 +61,7 @@ function CustomersManagement() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredData.map((item) => (
+          {filteredUsers.map((item) => (
             <TableRow key={item.id}>
               <TableCell>{item.id}</TableCell>
               <TableCell>{item.lastname}</TableCell>
@@ -177,10 +92,12 @@ function CustomersManagement() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align='end'>
-                    <DropdownMenuItem>Sửa thông tin</DropdownMenuItem>
-                    <DropdownMenuItem>Khóa người dùng</DropdownMenuItem>
+                    <DropdownMenuItem className='cursor-pointer'>Sửa thông tin</DropdownMenuItem>
+                    <DropdownMenuItem className='cursor-pointer'>Khóa người dùng</DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className='text-red-600'>Xóa người dùng</DropdownMenuItem>
+                    <DropdownMenuItem className='text-red-600 cursor-pointer'>
+                      Xóa người dùng
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>

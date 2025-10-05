@@ -1,5 +1,8 @@
 import authService from '../services/authService.js';
+import dotenv from 'dotenv';
 import ms from 'ms';
+
+dotenv.config();
 
 const authController = {
   loginUser: async (req, res) => {
@@ -24,6 +27,65 @@ const authController = {
 
       res.status(200).json({
         message: 'Đăng nhập thành công',
+        data: userWithoutToken,
+      });
+    } catch (err) {
+      res.status(401).json({ message: err.message });
+    }
+  },
+
+  loginUserByGoogle: async (req, res) => {
+    try {
+      const tokenId = req.body.tokenId;
+      const result = await authService.loginUserByGoogle(tokenId);
+
+      const { accessToken, refreshToken, ...userWithoutToken } = result;
+
+      res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        maxAge: ms('14 days'),
+      });
+
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        maxAge: ms('14 days'),
+      });
+
+      res.status(200).json({
+        message: 'Đăng nhập bằng Google thành công',
+        data: userWithoutToken,
+      });
+    } catch (err) {
+      res.status(401).json({ message: err.message });
+    }
+  },
+
+  loginUserByFacebook: async (req, res) => {
+    try {
+      const token = req.body.accessToken;
+      const result = await authService.loginUserByFacebook(token);
+      const { accessToken, refreshToken, ...userWithoutToken } = result;
+
+      res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        maxAge: ms('14 days'),
+      });
+
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        maxAge: ms('14 days'),
+      });
+
+      res.status(200).json({
+        message: 'Đăng nhập bằng Facebook thành công',
         data: userWithoutToken,
       });
     } catch (err) {
@@ -78,6 +140,18 @@ const authController = {
         .json({ message: 'Làm mới token thành công', data: result });
     } catch (err) {
       res.status(401).json(err.message);
+    }
+  },
+
+  forgotPasswordUser: async (req, res) => {
+    try {
+      const { email, otp } = req.body;
+      await authService.forgotPasswordUser(email, newPassword, otp);
+      res
+        .status(200)
+        .json({ message: 'Vui lòng kiểm tra email để đặt lại mật khẩu!' });
+    } catch (err) {
+      res.status(500).json(err.message);
     }
   },
 };

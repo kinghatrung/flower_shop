@@ -1,9 +1,9 @@
 import userService from '../services/userService.js';
 
 const userController = {
-  getAllUsers: async (req, res) => {
+  getUsers: async (req, res) => {
     try {
-      const users = await userService.getAllUsers();
+      const users = await userService.getUsers();
       res.status(200).json({ data: users });
     } catch (err) {
       res.status(500).json(err);

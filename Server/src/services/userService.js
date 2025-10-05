@@ -1,10 +1,19 @@
-import pool from '../config/db.js';
+import userRepository from '../repositories/userRepository.js';
 
 const userService = {
-  getAllUsers: async () => {
+  getUsers: async () => {
     try {
-      const users = await pool.query('SELECT * FROM users');
-      return users.rows;
+      const users = await userRepository.getUsers();
+      return users;
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  getUser: async (email) => {
+    try {
+      const user = await userRepository.getUserByEmail(email);
+      return user;
     } catch (err) {
       throw err;
     }

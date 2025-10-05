@@ -1,13 +1,21 @@
 import { useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
+import FacebookLogin from '@greatsumini/react-facebook-login'
+import { toast } from 'sonner'
+import { GoogleLogin } from '@react-oauth/google'
 
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
 import { ROUTES } from '~/constants'
-import { selectCurrentUser, loginUser } from '~/redux/slices/authSlice'
+import {
+  selectCurrentUser,
+  loginUser,
+  loginUserByGoogle,
+  loginUserByFacebook
+} from '~/redux/slices/authSlice'
 
 function Login() {
   const currentUser = useSelector(selectCurrentUser)
@@ -27,6 +35,16 @@ function Login() {
       password
     }
     await dispatch(loginUser(user)).unwrap()
+    navigate(ROUTES.HOME)
+  }
+
+  const handleLoginWithGoogle = async (tokenId) => {
+    await dispatch(loginUserByGoogle(tokenId)).unwrap()
+    navigate(ROUTES.HOME)
+  }
+
+  const handleLoginWithFacebook = async (accessToken) => {
+    await dispatch(loginUserByFacebook(accessToken)).unwrap()
     navigate(ROUTES.HOME)
   }
 
@@ -88,6 +106,7 @@ function Login() {
                 Đăng nhập
               </Button>
             </form>
+
             <div className='text-center'>
               <p className='text-sm text-gray-600'>
                 Chưa có tài khoản?{' '}
@@ -98,6 +117,49 @@ function Login() {
                   Đăng ký ngay
                 </Link>
               </p>
+            </div>
+
+            <div className='relative'>
+              <div className='absolute inset-0 flex items-center'>
+                <span className='w-full border-t border-gray-200' />
+              </div>
+              <div className='relative flex justify-center text-xs uppercase'>
+                <span className='bg-white px-2 text-gray-500'>Hoặc</span>
+              </div>
+            </div>
+
+            <div className='flex flex-col items-center justify-center gap-2'>
+              <FacebookLogin
+                appId={import.meta.env.VITE_FACEBOOK_ID}
+                onSuccess={(response) => handleLoginWithFacebook(response.accessToken)}
+                onFail={(error) => {
+                  console.log('Login Failed!', error)
+                }}
+                style={{
+                  backgroundColor: '#4267b2',
+                  color: '#fff',
+                  fontSize: '16px',
+                  padding: '7px 31px',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+                scope='public_profile,email'
+                fields='id,name,email,picture'
+              />
+
+              <GoogleLogin
+                size='large'
+                text='signin_with'
+                ux_mode='popup'
+                width={36}
+                onSuccess={(credentialResponse) =>
+                  handleLoginWithGoogle(credentialResponse.credential)
+                }
+                onError={() => {
+                  toast.message('Đăng nhập không thành công')
+                }}
+              />
             </div>
           </CardContent>
         </Card>

@@ -37,7 +37,7 @@ function ForgotPassword() {
             </div>
             <CardTitle className='text-2xl font-serif text-gray-800'>Quên mật khẩu?</CardTitle>
             <CardDescription className='text-gray-600'>
-              Nhập email để nhận liên kết đặt lại mật khẩu
+              Nhập email để nhận mã Otp đặt lại mật khẩu
             </CardDescription>
           </CardHeader>
           <CardContent className='space-y-6'>
@@ -54,9 +54,26 @@ function ForgotPassword() {
                   required
                 />
               </div>
+              <div className='space-y-2'>
+                <Label htmlFor='otp' className='text-sm font-medium text-gray-700'>
+                  Mã Otp
+                </Label>
+                <div className='flex gap-2'>
+                  <Input
+                    id='otp'
+                    type='text'
+                    placeholder='xxxxxx'
+                    className='h-11 border-gray-200 focus:border-purple-400 focus:ring-purple-400'
+                    required
+                  />
+                  <Button className='h-11 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer'>
+                    Nhận mã
+                  </Button>
+                </div>
+              </div>
               <Button
                 type='submit'
-                className='w-full h-11 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300'
+                className='w-full h-11 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer'
               >
                 Gửi liên kết đặt lại
               </Button>

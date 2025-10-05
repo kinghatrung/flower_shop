@@ -3,14 +3,19 @@ import cors from 'cors';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
-import path from 'path';
+import dotenv from 'dotenv';
 
+import { initRedis, closeRedis } from './config/redis.js';
 import userRouter from './routes/userRouter.js';
 import authRouter from './routes/authRouter.js';
 
+dotenv.config();
 const app = express();
-const __dirname = path.resolve();
+// const __dirname = path.resolve();
 const PORT = process.env.PORT || 2708;
+
+// init redis
+await initRedis();
 
 // cache from disk in expressjs
 app.use((req, res, next) => {
@@ -36,14 +41,20 @@ if (process.env.NODE_ENV !== 'production') {
 app.use('/api/users', userRouter);
 app.use('/api/auth', authRouter);
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../Client/dist')));
+// if (process.env.NODE_ENV === 'production') {
+//   app.use(express.static(path.join(__dirname, '../Client/dist')));
 
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../Client/dist/index.html'));
-  });
-}
+//   app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, '../Client/dist/index.html'));
+//   });
+// }
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
+});
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  await closeRedis();
+  process.exit(0);
 });

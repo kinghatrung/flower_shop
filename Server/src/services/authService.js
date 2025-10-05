@@ -1,7 +1,11 @@
 import bcrypt from 'bcrypt';
+import { OAuth2Client } from 'google-auth-library';
+import axios from 'axios';
 
 import authRepository from '../repositories/authRepository.js';
 import { generateToken, verifyToken } from '../providers/JwtProvider.js';
+
+const client = new OAuth2Client(process.env.GOOGLE_APP_CLIENT_ID);
 
 const authService = {
   loginUser: async (email, password) => {
@@ -38,6 +42,93 @@ const authService = {
     }
   },
 
+  loginUserByGoogle: async (tokenId) => {
+    try {
+      const ticket = await client.verifyIdToken({
+        idToken: tokenId,
+        audience: process.env.GOOGLE_APP_CLIENT_ID,
+      });
+      const payload = ticket.getPayload();
+
+      const email = payload.email;
+
+      let user = await authRepository.findUserByEmail(email);
+
+      if (!user) {
+        user = await authRepository.createUser(
+          payload.given_name,
+          payload.family_name,
+          payload.email,
+          '',
+          null,
+          payload.picture,
+          'GOOGLE'
+        );
+      }
+
+      const accessToken = await generateToken(
+        user,
+        process.env.JWT_ACCESS_TOKEN,
+        '1h'
+      );
+
+      const refreshToken = await generateToken(
+        user,
+        process.env.JWT_REFRESH_TOKEN,
+        '7 days'
+      );
+
+      const { password_hash, ...userWithoutPassword } = user;
+
+      return { user: userWithoutPassword, accessToken, refreshToken };
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  loginUserByFacebook: async (token) => {
+    try {
+      const response = await axios.get(
+        `https://graph.facebook.com/v18.0/me?fields=id,name,email,picture&access_token=${token}`
+      );
+
+      const email = response.data.email;
+      const picture = response.data.picture;
+
+      let user = await authRepository.findUserByEmail(email);
+
+      if (!user) {
+        user = await authRepository.createUser(
+          response.data.name,
+          '',
+          response.data.email,
+          '',
+          null,
+          picture.data.url,
+          'FACEBOOK'
+        );
+      }
+
+      const accessToken = await generateToken(
+        user,
+        process.env.JWT_ACCESS_TOKEN,
+        '1h'
+      );
+
+      const refreshToken = await generateToken(
+        user,
+        process.env.JWT_REFRESH_TOKEN,
+        '7 days'
+      );
+
+      const { password_hash, ...userWithoutPassword } = user;
+
+      return { user: userWithoutPassword, accessToken, refreshToken };
+    } catch (err) {
+      throw err;
+    }
+  },
+
   registerUser: async (name, lastName, email, password, rePassword, phone) => {
     try {
       const checkUser = await authRepository.findUserByEmail(email);
@@ -53,7 +144,8 @@ const authService = {
         lastName,
         email,
         hashPassword,
-        phone
+        phone,
+        (avatar = null)
       );
 
       return newUser;
@@ -74,6 +166,7 @@ const authService = {
         email: refreshTokenDecoded.email,
         lastname: refreshTokenDecoded.lastname,
         phone: refreshTokenDecoded.phone,
+        type: refreshTokenDecoded.type,
         date_of_birth: refreshTokenDecoded.date_of_birth,
         avatar_url: refreshTokenDecoded.avatar_url,
         is_active: refreshTokenDecoded.is_active,
@@ -92,6 +185,13 @@ const authService = {
       );
 
       return accessToken;
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  forgotPasswordUser: async (email, newPassword, otp) => {
+    try {
     } catch (err) {
       throw err;
     }

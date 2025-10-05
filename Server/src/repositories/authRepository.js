@@ -6,15 +6,23 @@ const authRepository = {
     try {
       const result = await pool.query(query, [email]);
       return result.rows[0];
-    } catch (error) {
-      throw error;
+    } catch (err) {
+      throw err;
     }
   },
 
-  createUser: async (name, lastName, email, passwordHash, phone) => {
+  createUser: async (
+    name,
+    lastName,
+    email,
+    passwordHash,
+    phone,
+    avatar,
+    type
+  ) => {
     const query = `
-      INSERT INTO users (name, lastname, email, password_hash, phone) 
-      VALUES ($1, $2, $3, $4, $5) 
+      INSERT INTO users (name, lastname, email, password_hash, phone, avatar_url, type) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7) 
       RETURNING *;
     `;
     try {
@@ -24,10 +32,12 @@ const authRepository = {
         email,
         passwordHash,
         phone,
+        avatar,
+        type,
       ]);
       return result.rows[0];
-    } catch (error) {
-      throw error;
+    } catch (err) {
+      throw err;
     }
   },
 };
