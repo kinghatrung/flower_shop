@@ -2,7 +2,7 @@ import pool from '../config/db.js';
 
 const userRepository = {
   getUsers: async () => {
-    const query = 'SELECT * FROM users';
+    const query = 'SELECT * FROM users ORDER BY created_at';
     try {
       const result = await pool.query(query);
       return result.rows;

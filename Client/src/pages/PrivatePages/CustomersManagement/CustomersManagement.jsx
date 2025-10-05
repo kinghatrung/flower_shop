@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { MoreVertical } from 'lucide-react'
+import dayjs from 'dayjs'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -28,7 +29,7 @@ function CustomersManagement() {
   useEffect(() => {
     const fetchDataUsers = async () => {
       const res = await getUsers()
-      setUsers(res.data.reverse())
+      setUsers(res.data)
     }
 
     fetchDataUsers()
@@ -62,11 +63,11 @@ function CustomersManagement() {
         </TableHeader>
         <TableBody>
           {filteredUsers.map((item) => (
-            <TableRow key={item.id}>
-              <TableCell>{item.id}</TableCell>
+            <TableRow key={item.user_id}>
+              <TableCell>{item.user_id}</TableCell>
               <TableCell>{item.lastname}</TableCell>
               <TableCell>{item.name}</TableCell>
-              <TableCell>{item.phone}</TableCell>
+              <TableCell>{item.phone ? item.phone : 'Chưa cập nhập'}</TableCell>
               <TableCell>{item.email}</TableCell>
               <TableCell>
                 <Badge className='text-white' variant={item.verified ? 'default' : 'destructive'}>
@@ -74,12 +75,12 @@ function CustomersManagement() {
                 </Badge>
               </TableCell>
               <TableCell>
-                <Badge className='text-white' variant={item.status ? 'default' : 'destructive'}>
-                  {item.status ? 'Đang hoạt động' : 'Tạm khóa'}
+                <Badge className='text-white' variant={item.is_active ? 'default' : 'destructive'}>
+                  {item.is_active ? 'Đang hoạt động' : 'Tạm khóa'}
                 </Badge>
               </TableCell>
               <TableCell>{item.role}</TableCell>
-              <TableCell>{item.created}</TableCell>
+              <TableCell>{dayjs(item.created_at).format('DD/MM/YYYY HH:mm')}</TableCell>
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>

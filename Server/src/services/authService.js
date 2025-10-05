@@ -63,7 +63,8 @@ const authService = {
           '',
           null,
           payload.picture,
-          'GOOGLE'
+          'GOOGLE',
+          payload.email_verified
         );
       }
 
@@ -106,7 +107,8 @@ const authService = {
           '',
           null,
           picture.data.url,
-          'FACEBOOK'
+          'FACEBOOK',
+          response.data.email_verified
         );
       }
 

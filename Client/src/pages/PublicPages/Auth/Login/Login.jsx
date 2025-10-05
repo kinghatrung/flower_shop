@@ -133,7 +133,7 @@ function Login() {
                 appId={import.meta.env.VITE_FACEBOOK_ID}
                 onSuccess={(response) => handleLoginWithFacebook(response.accessToken)}
                 onFail={(error) => {
-                  console.log('Login Failed!', error)
+                  toast.error('Đăng nhập không thành công')
                 }}
                 style={{
                   backgroundColor: '#4267b2',

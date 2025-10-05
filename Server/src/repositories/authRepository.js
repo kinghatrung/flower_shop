@@ -18,11 +18,12 @@ const authRepository = {
     passwordHash,
     phone,
     avatar,
-    type
+    type = 'LOCAL',
+    is_verified = true
   ) => {
     const query = `
-      INSERT INTO users (name, lastname, email, password_hash, phone, avatar_url, type) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7) 
+      INSERT INTO users (name, lastname, email, password_hash, phone, avatar_url, type, is_verified) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
       RETURNING *;
     `;
     try {
@@ -34,6 +35,7 @@ const authRepository = {
         phone,
         avatar,
         type,
+        is_verified,
       ]);
       return result.rows[0];
     } catch (err) {
