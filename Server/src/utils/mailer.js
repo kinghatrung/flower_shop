@@ -15,9 +15,109 @@ export const sendOtpEmail = async (to, otp) => {
   const mailOptions = {
     from: process.env.EMAIL_FROM,
     to,
-    subject: 'Mã OTP để đặt lại mật khẩu',
-    text: `Mã OTP của bạn là: ${otp}. Mã này có hiệu lực trong 10 phút.`,
-    html: `<p>Mã OTP của bạn là: <strong>${otp}</strong>. Mã này có hiệu lực trong 10 phút.</p>`,
+    subject: 'Mã OTP để đặt lại mật khẩu - Bloom Luxury Flowers',
+    text: `Mã OTP của bạn là: ${otp}. Mã này có hiệu lực trong 5 phút.`,
+    html: `
+      <!DOCTYPE html>
+      <html lang="vi">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Mã OTP - Bloom Luxury Flowers</title>
+        </head>
+        <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #fef3f5 0%, #f5e6f8 100%); min-height: 100vh;">
+          <table role="presentation" style="width: 100%; border-collapse: collapse; background: linear-gradient(135deg, #fef3f5 0%, #f5e6f8 100%); padding: 40px 20px;">
+            <tr>
+              <td align="center">
+                <table role="presentation" style="max-width: 600px; width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 60px rgba(139, 92, 246, 0.15);">
+                  <tr>
+                    <td style="background: linear-gradient(135deg, #f8c8d3 0%, #c084fc 100%); padding: 40px 30px; text-align: center;">
+                      <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.1); letter-spacing: -0.5px;">
+                        🌸 Bloom Luxury Flowers
+                      </h1>
+                      <p style="margin: 10px 0 0 0; color: rgba(255,255,255,0.95); font-size: 16px; font-weight: 500;">
+                        Nơi mỗi bông hoa kể một câu chuyện
+                      </p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style="padding: 50px 40px;">
+                      <h2 style="margin: 0 0 20px 0; color: #1f2937; font-size: 26px; font-weight: 700; text-align: center;">
+                        Đặt lại mật khẩu của bạn
+                      </h2>
+                      
+                      <p style="margin: 0 0 30px 0; color: #6b7280; font-size: 16px; line-height: 1.6; text-align: center;">
+                        Chúng tôi đã nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn. Vui lòng sử dụng mã OTP bên dưới để tiếp tục:
+                      </p>
+
+                      <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 30px 0;">
+                        <tr>
+                          <td align="center">
+                            <div style="background: linear-gradient(135deg, #fef3f5 0%, #f5e6f8 100%); border: 3px dashed #f8c8d3; border-radius: 16px; padding: 30px; display: inline-block;">
+                              <p style="margin: 0 0 10px 0; color: #8b5cf6; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                                Mã OTP của bạn
+                              </p>
+                              <p style="margin: 0; color: #1f2937; font-size: 48px; font-weight: 800; letter-spacing: 8px; font-family: 'Courier New', monospace;">
+                                ${otp}
+                              </p>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <table role="presentation" style="width: 100%; border-collapse: collapse; background: #fef3f5; border-left: 4px solid #f8c8d3; border-radius: 8px; padding: 20px; margin: 0 0 30px 0;">
+                        <tr>
+                          <td>
+                            <p style="margin: 0 0 10px 0; color: #1f2937; font-size: 15px; font-weight: 600;">
+                              ⏰ Lưu ý quan trọng:
+                            </p>
+                            <ul style="margin: 0; padding-left: 20px; color: #6b7280; font-size: 14px; line-height: 1.6;">
+                              <li style="margin-bottom: 8px;">Mã OTP này có hiệu lực trong <strong style="color: #f8c8d3;">10 phút</strong></li>
+                              <li style="margin-bottom: 8px;">Không chia sẻ mã này với bất kỳ ai</li>
+                              <li>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này</li>
+                            </ul>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6; text-align: center;">
+                        Nếu bạn gặp bất kỳ vấn đề nào, đừng ngần ngại liên hệ với chúng tôi qua email 
+                        <a href="mailto:support@bloomflowers.vn" style="color: #f8c8d3; text-decoration: none; font-weight: 600;">support@bloomflowers.vn</a>
+                      </p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style="background: linear-gradient(135deg, #1f2937 0%, #374151 100%); padding: 30px 40px; text-align: center;">
+                      <p style="margin: 0 0 15px 0; color: #ffffff; font-size: 16px; font-weight: 600;">
+                        Bloom Luxury Flowers
+                      </p>
+                      
+                      <p style="margin: 0 0 15px 0; color: #d1d5db; font-size: 14px; line-height: 1.6;">
+                        📍 123 Nguyễn Huệ, Quận 1, TP.HCM<br>
+                        📞 1900 1234 | 📧 info@bloomflowers.vn
+                      </p>
+
+                      <div style="margin: 20px 0 0 0;">
+                        <a href="#" style="display: inline-block; margin: 0 8px; color: #f8c8d3; text-decoration: none; font-size: 24px;">📘</a>
+                        <a href="#" style="display: inline-block; margin: 0 8px; color: #f8c8d3; text-decoration: none; font-size: 24px;">📷</a>
+                        <a href="#" style="display: inline-block; margin: 0 8px; color: #f8c8d3; text-decoration: none; font-size: 24px;">🐦</a>
+                      </div>
+
+                      <p style="margin: 20px 0 0 0; color: #9ca3af; font-size: 12px;">
+                        © 2025 Bloom Luxury Flowers. All rights reserved.
+                      </p>
+                    </td>
+                  </tr>
+
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+      </html>
+    `,
   };
 
   await transporter.sendMail(mailOptions);
