@@ -18,12 +18,13 @@ const authRepository = {
     passwordHash,
     phone,
     avatar,
-    type = 'LOCAL',
-    is_verified = true
+    type,
+    is_verified,
+    is_active
   ) => {
     const query = `
-      INSERT INTO users (name, lastname, email, password_hash, phone, avatar_url, type, is_verified) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+      INSERT INTO users (name, lastname, email, password_hash, phone, avatar_url, type, is_verified, is_active) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
       RETURNING *;
     `;
     try {
@@ -36,6 +37,7 @@ const authRepository = {
         avatar,
         type,
         is_verified,
+        is_active,
       ]);
       return result.rows[0];
     } catch (err) {
@@ -48,6 +50,16 @@ const authRepository = {
     try {
       const result = await pool.query(query, [newPassword, email]);
       return result.rows[0];
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  deleteUserByEmail: async (email) => {
+    const query = 'DELETE FROM users WHERE email = $1';
+    try {
+      await pool.query(query, [email]);
+      return true;
     } catch (err) {
       throw err;
     }

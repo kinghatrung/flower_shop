@@ -48,7 +48,7 @@ function Header() {
   }, [lastScrollY])
 
   const handleLogout = async () => {
-    await dispatch(logoutUser())
+    await dispatch(logoutUser(false))
     navigate(ROUTES.LOGIN)
   }
 

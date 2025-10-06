@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { MoreVertical, Plus } from 'lucide-react'
 import dayjs from 'dayjs'
+import { useNavigate } from 'react-router-dom'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -27,10 +28,13 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
+import { ROUTES } from '~/constants'
 import UserFormDialog from '~/components/common/UserFormDialog'
-import { getUsers } from '~/api'
+import { getUsers, registerUser, deleteUser } from '~/api'
 
 function CustomersManagement() {
+  const navigate = useNavigate()
+
   const [search, setSearch] = useState('')
   const [users, setUsers] = useState([])
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
@@ -70,14 +74,9 @@ function CustomersManagement() {
     return matchesSearch && matchesRole && matchesStatus && matchesVerified
   })
 
-  const handleAddUser = (userData) => {
-    const newUser = {
-      user_id: users.length + 1,
-      ...userData,
-      created_at: new Date()
-    }
-    setUsers([...users, newUser])
-    setIsAddDialogOpen(false)
+  const handleAddUser = async (userData) => {
+    await registerUser(userData)
+    setIsAddDialogOpen(!isAddDialogOpen)
   }
 
   const handleEditUser = (userData) => {
@@ -95,6 +94,11 @@ function CustomersManagement() {
   const handleEditClick = (user) => {
     setSelectedUser(user)
     setIsEditDialogOpen(true)
+  }
+
+  const handleDeleteUser = async (email) => {
+    await deleteUser(email)
+    setUsers(users.filter((user) => user.email !== email))
   }
 
   return (
@@ -225,7 +229,10 @@ function CustomersManagement() {
                             Khóa người dùng
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className='text-destructive cursor-pointer'>
+                          <DropdownMenuItem
+                            onClick={() => handleDeleteUser(item.email)}
+                            className='text-destructive cursor-pointer'
+                          >
                             Xóa người dùng
                           </DropdownMenuItem>
                         </DropdownMenuContent>

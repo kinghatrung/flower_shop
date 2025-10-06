@@ -25,4 +25,7 @@ authRouter.get('/refresh-token', authController.refreshToken);
 // POST /api/auth/reset-password - Initiate password reset
 authRouter.post('/reset-password', authController.resetPasswordUser);
 
+// DELETE /api/auth/delete-account - Delete user account
+authRouter.delete('/delete-account', authController.deleteAccountUser);
+
 export default authRouter;

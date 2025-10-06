@@ -26,28 +26,33 @@ function UserFormDialog({ open, onOpenChange, onSubmit, title, description, init
     handleSubmit,
     formState: { errors },
     reset,
-    setValue
+    setValue,
+    watch
   } = useForm({
     defaultValues: {
-      lastname: '',
       name: '',
+      lastName: '',
       phone: '',
       email: '',
+      password: '',
+      rePassword: '',
       is_verified: false,
-      is_active: true,
-      role: 'customer'
+      is_active: true
     }
   })
 
+  const password = watch('password')
+
   useEffect(() => {
     if (initialData) {
-      setValue('lastname', initialData.lastname || '')
       setValue('name', initialData.name || '')
+      setValue('lastName', initialData.lastName || '')
       setValue('phone', initialData.phone || '')
       setValue('email', initialData.email || '')
+      setValue('password', initialData.password || '')
+      setValue('rePassword', initialData.password || '')
       setValue('is_verified', initialData.is_verified || false)
       setValue('is_active', initialData.is_active || true)
-      setValue('role', initialData.role || 'customer')
     } else {
       reset()
     }
@@ -55,7 +60,6 @@ function UserFormDialog({ open, onOpenChange, onSubmit, title, description, init
 
   const onSubmitForm = (data) => {
     onSubmit(data)
-    console.log(data)
   }
 
   return (
@@ -71,19 +75,19 @@ function UserFormDialog({ open, onOpenChange, onSubmit, title, description, init
             {/* Họ & Tên */}
             <div className='grid grid-cols-2 gap-4'>
               <div className='space-y-2'>
-                <Label htmlFor='lastname'>
+                <Label htmlFor='lastName'>
                   Họ <span className='text-destructive'>*</span>
                 </Label>
                 <Input
-                  id='lastname'
-                  {...register('lastname', {
+                  id='lastName'
+                  {...register('lastName', {
                     required: 'Họ không được để trống',
                     validate: (value) => value.trim() !== '' || 'Họ không được để trống'
                   })}
                   placeholder='Nguyễn'
                 />
-                {errors.lastname && (
-                  <p className='text-sm text-destructive'>{errors.lastname.message}</p>
+                {errors.lastName && (
+                  <p className='text-sm text-destructive'>{errors.lastName.message}</p>
                 )}
               </div>
 
@@ -123,6 +127,47 @@ function UserFormDialog({ open, onOpenChange, onSubmit, title, description, init
               {errors.email && <p className='text-sm text-destructive'>{errors.email.message}</p>}
             </div>
 
+            {/* Password */}
+            <div className='space-y-2'>
+              <Label htmlFor='password'>
+                Mật khẩu <span className='text-destructive'>*</span>
+              </Label>
+              <Input
+                id='password'
+                type='password'
+                {...register('password', {
+                  required: 'Mật khẩu không được để trống',
+                  minLength: {
+                    value: 8,
+                    message: 'Mật khẩu phải có ít nhất 8 ký tự'
+                  }
+                })}
+                placeholder='Nhập mật khẩu'
+              />
+              {errors.password && (
+                <p className='text-sm text-destructive'>{errors.password.message}</p>
+              )}
+            </div>
+
+            {/* rePassword */}
+            <div className='space-y-2'>
+              <Label htmlFor='rePassword'>
+                Nhập lại mật khẩu <span className='text-destructive'>*</span>
+              </Label>
+              <Input
+                id='rePassword'
+                type='password'
+                {...register('rePassword', {
+                  required: 'Vui lòng nhập lại mật khẩu',
+                  validate: (value) => value === password || 'Mật khẩu nhập lại không khớp'
+                })}
+                placeholder='Nhập lại mật khẩu'
+              />
+              {errors.rePassword && (
+                <p className='text-sm text-destructive'>{errors.rePassword.message}</p>
+              )}
+            </div>
+
             {/* Phone */}
             <div className='space-y-2'>
               <Label htmlFor='phone'>Số điện thoại</Label>
@@ -140,7 +185,7 @@ function UserFormDialog({ open, onOpenChange, onSubmit, title, description, init
             </div>
 
             {/* Role */}
-            <div className='space-y-2'>
+            {/* <div className='space-y-2'>
               <Label htmlFor='role'>Vai trò</Label>
               <Select
                 value={register('role').value}
@@ -161,7 +206,7 @@ function UserFormDialog({ open, onOpenChange, onSubmit, title, description, init
                   </SelectItem>
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
 
             {/* Switches */}
             <div className='flex items-center justify-between space-x-2 rounded-lg border p-4'>

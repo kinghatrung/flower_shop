@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
+import path from 'path';
 
 import { initRedis, closeRedis } from './config/redis.js';
 import userRouter from './routes/userRouter.js';
@@ -13,7 +14,7 @@ import productRouter from './routes/productRouter.js';
 
 dotenv.config();
 const app = express();
-// const __dirname = path.resolve();
+const __dirname = path.resolve();
 const PORT = process.env.PORT || 2708;
 
 // init redis
@@ -45,13 +46,13 @@ app.use('/api/auth', authRouter);
 app.use('/api/otp', otpRouter);
 app.use('/api/products', productRouter);
 
-// if (process.env.NODE_ENV === 'production') {
-//   app.use(express.static(path.join(__dirname, '../Client/dist')));
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../Client/dist')));
 
-//   app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname, '../Client/dist/index.html'));
-//   });
-// }
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../Client/dist/index.html'));
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

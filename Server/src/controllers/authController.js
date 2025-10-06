@@ -95,14 +95,29 @@ const authController = {
 
   registerUser: async (req, res) => {
     try {
-      const { name, lastName, email, password, rePassword, phone } = req.body;
+      const {
+        name,
+        lastName,
+        email,
+        password,
+        rePassword,
+        phone,
+        type = 'LOCAL',
+        avatar = null,
+        is_verified = false,
+        is_active = true,
+      } = req.body;
       const newUser = await authService.registerUser(
         name,
         lastName,
         email,
         password,
         rePassword,
-        phone
+        phone,
+        type,
+        avatar,
+        is_verified,
+        is_active
       );
 
       res.status(201).json({
@@ -149,7 +164,18 @@ const authController = {
       await authService.resetPasswordUser(email, password, otp);
       res.status(200).json({ message: 'Đặt lại mật khẩu thành công' });
     } catch (err) {
-      req.status(500).json({ message: err.message });
+      res.status(500).json({ message: err.message });
+    }
+  },
+
+  deleteAccountUser: async (req, res) => {
+    try {
+      const { email } = req.body;
+      await authService.deleteAccountUser(email);
+
+      res.status(200).json({ message: 'Xoá tài khoản thành công' });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
     }
   },
 };

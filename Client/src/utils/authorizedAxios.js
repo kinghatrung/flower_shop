@@ -31,6 +31,9 @@ let refreshTokenPromise = null
 authorizedAxiosInstance.interceptors.response.use(
   (response) => {
     // Những status code trong khoảng 2xx sẽ nằm ở trong này
+    if (response.data?.message) {
+      toast.success(response.data.message)
+    }
     return response
   },
   (error) => {

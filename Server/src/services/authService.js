@@ -132,7 +132,18 @@ const authService = {
     }
   },
 
-  registerUser: async (name, lastName, email, password, rePassword, phone) => {
+  registerUser: async (
+    name,
+    lastName,
+    email,
+    password,
+    rePassword,
+    phone,
+    type,
+    avatar,
+    is_verified,
+    is_active
+  ) => {
     try {
       const checkUser = await authRepository.findUserByEmail(email);
 
@@ -148,7 +159,10 @@ const authService = {
         email,
         hashPassword,
         phone,
-        (avatar = null)
+        avatar,
+        type,
+        is_verified,
+        is_active
       );
 
       return newUser;
@@ -218,6 +232,18 @@ const authService = {
       );
 
       return result;
+    } catch (err) {
+      throw err;
+    }
+  },
+  deleteAccountUser: async (email) => {
+    try {
+      const user = await authRepository.findUserByEmail(email);
+      if (!user) {
+        throw new Error('Yêu cầu không thể xử lý');
+      }
+      await authRepository.deleteUserByEmail(email);
+      return true;
     } catch (err) {
       throw err;
     }

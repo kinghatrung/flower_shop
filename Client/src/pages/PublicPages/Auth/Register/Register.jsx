@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/com
 import { ROUTES } from '~/constants'
 import { registerUser } from '~/api'
 import { selectCurrentUser } from '~/redux/slices/authSlice'
+import { toast } from 'sonner'
 
 function Register() {
   const currentUser = useSelector(selectCurrentUser)
@@ -35,7 +36,8 @@ function Register() {
       password,
       rePassword
     }
-    await registerUser(newUser)
+    const res = await registerUser(newUser)
+    toast.success(res.message)
     navigate(ROUTES.LOGIN)
   }
 
