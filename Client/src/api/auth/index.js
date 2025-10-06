@@ -24,6 +24,6 @@ export const resetPasswordUser = async (email, otp, password) => {
 
 export const deleteUser = async (email) => {
   return await authorizedAxiosInstance.delete(`${API_URL}/api/auth/delete-account`, {
-    email
+    data: { email }
   })
 }
