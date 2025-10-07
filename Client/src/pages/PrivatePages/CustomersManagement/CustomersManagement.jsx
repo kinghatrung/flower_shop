@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { MoreVertical, Plus } from 'lucide-react'
 import dayjs from 'dayjs'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -11,6 +12,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious
+} from '~/components/ui/pagination'
 import { Input } from '~/components/ui/input'
 import {
   Table,
@@ -34,6 +44,8 @@ import { getUsers, registerUser, deleteUser, updateUser } from '~/api'
 import useQueryParams from '~/hooks/useQueryParams'
 
 function CustomersManagement() {
+  const navigate = useNavigate()
+
   const [search, setSearch] = useState('')
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
@@ -45,13 +57,14 @@ function CustomersManagement() {
 
   const queryClient = useQueryClient()
   const queryString = useQueryParams()
-  const limit = queryString.limit || 5
   const page = queryString.page || 1
-
+  const limit = 10
   const { data, isLoading } = useQuery({
     queryKey: ['users', page],
-    queryFn: () => getUsers(limit, page)
+    queryFn: () => getUsers(page, limit)
   })
+  const currentPage = Number(page)
+  const totalPages = data?.pagination?.totalPages || 1
 
   const filteredUsers = data?.data.filter((user) => {
     const matchesSearch = `${user.lastname} ${user.name}`
@@ -99,6 +112,12 @@ function CustomersManagement() {
     await queryClient.invalidateQueries(['users'])
   }
 
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      navigate(`?page=${newPage}`)
+    }
+  }
+
   return (
     <div className='container mx-auto py-8 space-y-6'>
       <div className='flex items-center justify-between'>
@@ -124,35 +143,53 @@ function CustomersManagement() {
           />
 
           <Select value={roleFilter} onValueChange={setRoleFilter}>
-            <SelectTrigger className='sm:w-[180px]'>
+            <SelectTrigger className='sm:w-[180px] cursor-pointer'>
               <SelectValue placeholder='Lọc theo vai trò' />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='all'>Tất cả vai trò</SelectItem>
-              <SelectItem value='admin'>Admin</SelectItem>
-              <SelectItem value='customer'>User</SelectItem>
+              <SelectItem className='cursor-pointer' value='all'>
+                Tất cả vai trò
+              </SelectItem>
+              <SelectItem className='cursor-pointer' value='admin'>
+                Admin
+              </SelectItem>
+              <SelectItem className='cursor-pointer' value='customer'>
+                User
+              </SelectItem>
             </SelectContent>
           </Select>
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className='sm:w-[180px]'>
+            <SelectTrigger className='sm:w-[180px] cursor-pointer'>
               <SelectValue placeholder='Lọc theo trạng thái' />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='all'>Tất cả trạng thái</SelectItem>
-              <SelectItem value='active'>Đang hoạt động</SelectItem>
-              <SelectItem value='inactive'>Tạm khóa</SelectItem>
+              <SelectItem className='cursor-pointer' value='all'>
+                Tất cả trạng thái
+              </SelectItem>
+              <SelectItem className='cursor-pointer' value='active'>
+                Đang hoạt động
+              </SelectItem>
+              <SelectItem className='cursor-pointer' value='inactive'>
+                Tạm khóa
+              </SelectItem>
             </SelectContent>
           </Select>
 
           <Select value={verifiedFilter} onValueChange={setVerifiedFilter}>
-            <SelectTrigger className='sm:w-[200px]'>
+            <SelectTrigger className='sm:w-[200px] cursor-pointer'>
               <SelectValue placeholder='Lọc xác thực email' />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='all'>Tất cả</SelectItem>
-              <SelectItem value='verified'>Đã xác thực</SelectItem>
-              <SelectItem value='unverified'>Chưa xác thực</SelectItem>
+              <SelectItem className='cursor-pointer' value='all'>
+                Tất cả
+              </SelectItem>
+              <SelectItem className='cursor-pointer' value='verified'>
+                Đã xác thực
+              </SelectItem>
+              <SelectItem className='cursor-pointer' value='unverified'>
+                Chưa xác thực
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -174,7 +211,7 @@ function CustomersManagement() {
             </TableHeader>
             <TableBody>
               {isLoading
-                ? Array.from({ length: 5 }).map((_, index) => (
+                ? Array.from({ length: limit }).map((_, index) => (
                     <TableRow key={index}>
                       <TableCell>
                         <Skeleton className='h-4 w-8' />
@@ -210,7 +247,7 @@ function CustomersManagement() {
                   ))
                 : filteredUsers.map((item, index) => (
                     <TableRow key={item.user_id}>
-                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>{(page - 1) * limit + index + 1}</TableCell>
                       <TableCell>{item.lastname}</TableCell>
                       <TableCell>{item.name}</TableCell>
                       <TableCell>{item.phone ? item.phone : 'Chưa cập nhật'}</TableCell>
@@ -269,6 +306,35 @@ function CustomersManagement() {
             </TableBody>
           </Table>
         </div>
+
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                className={`cursor-pointer ${!data?.pagination?.hasPrev ? 'opacity-50 pointer-events-none' : ''}`}
+                onClick={() => data?.pagination?.hasPrev && handlePageChange(currentPage - 1)}
+              />
+            </PaginationItem>
+
+            {[...Array(totalPages)].map((_, i) => (
+              <PaginationItem key={i}>
+                <PaginationLink
+                  isActive={currentPage === i + 1}
+                  onClick={() => handlePageChange(i + 1)}
+                  className='cursor-pointer'
+                >
+                  {i + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            <PaginationItem>
+              <PaginationNext
+                className={`cursor-pointer ${!data?.pagination?.hasNext ? 'opacity-50 pointer-events-none' : ''}`}
+                onClick={() => data?.pagination?.hasNext && handlePageChange(currentPage + 1)}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
 
       <UserFormDialog

@@ -16,7 +16,7 @@ dotenv.config();
 const app = express();
 const __dirname = path.resolve();
 const PORT = process.env.PORT || 2708;
-const DELAY = 0;
+const DELAY = 1000;
 
 // init redis
 await initRedis();

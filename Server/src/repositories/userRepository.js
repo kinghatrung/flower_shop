@@ -3,11 +3,16 @@ import pool from '../config/db.js';
 const userRepository = {
   getUsers: async (limit, page) => {
     const offset = (page - 1) * limit;
+    const countQuery = 'SELECT COUNT(*) FROM users';
     const query =
       'SELECT * FROM users ORDER BY user_id DESC LIMIT $1 OFFSET $2';
     try {
       const result = await pool.query(query, [limit, offset]);
-      return result.rows;
+      const countResult = await pool.query(countQuery);
+      return {
+        users: result.rows,
+        total: parseInt(countResult.rows[0].count, 10),
+      };
     } catch (err) {
       throw err;
     }

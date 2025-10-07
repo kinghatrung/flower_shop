@@ -5,8 +5,11 @@ const userController = {
     try {
       const { limit = 5, page = 1 } = req.query;
 
-      const users = await userService.getUsers(limit, page);
-      res.status(200).json({ data: users });
+      const result = await userService.getUsers(Number(limit), Number(page));
+      res.status(200).json({
+        data: result.users,
+        pagination: result.pagination,
+      });
     } catch (err) {
       res.status(500).json(err);
     }

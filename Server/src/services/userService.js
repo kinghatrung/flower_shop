@@ -5,8 +5,18 @@ import userRepository from '../repositories/userRepository.js';
 const userService = {
   getUsers: async (limit, page) => {
     try {
-      const users = await userRepository.getUsers(limit, page);
-      return users;
+      const { users, total } = await userRepository.getUsers(limit, page);
+      const totalPages = Math.ceil(total / limit);
+      return {
+        users,
+        pagination: {
+          currentPage: Number(page),
+          totalPages,
+          totalUsers: total,
+          hasNext: page < totalPages,
+          hasPrev: page > 1,
+        },
+      };
     } catch (err) {
       throw err;
     }
