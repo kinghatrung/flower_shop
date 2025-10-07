@@ -1,10 +1,12 @@
 import pool from '../config/db.js';
 
 const userRepository = {
-  getUsers: async () => {
-    const query = 'SELECT * FROM users ORDER BY created_at';
+  getUsers: async (limit, page) => {
+    const offset = (page - 1) * limit;
+    const query =
+      'SELECT * FROM users ORDER BY user_id DESC LIMIT $1 OFFSET $2';
     try {
-      const result = await pool.query(query);
+      const result = await pool.query(query, [limit, offset]);
       return result.rows;
     } catch (err) {
       throw err;

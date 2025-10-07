@@ -16,6 +16,7 @@ dotenv.config();
 const app = express();
 const __dirname = path.resolve();
 const PORT = process.env.PORT || 2708;
+const DELAY = 1000;
 
 // init redis
 await initRedis();
@@ -23,6 +24,11 @@ await initRedis();
 // cache from disk in expressjs
 app.use((req, res, next) => {
   res.set('Cache-Control', 'no-store');
+  next();
+});
+
+app.use(async (req, res, next) => {
+  await new Promise((resolve) => setTimeout(resolve, DELAY));
   next();
 });
 

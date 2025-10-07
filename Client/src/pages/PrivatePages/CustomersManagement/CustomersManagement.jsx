@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { MoreVertical, Plus } from 'lucide-react'
 import dayjs from 'dayjs'
-import { useNavigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -28,15 +28,22 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
-import { ROUTES } from '~/constants'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious
+} from '~/components/ui/pagination'
+import { Skeleton } from '~/components/ui/skeleton'
 import UserFormDialog from '~/components/common/UserFormDialog'
 import { getUsers, registerUser, deleteUser } from '~/api'
+import useQueryParams from '~/hooks/useQueryParams'
 
 function CustomersManagement() {
-  const navigate = useNavigate()
-
   const [search, setSearch] = useState('')
-  const [users, setUsers] = useState([])
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
@@ -45,16 +52,16 @@ function CustomersManagement() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [verifiedFilter, setVerifiedFilter] = useState('all')
 
-  useEffect(() => {
-    const fetchDataUsers = async () => {
-      const res = await getUsers()
-      setUsers(res.data)
-    }
+  const queryString = useQueryParams()
+  const limit = useQueryParams.limit || 5
+  const page = useQueryParams.page || 1
 
-    fetchDataUsers()
-  }, [])
+  const { data, isLoading } = useQuery({
+    queryKey: ['users', page],
+    queryFn: () => getUsers(limit, page)
+  })
 
-  const filteredUsers = users.filter((user) => {
+  const filteredUsers = data?.data.filter((user) => {
     const matchesSearch = `${user.lastname} ${user.name}`
       .toLowerCase()
       .includes(search.toLowerCase())
@@ -81,11 +88,6 @@ function CustomersManagement() {
 
   const handleEditUser = (userData) => {
     if (selectedUser) {
-      setUsers(
-        users.map((user) =>
-          user.user_id === selectedUser.user_id ? { ...user, ...userData } : user
-        )
-      )
       setIsEditDialogOpen(false)
       setSelectedUser(null)
     }
@@ -98,7 +100,6 @@ function CustomersManagement() {
 
   const handleDeleteUser = async (email) => {
     await deleteUser(email)
-    setUsers(users.filter((user) => user.email !== email))
   }
 
   return (
@@ -175,72 +176,99 @@ function CustomersManagement() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredUsers.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={10} className='text-center py-8 text-muted-foreground'>
-                    Không tìm thấy người dùng nào
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredUsers.map((item, index) => (
-                  <TableRow key={item.user_id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{item.lastname}</TableCell>
-                    <TableCell>{item.name}</TableCell>
-                    <TableCell>{item.phone ? item.phone : 'Chưa cập nhật'}</TableCell>
-                    <TableCell>{item.email}</TableCell>
-                    <TableCell>
-                      <Badge
-                        className='text-white'
-                        variant={item.is_verified ? 'default' : 'destructive'}
-                      >
-                        {item.is_verified ? 'Đã xác thực' : 'Chưa xác thực'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        className='text-white'
-                        variant={item.is_active ? 'default' : 'destructive'}
-                      >
-                        {item.is_active ? 'Đang hoạt động' : 'Tạm khóa'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{item.role}</TableCell>
-                    <TableCell>{dayjs(item.created_at).format('DD/MM/YYYY HH:mm')}</TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant='ghost'
-                            size='icon'
-                            className='size-8 cursor-pointer data-[state=open]:bg-accent/10 hover:scale-110 transition-all duration-300'
-                          >
-                            <MoreVertical className='size-4' />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align='end'>
-                          <DropdownMenuItem
-                            className='cursor-pointer'
-                            onClick={() => handleEditClick(item)}
-                          >
-                            Sửa thông tin
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className='cursor-pointer'>
-                            Khóa người dùng
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => handleDeleteUser(item.email)}
-                            className='text-destructive cursor-pointer'
-                          >
-                            Xóa người dùng
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
+              {isLoading
+                ? Array.from({ length: 5 }).map((_, index) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        <Skeleton className='h-4 w-8' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-20' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-24' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-28' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-40' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-6 w-24 rounded-full' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-6 w-28 rounded-full' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-16' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-32' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-8 w-8 rounded-md' />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                : filteredUsers.map((item, index) => (
+                    <TableRow key={item.user_id}>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>{item.lastname}</TableCell>
+                      <TableCell>{item.name}</TableCell>
+                      <TableCell>{item.phone ? item.phone : 'Chưa cập nhật'}</TableCell>
+                      <TableCell>{item.email}</TableCell>
+                      <TableCell>
+                        <Badge
+                          className='text-white'
+                          variant={item.is_verified ? 'default' : 'destructive'}
+                        >
+                          {item.is_verified ? 'Đã xác thực' : 'Chưa xác thực'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          className='text-white'
+                          variant={item.is_active ? 'default' : 'destructive'}
+                        >
+                          {item.is_active ? 'Đang hoạt động' : 'Tạm khóa'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{item.role}</TableCell>
+                      <TableCell>{dayjs(item.created_at).format('DD/MM/YYYY HH:mm')}</TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant='ghost'
+                              size='icon'
+                              className='size-8 cursor-pointer data-[state=open]:bg-accent/10 hover:scale-110 transition-all duration-300'
+                            >
+                              <MoreVertical className='size-4' />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align='end'>
+                            <DropdownMenuItem
+                              className='cursor-pointer'
+                              onClick={() => handleEditClick(item)}
+                            >
+                              Sửa thông tin
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className='cursor-pointer'>
+                              Khóa người dùng
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() => handleDeleteUser(item.email)}
+                              className='text-destructive cursor-pointer'
+                            >
+                              Xóa người dùng
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
             </TableBody>
           </Table>
         </div>
@@ -257,7 +285,7 @@ function CustomersManagement() {
       <UserFormDialog
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
-        onSubmit={handleEditUser}
+        // onSubmit={handleEditUser}
         title='Sửa thông tin người dùng'
         description='Cập nhật thông tin người dùng'
         initialData={selectedUser}
