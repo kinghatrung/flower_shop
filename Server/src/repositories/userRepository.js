@@ -22,6 +22,37 @@ const userRepository = {
       throw err;
     }
   },
+
+  editUser: async (data, id) => {
+    const query = `
+      UPDATE users
+      SET
+        name = COALESCE($1, name),
+        lastname = COALESCE($2, lastname),
+        email = COALESCE($3, email),
+        password_hash = COALESCE($4, password_hash),
+        phone = COALESCE($5, phone),
+        is_verified = COALESCE($6, is_verified),
+        is_active = COALESCE($7, is_active)
+      WHERE user_id = $8
+      RETURNING *;
+    `;
+    try {
+      const result = await pool.query(query, [
+        data.name,
+        data.lastName,
+        data.email,
+        data.password_hash,
+        data.phone,
+        data.is_verified,
+        data.is_active,
+        id,
+      ]);
+      return result.rows[0];
+    } catch (err) {
+      throw err;
+    }
+  },
 };
 
 export default userRepository;

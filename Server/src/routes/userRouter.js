@@ -11,4 +11,7 @@ userRouter.get(
   userController.getUsers
 );
 
+// PATCH / api/auth/edit-user - Edit user information
+userRouter.patch('/edit-user/:id', userController.editUser);
+
 export default userRouter;

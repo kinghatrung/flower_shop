@@ -7,3 +7,10 @@ export const getUsers = async (limit, page) => {
   })
   return res.data
 }
+
+export const updateUser = async (userId, updatedFields) => {
+  return await authorizedAxiosInstance.patch(
+    `${API_URL}/api/users/edit-user/${userId}`,
+    updatedFields
+  )
+}

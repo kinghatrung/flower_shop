@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { MoreVertical, Plus } from 'lucide-react'
 import dayjs from 'dayjs'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -28,18 +28,9 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious
-} from '~/components/ui/pagination'
 import { Skeleton } from '~/components/ui/skeleton'
 import UserFormDialog from '~/components/common/UserFormDialog'
-import { getUsers, registerUser, deleteUser } from '~/api'
+import { getUsers, registerUser, deleteUser, updateUser } from '~/api'
 import useQueryParams from '~/hooks/useQueryParams'
 
 function CustomersManagement() {
@@ -52,9 +43,10 @@ function CustomersManagement() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [verifiedFilter, setVerifiedFilter] = useState('all')
 
+  const queryClient = useQueryClient()
   const queryString = useQueryParams()
-  const limit = useQueryParams.limit || 5
-  const page = useQueryParams.page || 1
+  const limit = queryString.limit || 5
+  const page = queryString.page || 1
 
   const { data, isLoading } = useQuery({
     queryKey: ['users', page],
@@ -83,14 +75,18 @@ function CustomersManagement() {
 
   const handleAddUser = async (userData) => {
     await registerUser(userData)
+    await queryClient.invalidateQueries(['users'])
     setIsAddDialogOpen(!isAddDialogOpen)
   }
 
-  const handleEditUser = (userData) => {
-    if (selectedUser) {
-      setIsEditDialogOpen(false)
-      setSelectedUser(null)
-    }
+  const handleEditUser = async (userData) => {
+    const cleanedData = Object.fromEntries(
+      Object.entries(userData).filter(([_, value]) => value !== '' && value !== undefined)
+    )
+    await updateUser(selectedUser.user_id, cleanedData)
+    await queryClient.invalidateQueries(['users'])
+    setIsEditDialogOpen(false)
+    setSelectedUser(null)
   }
 
   const handleEditClick = (user) => {
@@ -100,6 +96,7 @@ function CustomersManagement() {
 
   const handleDeleteUser = async (email) => {
     await deleteUser(email)
+    await queryClient.invalidateQueries(['users'])
   }
 
   return (
@@ -280,15 +277,17 @@ function CustomersManagement() {
         onSubmit={handleAddUser}
         title='Thêm người dùng mới'
         description='Điền thông tin để thêm người dùng mới vào hệ thống'
+        isAdd
       />
 
       <UserFormDialog
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
-        // onSubmit={handleEditUser}
+        onSubmit={handleEditUser}
         title='Sửa thông tin người dùng'
         description='Cập nhật thông tin người dùng'
         initialData={selectedUser}
+        isEdit
       />
     </div>
   )

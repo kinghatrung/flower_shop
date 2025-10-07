@@ -28,7 +28,7 @@ function NavUser() {
   const { isMobile } = useSidebar()
 
   const handleLogout = async () => {
-    await dispatch(logoutUser())
+    await dispatch(logoutUser(false))
     navigate(ROUTES.LOGIN)
   }
 
@@ -42,7 +42,7 @@ function NavUser() {
               className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer'
             >
               <Avatar className='h-8 w-8 rounded-lg'>
-                <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
+                <AvatarImage src={currentUser.avatar_url} alt={currentUser.name} />
                 <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
               </Avatar>
               <div className='grid flex-1 text-left text-sm leading-tight'>
@@ -61,7 +61,7 @@ function NavUser() {
             <DropdownMenuLabel className='p-0 font-normal'>
               <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
                 <Avatar className='h-8 w-8 rounded-lg'>
-                  <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
+                  <AvatarImage src={currentUser.avatar_url} alt={currentUser.name} />
                   <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
                 </Avatar>
                 <div className='grid flex-1 text-left text-sm leading-tight'>

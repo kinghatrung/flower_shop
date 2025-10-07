@@ -20,7 +20,16 @@ import {
 } from '~/components/ui/select'
 import { Switch } from '~/components/ui/switch'
 
-function UserFormDialog({ open, onOpenChange, onSubmit, title, description, initialData }) {
+function UserFormDialog({
+  open,
+  onOpenChange,
+  onSubmit,
+  title,
+  description,
+  initialData,
+  isEdit = false,
+  isAdd = false
+}) {
   const {
     register,
     handleSubmit,
@@ -81,8 +90,10 @@ function UserFormDialog({ open, onOpenChange, onSubmit, title, description, init
                 <Input
                   id='lastName'
                   {...register('lastName', {
-                    required: 'Họ không được để trống',
-                    validate: (value) => value.trim() !== '' || 'Họ không được để trống'
+                    required: !isEdit ? 'Họ không được để trống' : false,
+                    validate: !isEdit
+                      ? (value) => value.trim() !== '' || 'Họ không được để trống'
+                      : undefined
                   })}
                   placeholder='Nguyễn'
                 />
@@ -98,8 +109,10 @@ function UserFormDialog({ open, onOpenChange, onSubmit, title, description, init
                 <Input
                   id='name'
                   {...register('name', {
-                    required: 'Tên không được để trống',
-                    validate: (value) => value.trim() !== '' || 'Tên không được để trống'
+                    required: !isEdit ? 'Tên không được để trống' : false,
+                    validate: !isEdit
+                      ? (value) => value.trim() !== '' || 'Tên không được để trống'
+                      : undefined
                   })}
                   placeholder='Văn A'
                 />
@@ -116,7 +129,7 @@ function UserFormDialog({ open, onOpenChange, onSubmit, title, description, init
                 id='email'
                 type='email'
                 {...register('email', {
-                  required: 'Email không được để trống',
+                  required: !isEdit ? 'Email không được để trống' : false,
                   pattern: {
                     value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                     message: 'Email không hợp lệ'
@@ -136,11 +149,13 @@ function UserFormDialog({ open, onOpenChange, onSubmit, title, description, init
                 id='password'
                 type='password'
                 {...register('password', {
-                  required: 'Mật khẩu không được để trống',
-                  minLength: {
-                    value: 8,
-                    message: 'Mật khẩu phải có ít nhất 8 ký tự'
-                  }
+                  required: !isEdit ? 'Mật khẩu không được để trống' : false,
+                  minLength: !isEdit
+                    ? {
+                        value: 8,
+                        message: 'Mật khẩu phải có ít nhất 8 ký tự'
+                      }
+                    : undefined
                 })}
                 placeholder='Nhập mật khẩu'
               />
@@ -158,8 +173,10 @@ function UserFormDialog({ open, onOpenChange, onSubmit, title, description, init
                 id='rePassword'
                 type='password'
                 {...register('rePassword', {
-                  required: 'Vui lòng nhập lại mật khẩu',
-                  validate: (value) => value === password || 'Mật khẩu nhập lại không khớp'
+                  required: !isEdit ? 'Vui lòng nhập lại mật khẩu' : false,
+                  validate: !isEdit
+                    ? (value) => value === password || 'Mật khẩu nhập lại không khớp'
+                    : undefined
                 })}
                 placeholder='Nhập lại mật khẩu'
               />

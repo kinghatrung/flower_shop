@@ -189,6 +189,11 @@ function Header() {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
+                    <Link to={ROUTES.ADMIN_DASHBOARD} className='cursor-pointer'>
+                      Quản lí hệ thống
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
                     <Link href='/orders' className='cursor-pointer'>
                       Đơn hàng của tôi
                     </Link>
