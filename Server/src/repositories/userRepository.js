@@ -1,14 +1,58 @@
 import pool from '../config/db.js';
 
 const userRepository = {
-  getUsers: async (limit, page) => {
+  getUsers: async (limit, page, filters) => {
     const offset = (page - 1) * limit;
-    const countQuery = 'SELECT COUNT(*) FROM users';
-    const query =
-      'SELECT * FROM users ORDER BY user_id DESC LIMIT $1 OFFSET $2';
+
+    // Tạo điều kiện WHERE động
+    const whereClauses = [];
+    const values = [];
+    let paramIndex = 1;
+
+    if (filters.role) {
+      whereClauses.push(`role = $${paramIndex++}`);
+      values.push(filters.role);
+    }
+
+    if (filters.is_active !== undefined) {
+      whereClauses.push(`is_active = $${paramIndex++}`);
+      values.push(filters.is_active);
+    }
+
+    if (filters.is_verified !== undefined) {
+      whereClauses.push(`is_verified = $${paramIndex++}`);
+      values.push(filters.is_verified);
+    }
+
+    if (filters.search) {
+      whereClauses.push(
+        `(LOWER(name) LIKE LOWER($${paramIndex}) OR LOWER(lastname) LIKE LOWER($${paramIndex}))`
+      );
+      values.push(`%${filters.search}%`);
+      paramIndex++;
+    }
+
+    // Gộp các điều kiện lại
+    const whereSQL =
+      whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
+
+    const countQuery = `SELECT COUNT(*) FROM users ${whereSQL}`;
+    const query = `
+      SELECT * FROM users
+      ${whereSQL}
+      ORDER BY user_id DESC
+      LIMIT $${paramIndex++} OFFSET $${paramIndex}
+    `;
+
+    values.push(limit, offset);
+
     try {
-      const result = await pool.query(query, [limit, offset]);
-      const countResult = await pool.query(countQuery);
+      const result = await pool.query(query, values);
+      const countResult = await pool.query(
+        countQuery,
+        values.slice(0, values.length - 2)
+      );
+
       return {
         users: result.rows,
         total: parseInt(countResult.rows[0].count, 10),

@@ -3,9 +3,13 @@ import bcrypt from 'bcrypt';
 import userRepository from '../repositories/userRepository.js';
 
 const userService = {
-  getUsers: async (limit, page) => {
+  getUsers: async (limit, page, filters) => {
     try {
-      const { users, total } = await userRepository.getUsers(limit, page);
+      const { users, total } = await userRepository.getUsers(
+        limit,
+        page,
+        filters
+      );
       const totalPages = Math.ceil(total / limit);
       return {
         users,

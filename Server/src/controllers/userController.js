@@ -3,9 +3,28 @@ import userService from '../services/userService.js';
 const userController = {
   getUsers: async (req, res) => {
     try {
-      const { limit = 5, page = 1 } = req.query;
+      const {
+        limit = 5,
+        page = 1,
+        role,
+        is_active,
+        is_verified,
+        search,
+      } = req.query;
 
-      const result = await userService.getUsers(Number(limit), Number(page));
+      const filters = {
+        role,
+        is_active: is_active === undefined ? undefined : is_active === 'true',
+        is_verified:
+          is_verified === undefined ? undefined : is_verified === 'true',
+        search,
+      };
+
+      const result = await userService.getUsers(
+        Number(limit),
+        Number(page),
+        filters
+      );
       res.status(200).json({
         data: result.users,
         pagination: result.pagination,
