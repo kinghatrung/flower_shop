@@ -144,7 +144,7 @@ function CustomersManagement() {
 
       {/* Filters */}
       <div className='space-y-4'>
-        <div className='flex flex-col sm:flex-row gap-4'>
+        <div className='flex sm:f lex-row gap-4'>
           <Input
             placeholder='Tìm kiếm theo tên...'
             value={search}
