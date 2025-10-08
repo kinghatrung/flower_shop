@@ -201,30 +201,6 @@ function UserFormDialog({
               {errors.phone && <p className='text-sm text-destructive'>{errors.phone.message}</p>}
             </div>
 
-            {/* Role */}
-            {/* <div className='space-y-2'>
-              <Label htmlFor='role'>Vai trò</Label>
-              <Select
-                value={register('role').value}
-                onValueChange={(value) => setValue('role', value)}
-              >
-                <SelectTrigger className='cursor-pointer' id='role'>
-                  <SelectValue placeholder='Chọn vai trò' />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem className='cursor-pointer' value='Admin'>
-                    Admin
-                  </SelectItem>
-                  <SelectItem className='cursor-pointer' value='customer'>
-                    User
-                  </SelectItem>
-                  <SelectItem className='cursor-pointer' value='Manager'>
-                    Manager
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div> */}
-
             {/* Switches */}
             <div className='flex items-center justify-between space-x-2 rounded-lg border p-4'>
               <div className='space-y-0.5'>

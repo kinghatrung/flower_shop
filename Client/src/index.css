@@ -117,9 +117,7 @@
   /* Updated font family tokens to use new elegant fonts */
   --font-sans: var(--font-inter);
   --font-serif: var(--font-playfair);
-  --font-mono:
-    ui-monospace, SFMono-Regular, 'SF Mono', Monaco, Consolas, 'Liberation Mono', 'Courier New',
-    monospace;
+  --font-mono: 'Exo 2', sans-serif;
 }
 
 @layer base {
@@ -128,6 +126,10 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-mono);
   }
 }
 
@@ -328,10 +330,6 @@
 
 .animate-delay-1000 {
   animation-delay: 1s;
-}
-
-html {
-  scroll-behavior: smooth;
 }
 
 /* Enhanced hover effects for interactive elements */
