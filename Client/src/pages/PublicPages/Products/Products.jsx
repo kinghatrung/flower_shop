@@ -1,9 +1,12 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 
 import ProductCard from '~/components/common/products/ProductCard'
 import ProductFilters from '~/components/common/products/ProductFilters'
-import { products } from '~/data'
+// import { products } from '~/data'
 import { useScrollAnimation } from '~/hooks/useScrollAnimationOptions'
+import { getProducts } from '~/api'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import CardSkeletonProduct from '~/components/common/CardSkeletonProduct'
 
 function Products() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -14,17 +17,22 @@ function Products() {
   const { isVisible: filtersVisible, ref: filtersRef } = useScrollAnimation()
   const { isVisible: productsVisible, ref: productsRef } = useScrollAnimation()
 
-  const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
-      const matchesSearch =
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchQuery.toLowerCase())
-      const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory
-      const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1]
+  const { data, isLoading } = useQuery({
+    queryKey: ['products'],
+    queryFn: () => getProducts()
+  })
 
-      return matchesSearch && matchesCategory && matchesPrice
-    })
-  }, [searchQuery, selectedCategory, priceRange])
+  // const filteredProducts = useMemo(() => {
+  //   return products?.filter((product) => {
+  //     const matchesSearch =
+  //       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //       product.description.toLowerCase().includes(searchQuery.toLowerCase())
+  //     const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory
+  //     const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1]
+
+  //     return matchesSearch && matchesCategory && matchesPrice
+  //   })
+  // }, [searchQuery, selectedCategory, priceRange])
 
   return (
     <div className='pt-24 pb-16 px-4'>
@@ -70,12 +78,20 @@ function Products() {
               className={`transition-all duration-700 ${productsVisible ? 'animate-fade-in-up' : ''}`}
             >
               <div className='flex items-center justify-between mb-6'>
-                <p className='text-muted-foreground'>Hiển thị {filteredProducts.length} sản phẩm</p>
+                <p className='text-muted-foreground'>Hiển thị {data?.data?.length} sản phẩm</p>
               </div>
-
-              {filteredProducts.length > 0 ? (
+              {isLoading ? (
                 <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-6'>
-                  {filteredProducts.map((product, index) => (
+                  <CardSkeletonProduct />
+                  <CardSkeletonProduct />
+                  <CardSkeletonProduct />
+                  <CardSkeletonProduct />
+                  <CardSkeletonProduct />
+                  <CardSkeletonProduct />
+                </div>
+              ) : data?.data?.length > 0 ? (
+                <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-6'>
+                  {data?.data.map((product, index) => (
                     <div
                       key={product.id}
                       className={`transition-all duration-500 ${productsVisible ? 'animate-fade-in-up' : ''}`}

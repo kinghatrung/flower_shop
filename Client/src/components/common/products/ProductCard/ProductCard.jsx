@@ -40,10 +40,8 @@ function ProductCard({ product }) {
 
         {/* Badges */}
         <div className='absolute top-3 left-3 flex flex-col gap-2'>
-          {product.isNew && <Badge className='bg-secondary text-secondary-foreground'>Mới</Badge>}
-          {product.isBestSeller && (
-            <Badge className='bg-primary text-primary-foreground'>Bán chạy</Badge>
-          )}
+          {product.is_new && <Badge className='bg-secondary text-secondary-foreground'>Mới</Badge>}
+          {product.is_best_seller && <Badge className='bg-primary text-white'>Bán chạy</Badge>}
         </div>
 
         {/* Wishlist Button */}
@@ -71,7 +69,7 @@ function ProductCard({ product }) {
         </div>
       </div>
 
-      <CardContent className='p-4'>
+      <CardContent className='px-4 pb-4'>
         <div className='space-y-2'>
           <Link to={`${ROUTES.PRODUCTS}/product/${product.id}`}>
             <h3 className='font-semibold text-card-foreground hover:text-primary transition-colors line-clamp-2'>
@@ -103,9 +101,9 @@ function ProductCard({ product }) {
           {/* Price */}
           <div className='flex items-center gap-2'>
             <span className='font-bold text-foreground'>{formatPrice(product.price)}</span>
-            {product.originalPrice && (
+            {product.original_price && (
               <span className='text-sm text-muted-foreground line-through'>
-                {formatPrice(product.originalPrice)}
+                {formatPrice(product.original_price)}
               </span>
             )}
           </div>
