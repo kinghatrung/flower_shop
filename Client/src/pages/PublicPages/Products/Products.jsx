@@ -1,30 +1,35 @@
-import { useState, useMemo, useEffect } from 'react'
-
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import ProductCard from '~/components/common/products/ProductCard'
 import ProductFilters from '~/components/common/products/ProductFilters'
-// import { products } from '~/data'
 import { useScrollAnimation } from '~/hooks/useScrollAnimationOptions'
 import { getProducts } from '~/api'
 import { useQuery } from '@tanstack/react-query'
 import CardSkeletonProduct from '~/components/common/CardSkeletonProduct'
 import useDebounce from '~/hooks/useDebounce'
+import useQueryParams from '~/hooks/useQueryParams'
 
 function Products() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('all')
-  const [priceRange, setPriceRange] = useState([0, 10000000])
+  const queryString = useQueryParams()
+  const [searchParams, setSearchParams] = useSearchParams()
 
-  const debouncedSearch = useDebounce(searchQuery, 500)
+  const [searchQuery, setSearchQuery] = useState(queryString.search || '')
+  const [appliedSearch, setAppliedSearch] = useState(queryString.search || '')
+  const [selectedCategory, setSelectedCategory] = useState(queryString.category || 'all')
+  const [priceRange, setPriceRange] = useState([
+    queryString.minPrice ? Number(queryString.minPrice) : 0,
+    queryString.maxPrice ? Number(queryString.maxPrice) : 10000000
+  ])
 
   const { isVisible: headerVisible, ref: headerRef } = useScrollAnimation()
   const { isVisible: filtersVisible, ref: filtersRef } = useScrollAnimation()
   const { isVisible: productsVisible, ref: productsRef } = useScrollAnimation()
 
   const { data, isLoading } = useQuery({
-    queryKey: ['products', debouncedSearch, selectedCategory, priceRange],
+    queryKey: ['products', appliedSearch, selectedCategory, priceRange],
     queryFn: () =>
       getProducts({
-        search: debouncedSearch,
+        search: appliedSearch,
         category_type: selectedCategory === 'all' ? '' : selectedCategory,
         priceRange: getPriceRangeParam(priceRange)
       }),
@@ -37,6 +42,19 @@ function Products() {
     if (max === Infinity) return `${min / 1000}+`
     return `${min / 1000}-${max / 1000}`
   }
+
+  // Cập nhật URL khi filter hoặc appliedSearch thay đổi
+  useEffect(() => {
+    const params = {}
+    if (appliedSearch) params.search = appliedSearch
+    if (selectedCategory && selectedCategory !== 'all') params.category = selectedCategory
+    if (priceRange[0] !== 0) params.minPrice = priceRange[0]
+    if (priceRange[1] !== 10000000) params.maxPrice = priceRange[1]
+
+    setSearchParams(params)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [appliedSearch, selectedCategory, priceRange])
 
   return (
     <div className='pt-24 pb-16 px-4'>
@@ -62,11 +80,14 @@ function Products() {
           <div className='lg:col-span-1'>
             <div
               ref={filtersRef}
-              className={`sticky top-24 transition-all duration-700 ${filtersVisible ? 'animate-slide-in-left' : ''}`}
+              className={`sticky top-24 transition-all duration-700 ${
+                filtersVisible ? 'animate-slide-in-left' : ''
+              }`}
             >
               <ProductFilters
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}
+                onSearchSubmit={setAppliedSearch}
                 selectedCategory={selectedCategory}
                 onCategoryChange={setSelectedCategory}
                 priceRange={priceRange}
@@ -79,7 +100,9 @@ function Products() {
           <div className='lg:col-span-3'>
             <div
               ref={productsRef}
-              className={`transition-all duration-700 ${productsVisible ? 'animate-fade-in-up' : ''}`}
+              className={`transition-all duration-700 ${
+                productsVisible ? 'animate-fade-in-up' : ''
+              }`}
             >
               <div className='flex items-center justify-between mb-6'>
                 <p className='text-muted-foreground'>Hiển thị {data?.data?.length} sản phẩm</p>
@@ -89,16 +112,15 @@ function Products() {
                   <CardSkeletonProduct />
                   <CardSkeletonProduct />
                   <CardSkeletonProduct />
-                  <CardSkeletonProduct />
-                  <CardSkeletonProduct />
-                  <CardSkeletonProduct />
                 </div>
               ) : data?.data?.length > 0 ? (
                 <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-6'>
                   {data?.data.map((product, index) => (
                     <div
                       key={product.id}
-                      className={`transition-all duration-500 ${productsVisible ? 'animate-fade-in-up' : ''}`}
+                      className={`transition-all duration-500 ${
+                        productsVisible ? 'animate-fade-in-up' : ''
+                      }`}
                       style={{
                         animationDelay: productsVisible ? `${index * 0.1}s` : '0s'
                       }}

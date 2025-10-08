@@ -9,10 +9,13 @@ import { categories, priceRanges } from '~/data'
 function ProductFilters({
   searchQuery,
   onSearchChange,
+  onSearchSubmit,
   selectedCategory,
   onCategoryChange,
   priceRange,
-  onPriceRangeChange
+  onPriceRangeChange,
+  sortBy,
+  onSortChange
 }) {
   const [showFilters, setShowFilters] = useState(false)
 
@@ -34,6 +37,9 @@ function ProductFilters({
           placeholder='Tìm kiếm hoa...'
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') onSearchSubmit(searchQuery)
+          }}
           className='pl-10'
         />
       </div>
