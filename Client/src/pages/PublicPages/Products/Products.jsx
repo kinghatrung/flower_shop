@@ -5,34 +5,38 @@ import ProductFilters from '~/components/common/products/ProductFilters'
 // import { products } from '~/data'
 import { useScrollAnimation } from '~/hooks/useScrollAnimationOptions'
 import { getProducts } from '~/api'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import CardSkeletonProduct from '~/components/common/CardSkeletonProduct'
+import useDebounce from '~/hooks/useDebounce'
 
 function Products() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [priceRange, setPriceRange] = useState([0, 10000000])
 
+  const debouncedSearch = useDebounce(searchQuery, 500)
+
   const { isVisible: headerVisible, ref: headerRef } = useScrollAnimation()
   const { isVisible: filtersVisible, ref: filtersRef } = useScrollAnimation()
   const { isVisible: productsVisible, ref: productsRef } = useScrollAnimation()
 
   const { data, isLoading } = useQuery({
-    queryKey: ['products'],
-    queryFn: () => getProducts()
+    queryKey: ['products', debouncedSearch, selectedCategory, priceRange],
+    queryFn: () =>
+      getProducts({
+        search: debouncedSearch,
+        category_type: selectedCategory === 'all' ? '' : selectedCategory,
+        priceRange: getPriceRangeParam(priceRange)
+      }),
+    keepPreviousData: true
   })
 
-  // const filteredProducts = useMemo(() => {
-  //   return products?.filter((product) => {
-  //     const matchesSearch =
-  //       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //       product.description.toLowerCase().includes(searchQuery.toLowerCase())
-  //     const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory
-  //     const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1]
-
-  //     return matchesSearch && matchesCategory && matchesPrice
-  //   })
-  // }, [searchQuery, selectedCategory, priceRange])
+  const getPriceRangeParam = (range) => {
+    const [min, max] = range
+    if (min === 0 && max === 10000000) return ''
+    if (max === Infinity) return `${min / 1000}+`
+    return `${min / 1000}-${max / 1000}`
+  }
 
   return (
     <div className='pt-24 pb-16 px-4'>

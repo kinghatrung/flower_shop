@@ -73,7 +73,7 @@ function ProductCard({ product }) {
         <div className='space-y-2'>
           <Link to={`${ROUTES.PRODUCTS}/product/${product.id}`}>
             <h3 className='font-semibold text-card-foreground hover:text-primary transition-colors line-clamp-2'>
-              {product.name}s
+              {product.name}
             </h3>
           </Link>
 

@@ -41,6 +41,7 @@ import { Skeleton } from '~/components/ui/skeleton'
 import UserFormDialog from '~/components/common/UserFormDialog'
 import { getUsers, registerUser, deleteUser, updateUser } from '~/api'
 import useQueryParams from '~/hooks/useQueryParams'
+import useDebounce from '~/hooks/useDebounce'
 
 function CustomersManagement() {
   const navigate = useNavigate()
@@ -49,24 +50,16 @@ function CustomersManagement() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
-  const [debouncedSearch, setDebouncedSearch] = useState(search)
 
   const [roleFilter, setRoleFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [verifiedFilter, setVerifiedFilter] = useState('all')
 
+  const debouncedSearch = useDebounce(search, 500)
   const queryClient = useQueryClient()
   const queryString = useQueryParams()
   const page = queryString.page || 1
   const limit = 10
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(search)
-    }, 1000)
-
-    return () => clearTimeout(handler)
-  }, [search])
 
   const filters = {
     ...(roleFilter !== 'all' && { role: roleFilter }),
