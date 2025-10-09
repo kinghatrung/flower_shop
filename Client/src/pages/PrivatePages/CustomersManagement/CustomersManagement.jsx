@@ -358,19 +358,13 @@ function CustomersManagement() {
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
         onSubmit={handleAddUser}
-        title='Thêm người dùng mới'
-        description='Điền thông tin để thêm người dùng mới vào hệ thống'
-        isAdd
       />
 
       <UserFormDialog
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
         onSubmit={handleEditUser}
-        title='Sửa thông tin người dùng'
-        description='Cập nhật thông tin người dùng'
         initialData={selectedUser}
-        isEdit
       />
     </div>
   )
