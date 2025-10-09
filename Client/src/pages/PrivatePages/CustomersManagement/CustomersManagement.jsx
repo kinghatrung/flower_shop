@@ -43,6 +43,7 @@ import { getUsers, registerUser, deleteUser, updateUser } from '~/api'
 import useQueryParams from '~/hooks/useQueryParams'
 import useDebounce from '~/hooks/useDebounce'
 import HeaderTable from '~/components/common/HeaderTable'
+import DataTable from '~/components/common/DataTable'
 
 function CustomersManagement() {
   const navigate = useNavigate()
@@ -119,6 +120,67 @@ function CustomersManagement() {
     }
   }
 
+  const columns = [
+    {
+      title: 'ID',
+      render: (item, index) => (page - 1) * limit + index + 1,
+      skeletonClassName: 'h-4 w-8'
+    },
+    {
+      title: 'Ảnh',
+      render: (item) => (
+        <img
+          src={item.avatar_url || '/image/Nuvexa.png'}
+          className='h-20 w-20 object-cover rounded-2xl'
+        />
+      ),
+      skeletonClassName: 'h-20 w-20'
+    },
+    { title: 'Họ', key: 'lastname' },
+    { title: 'Tên', key: 'name' },
+    { title: 'Số điện thoại', render: (item) => item.phone || 'Chưa cập nhật' },
+    { title: 'Email', key: 'email' },
+    {
+      title: 'Xác thực Email',
+      render: (item) => (
+        <Badge variant={item.is_verified ? 'default' : 'destructive'} className='text-white'>
+          {item.is_verified ? 'Đã xác thực' : 'Chưa xác thực'}
+        </Badge>
+      )
+    },
+    {
+      title: 'Trạng thái',
+      render: (item) => (
+        <Badge variant={item.is_active ? 'default' : 'destructive'} className='text-white'>
+          {item.is_active ? 'Đang hoạt động' : 'Tạm khóa'}
+        </Badge>
+      )
+    },
+    { title: 'Vai trò', key: 'role' },
+    {
+      title: 'Ngày tham gia',
+      render: (item) => dayjs(item.created_at).format('DD/MM/YYYY HH:mm')
+    }
+  ]
+
+  const actions = (item) => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant='ghost' size='icon' className='size-8 cursor-pointer'>
+          <MoreVertical className='size-4' />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align='end'>
+        <DropdownMenuItem onClick={() => handleEditClick(item)}>Sửa thông tin</DropdownMenuItem>
+        <DropdownMenuItem>Khóa người dùng</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => handleDeleteUser(item.email)} className='text-destructive'>
+          Xóa người dùng
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+
   return (
     <div className='container mx-auto py-8 space-y-6'>
       {/* Header */}
@@ -190,137 +252,14 @@ function CustomersManagement() {
             </SelectContent>
           </Select>
         </div>
-        <div className='border rounded-lg'>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Ảnh</TableHead>
-                <TableHead>Họ</TableHead>
-                <TableHead>Tên</TableHead>
-                <TableHead>Số điện thoại</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Xác thực Email</TableHead>
-                <TableHead>Trạng thái</TableHead>
-                <TableHead>Vai trò</TableHead>
-                <TableHead>Ngày tham gia</TableHead>
-                <TableHead className='w-[50px]' />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                Array.from({ length: limit }).map((_, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                      <Skeleton className='h-4 w-8' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-20 w-20' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-4 w-20' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-4 w-24' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-4 w-28' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-4 w-40' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-6 w-24 rounded-full' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-6 w-28 rounded-full' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-4 w-16' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-4 w-32' />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className='h-8 w-8 rounded-md' />
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : users.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={10} className='text-center text-muted-foreground'>
-                    Không tìm thấy dữ liệu
-                  </TableCell>
-                </TableRow>
-              ) : (
-                users.map((item, index) => (
-                  <TableRow key={item.user_id}>
-                    <TableCell>{(page - 1) * limit + index + 1}</TableCell>
-                    <TableCell>
-                      <img
-                        src={item.avatar_url || '/image/Nuvexa.png'}
-                        className='h-20 w-20 object-fit rounded-2xl'
-                      />
-                    </TableCell>
-                    <TableCell>{item.lastname}</TableCell>
-                    <TableCell>{item.name}</TableCell>
-                    <TableCell>{item.phone ? item.phone : 'Chưa cập nhật'}</TableCell>
-                    <TableCell>{item.email}</TableCell>
-                    <TableCell>
-                      <Badge
-                        className='text-white'
-                        variant={item.is_verified ? 'default' : 'destructive'}
-                      >
-                        {item.is_verified ? 'Đã xác thực' : 'Chưa xác thực'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        className='text-white'
-                        variant={item.is_active ? 'default' : 'destructive'}
-                      >
-                        {item.is_active ? 'Đang hoạt động' : 'Tạm khóa'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{item.role}</TableCell>
-                    <TableCell>{dayjs(item.created_at).format('DD/MM/YYYY HH:mm')}</TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant='ghost'
-                            size='icon'
-                            className='size-8 cursor-pointer data-[state=open]:bg-accent/10 hover:scale-110 transition-all duration-300'
-                          >
-                            <MoreVertical className='size-4' />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align='end'>
-                          <DropdownMenuItem
-                            className='cursor-pointer'
-                            onClick={() => handleEditClick(item)}
-                          >
-                            Sửa thông tin
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className='cursor-pointer'>
-                            Khóa người dùng
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => handleDeleteUser(item.email)}
-                            className='text-destructive cursor-pointer'
-                          >
-                            Xóa người dùng
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
+
+        <DataTable
+          columns={columns}
+          data={users}
+          isLoading={isLoading}
+          limit={5}
+          actions={actions}
+        />
 
         {data?.pagination?.totalUsers > 0 && (
           <Pagination>

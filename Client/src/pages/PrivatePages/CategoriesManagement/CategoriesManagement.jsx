@@ -24,11 +24,14 @@ import {
 } from '~/components/ui/dropdown-menu'
 import HeaderTable from '~/components/common/HeaderTable'
 import { gerCategories, deleteCategory } from '~/api'
+import CategoryFormDialog from '~/components/common/CategoryFormDialog'
 
 function CategoriesManagement() {
   const queryClient = useQueryClient()
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState(null)
 
   const { data, isLoading } = useQuery({
     queryKey: ['categories'],
@@ -36,6 +39,19 @@ function CategoriesManagement() {
   })
 
   const categories = data?.data || []
+
+  const handleEditClick = (category) => {
+    setSelectedCategory(category)
+    setIsEditDialogOpen(true)
+  }
+
+  const handleAddCategory = async () => {
+    console.log('Add')
+  }
+
+  const handleEditCategory = async () => {
+    console.log('Edit')
+  }
 
   const handleDeleteCategory = async (type) => {
     await deleteCategory(type)
@@ -167,7 +183,7 @@ function CategoriesManagement() {
                     <TableCell>{item.id}</TableCell>
                     <TableCell>{item.name}</TableCell>
                     <TableCell>{item.type}</TableCell>
-                    <TableCell>{item.decription || 'Chưa có'}</TableCell>
+                    <TableCell>{item.description || 'Chưa có'}</TableCell>
                     <TableCell>{item.products_count}</TableCell>
                     <TableCell>{dayjs(item.created_at).format('DD/MM/YYYY HH:mm')}</TableCell>
                     <TableCell>
@@ -184,7 +200,7 @@ function CategoriesManagement() {
                         <DropdownMenuContent align='end'>
                           <DropdownMenuItem
                             className='cursor-pointer'
-                            // onClick={() => handleEditClick(item)}
+                            onClick={() => handleEditClick(item)}
                           >
                             Sửa thông tin
                           </DropdownMenuItem>
@@ -236,6 +252,19 @@ function CategoriesManagement() {
           </Pagination>
         )} */}
       </div>
+
+      <CategoryFormDialog
+        open={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        onSubmit={handleAddCategory}
+      />
+
+      <CategoryFormDialog
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        onSubmit={handleEditCategory}
+        initialData={selectedCategory}
+      />
     </div>
   )
 }
