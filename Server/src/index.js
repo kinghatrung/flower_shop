@@ -11,6 +11,7 @@ import userRouter from './routes/userRouter.js';
 import authRouter from './routes/authRouter.js';
 import otpRouter from './routes/otpRouter.js';
 import productRouter from './routes/productRouter.js';
+import categoryRouter from './routes/categoryRouter.js';
 
 dotenv.config();
 const app = express();
@@ -51,6 +52,7 @@ app.use('/api/users', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/otp', otpRouter);
 app.use('/api/products', productRouter);
+app.use('/api/categories', categoryRouter);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../Client/dist')));

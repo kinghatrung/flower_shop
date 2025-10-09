@@ -53,12 +53,6 @@ export const sidebarMenu = {
       isActive: true
     },
     {
-      title: 'Nhân viên & Phân quyền',
-      url: '/admin/employees',
-      icon: ShieldCheck,
-      isActive: true
-    },
-    {
       title: 'Giao hàng',
       url: '/admin/transport',
       icon: Truck,

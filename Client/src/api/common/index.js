@@ -6,3 +6,14 @@ export const getProducts = async (filters = {}) => {
   const res = await authorizedAxiosInstance.get(`${API_URL}/api/products?${params}`)
   return res.data
 }
+
+export const gerCategories = async () => {
+  const res = await authorizedAxiosInstance.get(`${API_URL}/api/categories`)
+  return res.data
+}
+
+export const deleteCategory = async (type) => {
+  return await authorizedAxiosInstance.delete(`${API_URL}/api/categories/delete`, {
+    data: { type }
+  })
+}

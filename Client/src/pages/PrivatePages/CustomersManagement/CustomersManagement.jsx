@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { MoreVertical, Plus } from 'lucide-react'
+import { useState } from 'react'
+import { MoreVertical } from 'lucide-react'
 import dayjs from 'dayjs'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
@@ -42,6 +42,7 @@ import UserFormDialog from '~/components/common/UserFormDialog'
 import { getUsers, registerUser, deleteUser, updateUser } from '~/api'
 import useQueryParams from '~/hooks/useQueryParams'
 import useDebounce from '~/hooks/useDebounce'
+import HeaderTable from '~/components/common/HeaderTable'
 
 function CustomersManagement() {
   const navigate = useNavigate()
@@ -59,7 +60,7 @@ function CustomersManagement() {
   const queryClient = useQueryClient()
   const queryString = useQueryParams()
   const page = queryString.page || 1
-  const limit = 10
+  const limit = 5
 
   const filters = {
     ...(roleFilter !== 'all' && { role: roleFilter }),
@@ -121,19 +122,12 @@ function CustomersManagement() {
   return (
     <div className='container mx-auto py-8 space-y-6'>
       {/* Header */}
-      <div className='flex items-center justify-between'>
-        <div>
-          <h1 className='text-3xl font-bold tracking-tight'>Quản lý người dùng</h1>
-          <p className='text-muted-foreground mt-1'>Thêm, sửa và quản lý thông tin người dùng</p>
-        </div>
-        <Button
-          onClick={() => setIsAddDialogOpen(true)}
-          className='gap-2 text-center cursor-pointer hover:scale-105 transition-all duration-300 text-[#fff]'
-        >
-          <Plus className='size-4' />
-          Thêm người dùng
-        </Button>
-      </div>
+      <HeaderTable
+        title='Quản lý người dùng'
+        description='Thêm, sửa và quản lý thông tin người dùng'
+        buttonLabel='Thêm người dùng'
+        onSomething={setIsAddDialogOpen}
+      />
 
       {/* Filters */}
       <div className='space-y-4'>
@@ -201,6 +195,7 @@ function CustomersManagement() {
             <TableHeader>
               <TableRow>
                 <TableHead>ID</TableHead>
+                <TableHead>Ảnh</TableHead>
                 <TableHead>Họ</TableHead>
                 <TableHead>Tên</TableHead>
                 <TableHead>Số điện thoại</TableHead>
@@ -218,6 +213,9 @@ function CustomersManagement() {
                   <TableRow key={index}>
                     <TableCell>
                       <Skeleton className='h-4 w-8' />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className='h-20 w-20' />
                     </TableCell>
                     <TableCell>
                       <Skeleton className='h-4 w-20' />
@@ -258,6 +256,12 @@ function CustomersManagement() {
                 users.map((item, index) => (
                   <TableRow key={item.user_id}>
                     <TableCell>{(page - 1) * limit + index + 1}</TableCell>
+                    <TableCell>
+                      <img
+                        src={item.avatar_url || '/image/Nuvexa.png'}
+                        className='h-20 w-20 object-fit rounded-2xl'
+                      />
+                    </TableCell>
                     <TableCell>{item.lastname}</TableCell>
                     <TableCell>{item.name}</TableCell>
                     <TableCell>{item.phone ? item.phone : 'Chưa cập nhật'}</TableCell>
