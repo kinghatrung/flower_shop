@@ -56,7 +56,7 @@ function UserFormDialog({ open, onOpenChange, initialData, onSubmit }) {
           id='lastName'
           label='Họ'
           placeholder='Nguyễn'
-          required
+          required={!initialData}
           register={register}
           errors={errors}
         />
@@ -64,7 +64,7 @@ function UserFormDialog({ open, onOpenChange, initialData, onSubmit }) {
           id='name'
           label='Tên'
           placeholder='Văn A'
-          required
+          required={!initialData}
           register={register}
           errors={errors}
         />
@@ -74,7 +74,7 @@ function UserFormDialog({ open, onOpenChange, initialData, onSubmit }) {
         label='Email'
         type='email'
         placeholder='nguyenvana@gmail.com'
-        required
+        required={!initialData}
         register={register}
         errors={errors}
         validation={{
@@ -88,7 +88,7 @@ function UserFormDialog({ open, onOpenChange, initialData, onSubmit }) {
         id='phone'
         label='Phone'
         type='tel'
-        required
+        required={!initialData}
         placeholder='0123456789'
         register={register}
         errors={errors}

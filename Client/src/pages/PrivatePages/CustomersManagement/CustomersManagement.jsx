@@ -37,7 +37,6 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
-import { Skeleton } from '~/components/ui/skeleton'
 import UserFormDialog from '~/components/common/UserFormDialog'
 import { getUsers, registerUser, deleteUser, updateUser } from '~/api'
 import useQueryParams from '~/hooks/useQueryParams'
@@ -98,6 +97,9 @@ function CustomersManagement() {
     const cleanedData = Object.fromEntries(
       Object.entries(userData).filter(([_, value]) => value !== '' && value !== undefined)
     )
+    console.log('userData', userData)
+    console.log('cleanedData', cleanedData)
+
     await updateUser(selectedUser.user_id, cleanedData)
     await queryClient.invalidateQueries(['users'])
     setIsEditDialogOpen(false)

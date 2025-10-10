@@ -13,7 +13,6 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table'
-import { Badge } from '~/components/ui/badge'
 import { Skeleton } from '~/components/ui/skeleton'
 import {
   DropdownMenu,
@@ -23,7 +22,7 @@ import {
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
 import HeaderTable from '~/components/common/HeaderTable'
-import { gerCategories, deleteCategory } from '~/api'
+import { getCategories, deleteCategory, createCategory, editCategory } from '~/api'
 import CategoryFormDialog from '~/components/common/CategoryFormDialog'
 
 function CategoriesManagement() {
@@ -35,7 +34,7 @@ function CategoriesManagement() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['categories'],
-    queryFn: () => gerCategories()
+    queryFn: () => getCategories()
   })
 
   const categories = data?.data || []
@@ -45,17 +44,24 @@ function CategoriesManagement() {
     setIsEditDialogOpen(true)
   }
 
-  const handleAddCategory = async () => {
-    console.log('Add')
+  const handleAddCategory = async (data) => {
+    await createCategory(data)
+    await queryClient.invalidateQueries(['categories'])
+    setIsAddDialogOpen(!isAddDialogOpen)
   }
 
-  const handleEditCategory = async () => {
-    console.log('Edit')
+  const handleEditCategory = async (data) => {
+    const { name, type, description } = data
+
+    await editCategory(selectedCategory.id, { name, type, description })
+    await queryClient.invalidateQueries(['categories'])
+    setIsEditDialogOpen(!isEditDialogOpen)
+    setSelectedCategory(null)
   }
 
   const handleDeleteCategory = async (type) => {
     await deleteCategory(type)
-    await queryClient.invalidateQueries(['users'])
+    await queryClient.invalidateQueries(['categories'])
   }
 
   return (
