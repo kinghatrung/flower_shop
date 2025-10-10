@@ -16,7 +16,7 @@ function UserFormDialog({ open, onOpenChange, initialData, onSubmit }) {
   } = useForm({
     defaultValues: initialData || {
       name: '',
-      lastName: '',
+      lastname: '',
       phone: '',
       email: '',
       password: '',
@@ -33,6 +33,7 @@ function UserFormDialog({ open, onOpenChange, initialData, onSubmit }) {
       reset({
         ...initialData,
         password: '',
+        password_hash: '',
         rePassword: ''
       })
     }
@@ -53,7 +54,7 @@ function UserFormDialog({ open, onOpenChange, initialData, onSubmit }) {
     >
       <div className='grid grid-cols-2 gap-4'>
         <FormField
-          id='lastName'
+          id='lastname'
           label='Họ'
           placeholder='Nguyễn'
           required={!initialData}
