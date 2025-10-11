@@ -1,9 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 
-import FormDialog from '~/components/common/Form/FormDialog'
-import FormField from '~/components/common/Form/FormField'
-import SwitchField from '~/components/common/Form/SwitchField'
+import { FormDialog, FormField, SwitchField } from '~/components/common/Form'
 
 function UserFormDialog({ open, onOpenChange, initialData, onSubmit }) {
   const {
@@ -100,6 +98,7 @@ function UserFormDialog({ open, onOpenChange, initialData, onSubmit }) {
           }
         }}
       />
+
       <FormField
         id='password'
         label='Mật khẩu'

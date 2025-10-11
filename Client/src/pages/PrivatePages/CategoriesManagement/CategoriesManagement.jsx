@@ -24,6 +24,7 @@ import {
 import HeaderTable from '~/components/common/HeaderTable'
 import { getCategories, deleteCategory, createCategory, editCategory } from '~/api'
 import CategoryFormDialog from '~/components/common/CategoryFormDialog'
+import DataTable from '~/components/common/DataTable'
 
 function CategoriesManagement() {
   const queryClient = useQueryClient()
@@ -63,6 +64,32 @@ function CategoriesManagement() {
     await deleteCategory(type)
     await queryClient.invalidateQueries(['categories'])
   }
+
+  const actions = (item) => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant='ghost'
+          size='icon'
+          className='size-8 cursor-pointer data-[state=open]:bg-accent/10 hover:scale-110 transition-all duration-300'
+        >
+          <MoreVertical className='size-4' />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align='end'>
+        <DropdownMenuItem className='cursor-pointer' onClick={() => handleEditClick(item)}>
+          Sửa thông tin
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() => handleDeleteCategory(item.type)}
+          className='text-destructive cursor-pointer'
+        >
+          Xóa danh mục
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
 
   return (
     <div className='container mx-auto py-8 space-y-6'>
@@ -135,6 +162,8 @@ function CategoriesManagement() {
             </SelectContent>
           </Select>
         </div> */}
+
+        {/* <DataTable columns={columns} data={categories} isLoading={isLoading} actions={actions} /> */}
 
         <div className='border rounded-lg'>
           <Table>

@@ -21,14 +21,6 @@ import {
   PaginationPrevious
 } from '~/components/ui/pagination'
 import { Input } from '~/components/ui/input'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '~/components/ui/table'
 import { Badge } from '~/components/ui/badge'
 import {
   Select,
@@ -37,12 +29,13 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
-import UserFormDialog from '~/components/common/UserFormDialog'
 import { getUsers, registerUser, deleteUser, updateUser } from '~/api'
 import useQueryParams from '~/hooks/useQueryParams'
 import useDebounce from '~/hooks/useDebounce'
+import UserFormDialog from '~/components/common/UserFormDialog'
 import HeaderTable from '~/components/common/HeaderTable'
 import DataTable from '~/components/common/DataTable'
+import { FilterInput, FilterSelect, FilterContainer } from '~/components/common/Filters'
 
 function CustomersManagement() {
   const navigate = useNavigate()
@@ -195,65 +188,39 @@ function CustomersManagement() {
 
       {/* Filters */}
       <div className='space-y-4'>
-        <div className='flex sm:f lex-row gap-4'>
-          <Input
-            placeholder='Tìm kiếm theo tên...'
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className='sm:max-w-sm'
+        <FilterContainer>
+          <FilterInput placeholder='Tìm kiếm theo tên...' value={search} onChange={setSearch} />
+          <FilterSelect
+            placeholder='Lọc theo vai trò'
+            value={roleFilter}
+            onChange={setRoleFilter}
+            options={[
+              { label: 'Tất cả vai trò', value: 'all' },
+              { label: 'Admin', value: 'admin' },
+              { label: 'User', value: 'customer' }
+            ]}
           />
-
-          <Select value={roleFilter} onValueChange={setRoleFilter}>
-            <SelectTrigger className='sm:w-[180px] cursor-pointer'>
-              <SelectValue placeholder='Lọc theo vai trò' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem className='cursor-pointer' value='all'>
-                Tất cả vai trò
-              </SelectItem>
-              <SelectItem className='cursor-pointer' value='admin'>
-                Admin
-              </SelectItem>
-              <SelectItem className='cursor-pointer' value='customer'>
-                User
-              </SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className='sm:w-[180px] cursor-pointer'>
-              <SelectValue placeholder='Lọc theo trạng thái' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem className='cursor-pointer' value='all'>
-                Tất cả trạng thái
-              </SelectItem>
-              <SelectItem className='cursor-pointer' value='active'>
-                Đang hoạt động
-              </SelectItem>
-              <SelectItem className='cursor-pointer' value='inactive'>
-                Tạm khóa
-              </SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={verifiedFilter} onValueChange={setVerifiedFilter}>
-            <SelectTrigger className='sm:w-[200px] cursor-pointer'>
-              <SelectValue placeholder='Lọc xác thực email' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem className='cursor-pointer' value='all'>
-                Tất cả
-              </SelectItem>
-              <SelectItem className='cursor-pointer' value='verified'>
-                Đã xác thực
-              </SelectItem>
-              <SelectItem className='cursor-pointer' value='unverified'>
-                Chưa xác thực
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+          <FilterSelect
+            placeholder='Lọc theo trạng thái'
+            value={statusFilter}
+            onChange={setStatusFilter}
+            options={[
+              { label: 'Tất cả trạng thái', value: 'all' },
+              { label: 'Đang hoạt động', value: 'active' },
+              { label: 'Tạm khóa', value: 'inactive' }
+            ]}
+          />
+          <FilterSelect
+            placeholder='Lọc xác thực email'
+            value={verifiedFilter}
+            onChange={setVerifiedFilter}
+            options={[
+              { label: 'Tất cả', value: 'all' },
+              { label: 'Đã xác thực', value: 'verified' },
+              { label: 'Chưa xác thực', value: 'unverified' }
+            ]}
+          />
+        </FilterContainer>
 
         <DataTable
           columns={columns}

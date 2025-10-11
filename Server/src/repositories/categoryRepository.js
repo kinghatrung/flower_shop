@@ -9,7 +9,7 @@ const categoryRepository = {
       FROM categories c
       LEFT JOIN products p ON p.category_id = c.id
       GROUP BY c.id
-      order by c.id
+      ORDER BY c.id
     `;
     try {
       const result = await pool.query(query);
