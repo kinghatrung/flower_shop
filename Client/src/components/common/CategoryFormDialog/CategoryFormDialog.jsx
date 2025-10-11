@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 
-import {FormDialog, FormField} from "~/components/common/Form"
+import { FormDialog, FormField } from '~/components/common/Form'
 
 function CategoryFormDialog({ open, onOpenChange, initialData, onSubmit }) {
   const {

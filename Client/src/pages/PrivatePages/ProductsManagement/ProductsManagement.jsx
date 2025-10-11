@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { MoreVertical, Plus } from 'lucide-react'
+import { ImageOff, MoreVertical, Plus } from 'lucide-react'
 import dayjs from 'dayjs'
 import numeral from 'numeral'
 
@@ -28,7 +28,6 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table'
-import { Badge } from '~/components/ui/badge'
 import {
   Select,
   SelectContent,
@@ -39,10 +38,14 @@ import {
 import { Skeleton } from '~/components/ui/skeleton'
 import HeaderTable from '~/components/common/HeaderTable'
 import { getProducts } from '~/api'
+import ProductFormDialog from '~/components/common/ProductFormDialog'
 
 function ProductsManagement() {
   const [search, setSearch] = useState('')
   const [products, setProducts] = useState([])
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState(null)
 
   useEffect(() => {
     const fetchDataUsers = async () => {
@@ -53,90 +56,22 @@ function ProductsManagement() {
     fetchDataUsers()
   }, [])
 
+  const handleEditClick = (product) => {
+    setSelectedProduct(product)
+    setIsEditDialogOpen(true)
+  }
+
   return (
     <div className='container mx-auto py-8 space-y-6'>
-      <div className='flex items-center justify-between'>
-        <div>
-          <h1 className='text-3xl font-bold tracking-tight'>Quản lý sản phẩm</h1>
-          <p className='text-muted-foreground mt-1'>Thêm, sửa và quản lý thông tin sản phẩm</p>
-        </div>
-        <Button
-          // onClick={() => setIsAddDialogOpen(true)}
-          className='gap-2 text-center cursor-pointer hover:scale-105 transition-all duration-300 text-[#fff]'
-        >
-          <Plus className='size-4' />
-          Thêm sản phẩm
-        </Button>
-      </div>
+      {/* Header */}
+      <HeaderTable
+        title='Quản lý sản phẩm'
+        description='Thêm, sửa và quản lý thông tin sản phẩm'
+        buttonLabel='Thêm sản phẩm'
+        onSomething={setIsAddDialogOpen}
+      />
 
       <div className='space-y-4'>
-        {/* Filter */}
-        <div className='flex sm:f lex-row gap-4'>
-          <Input
-            placeholder='Tìm kiếm theo tên...'
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className='sm:max-w-sm'
-          />
-
-          <Select
-          // value={roleFilter} onValueChange={setRoleFilter}
-          >
-            <SelectTrigger className='sm:w-[180px] cursor-pointer'>
-              <SelectValue placeholder='Lọc theo vai trò' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem className='cursor-pointer' value='all'>
-                Tất cả vai trò
-              </SelectItem>
-              <SelectItem className='cursor-pointer' value='admin'>
-                Admin
-              </SelectItem>
-              <SelectItem className='cursor-pointer' value='customer'>
-                User
-              </SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select
-          // value={statusFilter} onValueChange={setStatusFilter}
-          >
-            <SelectTrigger className='sm:w-[180px] cursor-pointer'>
-              <SelectValue placeholder='Lọc theo trạng thái' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem className='cursor-pointer' value='all'>
-                Tất cả trạng thái
-              </SelectItem>
-              <SelectItem className='cursor-pointer' value='active'>
-                Đang hoạt động
-              </SelectItem>
-              <SelectItem className='cursor-pointer' value='inactive'>
-                Tạm khóa
-              </SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select
-          // value={verifiedFilter} onValueChange={setVerifiedFilter}
-          >
-            <SelectTrigger className='sm:w-[200px] cursor-pointer'>
-              <SelectValue placeholder='Lọc xác thực email' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem className='cursor-pointer' value='all'>
-                Tất cả
-              </SelectItem>
-              <SelectItem className='cursor-pointer' value='verified'>
-                Đã xác thực
-              </SelectItem>
-              <SelectItem className='cursor-pointer' value='unverified'>
-                Chưa xác thực
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
         <div className='border rounded-lg'>
           <Table>
             <TableHeader>
@@ -204,7 +139,10 @@ function ProductsManagement() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align='end'>
-                        <DropdownMenuItem className='cursor-pointer'>
+                        <DropdownMenuItem
+                          className='cursor-pointer'
+                          onClick={() => handleEditClick(product)}
+                        >
                           Sửa thông tin
                         </DropdownMenuItem>
                         <DropdownMenuItem className='cursor-pointer'>
@@ -223,6 +161,19 @@ function ProductsManagement() {
           </Table>
         </div>
       </div>
+
+      <ProductFormDialog
+        open={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        // onSubmit={handleAddCategory}
+      />
+
+      <ProductFormDialog
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        // onSubmit={handleEditCategory}
+        initialData={selectedProduct}
+      />
     </div>
   )
 }
