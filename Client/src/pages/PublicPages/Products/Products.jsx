@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
+
 import ProductCard from '~/components/common/products/ProductCard'
 import ProductFilters from '~/components/common/products/ProductFilters'
 import { useScrollAnimation } from '~/hooks/useScrollAnimationOptions'
@@ -35,6 +36,8 @@ function Products() {
       }),
     keepPreviousData: true
   })
+
+  const products = data?.data
 
   const getPriceRangeParam = (range) => {
     const [min, max] = range
@@ -105,7 +108,7 @@ function Products() {
               }`}
             >
               <div className='flex items-center justify-between mb-6'>
-                <p className='text-muted-foreground'>Hiển thị {data?.data?.length} sản phẩm</p>
+                <p className='text-muted-foreground'>Hiển thị {products?.length} sản phẩm</p>
               </div>
               {isLoading ? (
                 <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-6'>
@@ -113,9 +116,9 @@ function Products() {
                   <CardSkeletonProduct />
                   <CardSkeletonProduct />
                 </div>
-              ) : data?.data?.length > 0 ? (
+              ) : products?.length > 0 ? (
                 <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-6'>
-                  {data?.data.map((product, index) => (
+                  {products?.map((product, index) => (
                     <div
                       key={product.id}
                       className={`transition-all duration-500 ${

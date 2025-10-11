@@ -1,9 +1,9 @@
 import categoryRepository from '../repositories/categoryRepository.js';
 
 const categoryService = {
-  getCategories: async () => {
+  getCategories: async (filters) => {
     try {
-      const result = await categoryRepository.getCategories();
+      const result = await categoryRepository.getCategories(filters);
 
       return result;
     } catch (err) {

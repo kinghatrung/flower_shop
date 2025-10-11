@@ -7,9 +7,9 @@ export const getUsers = async (page, limit, filters = {}) => {
     page,
     limit,
     ...filters
-  })
+  }).toString()
 
-  const res = await authorizedAxiosInstance.get(`${API_URL}/api/users?${params.toString()}`)
+  const res = await authorizedAxiosInstance.get(`${API_URL}/api/users?${params}`)
   return res.data
 }
 
@@ -25,8 +25,9 @@ export const getProducts = async (filters = {}) => {
 }
 
 // CATEGORIES
-export const getCategories = async () => {
-  const res = await authorizedAxiosInstance.get(`${API_URL}/api/categories`)
+export const getCategories = async (filters = {}) => {
+  const params = new URLSearchParams(filters).toString()
+  const res = await authorizedAxiosInstance.get(`${API_URL}/api/categories?${params}`)
   return res.data
 }
 

@@ -3,7 +3,14 @@ import categoryService from '../services/categoryService.js';
 const categoryController = {
   getCategories: async (req, res) => {
     try {
-      const categories = await categoryService.getCategories();
+      const { search, type } = req.query;
+
+      const filters = {
+        search,
+        type,
+      };
+
+      const categories = await categoryService.getCategories(filters);
 
       res.status(200).json({ data: categories });
     } catch (err) {

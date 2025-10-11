@@ -1,18 +1,47 @@
 import pool from '../config/db.js';
 
 const categoryRepository = {
-  getCategories: async () => {
-    const query = `
-      SELECT 
-        c.*, 
-        COUNT(p.id) AS products_count
-      FROM categories c
-      LEFT JOIN products p ON p.category_id = c.id
-      GROUP BY c.id
-      ORDER BY c.id
-    `;
+  getCategories: async (filters) => {
+    const { search = '', type = '' } = filters;
     try {
-      const result = await pool.query(query);
+      let whereConditions = [];
+      let values = [];
+      let idx = 1;
+
+      if (search) {
+        whereConditions.push(`c.name ILIKE $${idx++}`);
+        values.push(`%${search}%`);
+      }
+
+      if (type && type !== 'all') {
+        whereConditions.push(`c.type = $${idx++}`);
+        values.push(type);
+      }
+
+      const whereClause =
+        whereConditions.length > 0
+          ? `WHERE ${whereConditions.join(' AND ')}`
+          : '';
+
+      const query = `
+        WITH total_products AS (
+          SELECT COUNT(*)::int AS total FROM products
+        )
+        SELECT 
+          c.*,
+          CASE 
+            WHEN c.type = 'all' THEN t.total
+            ELSE COUNT(p.id)
+          END AS products_count
+        FROM categories c
+        LEFT JOIN products p ON p.category_id = c.id
+        CROSS JOIN total_products t
+        ${whereClause}
+        GROUP BY c.id, t.total
+        ORDER BY c.id;
+      `;
+
+      const result = await pool.query(query, values);
 
       return result.rows;
     } catch (err) {

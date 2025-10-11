@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { MoreVertical } from 'lucide-react'
 import dayjs from 'dayjs'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -12,23 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious
-} from '~/components/ui/pagination'
-import { Input } from '~/components/ui/input'
 import { Badge } from '~/components/ui/badge'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '~/components/ui/select'
 import { getUsers, registerUser, deleteUser, updateUser } from '~/api'
 import useQueryParams from '~/hooks/useQueryParams'
 import useDebounce from '~/hooks/useDebounce'
@@ -36,18 +20,18 @@ import UserFormDialog from '~/components/common/UserFormDialog'
 import HeaderTable from '~/components/common/HeaderTable'
 import DataTable from '~/components/common/DataTable'
 import { FilterInput, FilterSelect, FilterContainer } from '~/components/common/Filters'
+import CustomPagination from '~/components/common/CustomPagination'
 
 function CustomersManagement() {
   const navigate = useNavigate()
 
   const [search, setSearch] = useState('')
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
-  const [selectedUser, setSelectedUser] = useState(null)
-
   const [roleFilter, setRoleFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [verifiedFilter, setVerifiedFilter] = useState('all')
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [selectedUser, setSelectedUser] = useState(null)
 
   const debouncedSearch = useDebounce(search, 500)
   const queryClient = useQueryClient()
@@ -90,9 +74,6 @@ function CustomersManagement() {
     const cleanedData = Object.fromEntries(
       Object.entries(userData).filter(([_, value]) => value !== '' && value !== undefined)
     )
-    console.log('userData', userData)
-    console.log('cleanedData', cleanedData)
-
     await updateUser(selectedUser.user_id, cleanedData)
     await queryClient.invalidateQueries(['users'])
     setIsEditDialogOpen(false)
@@ -190,6 +171,7 @@ function CustomersManagement() {
       <div className='space-y-4'>
         <FilterContainer>
           <FilterInput placeholder='Tìm kiếm theo tên...' value={search} onChange={setSearch} />
+
           <FilterSelect
             placeholder='Lọc theo vai trò'
             value={roleFilter}
@@ -200,6 +182,7 @@ function CustomersManagement() {
               { label: 'User', value: 'customer' }
             ]}
           />
+
           <FilterSelect
             placeholder='Lọc theo trạng thái'
             value={statusFilter}
@@ -210,6 +193,7 @@ function CustomersManagement() {
               { label: 'Tạm khóa', value: 'inactive' }
             ]}
           />
+
           <FilterSelect
             placeholder='Lọc xác thực email'
             value={verifiedFilter}
@@ -231,34 +215,15 @@ function CustomersManagement() {
         />
 
         {data?.pagination?.totalUsers > 0 && (
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  className={`cursor-pointer ${!data?.pagination?.hasPrev ? 'opacity-50 pointer-events-none' : ''}`}
-                  onClick={() => data?.pagination?.hasPrev && handlePageChange(currentPage - 1)}
-                />
-              </PaginationItem>
-
-              {[...Array(totalPages)].map((_, i) => (
-                <PaginationItem key={i}>
-                  <PaginationLink
-                    isActive={currentPage === i + 1}
-                    onClick={() => handlePageChange(i + 1)}
-                    className='cursor-pointer'
-                  >
-                    {i + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-              <PaginationItem>
-                <PaginationNext
-                  className={`cursor-pointer ${!data?.pagination?.hasNext ? 'opacity-50 pointer-events-none' : ''}`}
-                  onClick={() => data?.pagination?.hasNext && handlePageChange(currentPage + 1)}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          <CustomPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={data?.pagination.totalUsers}
+            onPageChange={handlePageChange}
+            hasNext={data?.pagination?.hasNext}
+            hasPrev={data?.pagination?.hasPrev}
+            label='Người dùng'
+          />
         )}
       </div>
 

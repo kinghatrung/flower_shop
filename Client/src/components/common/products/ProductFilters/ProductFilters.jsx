@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { Search, Filter, X } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
 
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Badge } from '~/components/ui/badge'
-import { categories, priceRanges } from '~/data'
+import { priceRanges } from '~/data'
+import { getCategories } from '~/api'
 
 function ProductFilters({
   searchQuery,
@@ -18,6 +20,13 @@ function ProductFilters({
   onSortChange
 }) {
   const [showFilters, setShowFilters] = useState(false)
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => getCategories()
+  })
+
+  const categories = data?.data
 
   const clearFilters = () => {
     onSearchChange('')
@@ -73,11 +82,11 @@ function ProductFilters({
               {categories.map((category) => (
                 <Badge
                   key={category.id}
-                  variant={selectedCategory === category.id ? 'default' : 'outline'}
+                  variant={selectedCategory === category.type ? 'default' : 'outline'}
                   className='cursor-pointer hover:bg-primary/10'
-                  onClick={() => onCategoryChange(category.id)}
+                  onClick={() => onCategoryChange(category.type)}
                 >
-                  {category.name} ({category.count})
+                  {category.name} ({category.products_count})
                 </Badge>
               ))}
             </div>
