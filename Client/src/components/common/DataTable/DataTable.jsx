@@ -42,7 +42,7 @@ function DataTable({ columns = [], data = [], isLoading = false, limit = 5, acti
                 )}
               </TableRow>
             ))
-          ) : data.length === 0 ? (
+          ) : data?.length === 0 ? (
             <TableRow>
               <TableCell
                 colSpan={columns.length + (actions ? 1 : 0)}
@@ -52,7 +52,7 @@ function DataTable({ columns = [], data = [], isLoading = false, limit = 5, acti
               </TableCell>
             </TableRow>
           ) : (
-            data.map((row, rowIndex) => (
+            data?.map((row, rowIndex) => (
               <TableRow key={row.id || rowIndex}>
                 {columns.map((col, colIndex) => (
                   <TableCell key={colIndex}>

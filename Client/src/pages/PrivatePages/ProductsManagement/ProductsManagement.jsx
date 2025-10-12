@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
-import { ImageOff, MoreVertical, Plus } from 'lucide-react'
+import { useState } from 'react'
+import { MoreVertical } from 'lucide-react'
 import dayjs from 'dayjs'
+import { useQuery } from '@tanstack/react-query'
 import numeral from 'numeral'
 
 import { Button } from '~/components/ui/button'
@@ -12,15 +13,6 @@ import {
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious
-} from '~/components/ui/pagination'
-import { Input } from '~/components/ui/input'
-import {
   Table,
   TableBody,
   TableCell,
@@ -28,38 +20,82 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '~/components/ui/select'
-import { Skeleton } from '~/components/ui/skeleton'
 import HeaderTable from '~/components/common/HeaderTable'
 import { getProducts } from '~/api'
 import ProductFormDialog from '~/components/common/ProductFormDialog'
+import DataTable from '~/components/common/DataTable'
 
 function ProductsManagement() {
   const [search, setSearch] = useState('')
-  const [products, setProducts] = useState([])
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState(null)
 
-  useEffect(() => {
-    const fetchDataUsers = async () => {
-      const res = await getProducts()
-      setProducts(res.data)
-    }
+  const { data, isLoading } = useQuery({
+    queryKey: ['products'],
+    queryFn: () => getProducts()
+  })
 
-    fetchDataUsers()
-  }, [])
+  const products = data?.data
 
   const handleEditClick = (product) => {
     setSelectedProduct(product)
     setIsEditDialogOpen(true)
   }
+
+  const columns = [
+    {
+      title: 'ID',
+      render: (item, index) => index + 1,
+      skeletonClassName: 'h-4 w-8'
+    },
+    {
+      title: 'Ảnh',
+      render: (item) => (
+        <img
+          src={item.image || '/image/Nuvexa.png'}
+          className='h-20 min-w-[80px] object-cover rounded-md'
+        />
+      )
+    },
+    { title: 'Tên', key: 'name' },
+    { title: 'Giá hiện tại (VNĐ)', render: (item) => numeral(item.price).format('0,0') + ' đ' },
+    {
+      title: 'Giá gốc (VNĐ)',
+      render: (item) => numeral(item.original_price).format('0,0') + ' đ'
+    },
+    { title: 'Loại hoa', key: 'category_name' },
+    { title: 'Nội dung', key: 'description' },
+    { title: 'Xếp hạng', key: 'rating' },
+    { title: 'Đánh giá', key: 'reviews' },
+    { title: 'Sản phẩm mới', render: (item) => (item.is_new ? 'Mới' : 'Không') },
+    { title: 'Sản phẩm bán chạy', render: (item) => (item.is_best_seller ? 'Bán chạy' : 'Không') },
+    {
+      title: 'Ngày thêm',
+      render: (item) => dayjs(item.created_at).format('DD/MM/YYYY HH:mm')
+    }
+  ]
+
+  const actions = (item) => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant='ghost'
+          size='icon'
+          className='size-8 cursor-pointer data-[state=open]:bg-accent/10 hover:scale-110 transition-all duration-300'
+        >
+          <MoreVertical />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align='end'>
+        <DropdownMenuItem className='cursor-pointer' onClick={() => handleEditClick(item)}>
+          Sửa thông tin
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className='text-red-600 cursor-pointer'>Xóa sản phẩm</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
 
   return (
     <div className='container mx-auto py-8 space-y-6'>
@@ -72,94 +108,7 @@ function ProductsManagement() {
       />
 
       <div className='space-y-4'>
-        <div className='border rounded-lg'>
-          <Table>
-            <TableHeader>
-              <TableRow className='border-b border-gray-300'>
-                <TableHead className='border-r border-gray-300'>ID</TableHead>
-                <TableHead className='border-r border-gray-300'>Ảnh</TableHead>
-                <TableHead className='border-r border-gray-300'>Tên</TableHead>
-                <TableHead className='border-r border-gray-300'>Giá hiện tại (VNĐ)</TableHead>
-                <TableHead className='border-r border-gray-300'>Giá gốc (VNĐ)</TableHead>
-                <TableHead className='border-r border-gray-300'>Loại hoa</TableHead>
-                <TableHead className='border-r border-gray-300'>Nội dung</TableHead>
-                <TableHead className='border-r border-gray-300'>Xếp hạng</TableHead>
-                <TableHead className='border-r border-gray-300'>Đánh giá</TableHead>
-                <TableHead className='border-r border-gray-300'>Sản phẩm mới</TableHead>
-                <TableHead className='border-r border-gray-300'>Sản phẩm bán chạy</TableHead>
-                <TableHead className='border-r border-gray-300'>Ngày thêm</TableHead>
-                <TableHead className='border-r border-gray-300' />
-              </TableRow>
-            </TableHeader>
-
-            <TableBody>
-              {products.map((product, index) => (
-                <TableRow key={product.id} className='border-b border-gray-200'>
-                  <TableCell className='border-r border-gray-300'>{index + 1}</TableCell>
-                  <TableCell className='border-r border-gray-300'>
-                    <img
-                      className='h-20 min-w-[80px] object-cover rounded-md'
-                      src={product.image}
-                      alt='Ảnh sản phẩm'
-                    />
-                  </TableCell>
-                  <TableCell className='border-r border-gray-300'>{product.name}</TableCell>
-                  <TableCell className='border-r border-gray-300'>
-                    {numeral(product.price).format('0,0') + ' đ'}
-                  </TableCell>
-                  <TableCell className='border-r border-gray-300'>
-                    {numeral(product.original_price).format('0,0') + ' đ'}
-                  </TableCell>
-                  <TableCell className='border-r border-gray-300'>
-                    {product.category_name}
-                  </TableCell>
-                  <TableCell className='border-r border-gray-300'>{product.description}</TableCell>
-                  <TableCell className='border-r border-gray-300'>
-                    {product.rating ? product.rating : 'Chưa có đánh giá'}
-                  </TableCell>
-                  <TableCell className='border-r border-gray-300'>{product.reviews}</TableCell>
-                  <TableCell className='border-r border-gray-300'>
-                    {product.is_new ? 'Mới' : ''}
-                  </TableCell>
-                  <TableCell className='border-r border-gray-300'>
-                    {product.is_best_seller ? 'Bán chạy' : 'Không chạy'}
-                  </TableCell>
-                  <TableCell className='border-r border-gray-300'>
-                    {dayjs(product.created_at).format('DD/MM/YYYY HH:mm')}
-                  </TableCell>
-                  <TableCell className='border-r border-gray-300'>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant='ghost'
-                          size='icon'
-                          className='size-8 cursor-pointer data-[state=open]:bg-accent/10 hover:scale-110 transition-all duration-300'
-                        >
-                          <MoreVertical />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align='end'>
-                        <DropdownMenuItem
-                          className='cursor-pointer'
-                          onClick={() => handleEditClick(product)}
-                        >
-                          Sửa thông tin
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className='cursor-pointer'>
-                          Khóa người dùng
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className='text-red-600 cursor-pointer'>
-                          Xóa người dùng
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        <DataTable columns={columns} actions={actions} data={products} isLoading={isLoading} />
       </div>
 
       <ProductFormDialog

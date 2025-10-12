@@ -5,7 +5,7 @@ const productRepository = {
     const { category_type, search, priceRange } = filters;
 
     let query = `
-      SELECT p.*, c.type AS category_type
+      SELECT p.*, c.type AS category_type, c.name AS category_name
       FROM products p
       JOIN categories c ON p.category_id = c.id
       WHERE 1=1

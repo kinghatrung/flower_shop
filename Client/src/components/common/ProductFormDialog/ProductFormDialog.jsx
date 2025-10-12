@@ -1,19 +1,25 @@
 import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 
-import { FormDialog, FormField } from '~/components/common/Form'
+import { FormDialog, FormField, SwitchField } from '~/components/common/Form'
 
 function ProductFormDialog({ open, onOpenChange, initialData, onSubmit }) {
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
+    setValue,
+    watch
   } = useForm({
     defaultValues: initialData || {
       name: '',
-      type: '',
-      description: ''
+      category_type: '',
+      description: '',
+      price: '',
+      original_price: '',
+      is_new: false,
+      is_best_seller: false
     }
   })
 
@@ -39,17 +45,65 @@ function ProductFormDialog({ open, onOpenChange, initialData, onSubmit }) {
       submitLabel={initialData ? 'Cập nhập' : 'Thêm mới'}
     >
       <div className='grid grid-cols-2 gap-4'>
-        asdads
-        {/* <FormField />
-        <FormField /> */}
+        <FormField
+          id='name'
+          label='Tên'
+          placeholder='Bó hoa hồng...'
+          required={!initialData}
+          register={register}
+          errors={errors}
+        />
+        <FormField
+          id='category_type'
+          label='Loại hoa'
+          placeholder='Hoa sim...'
+          required
+          register={register}
+          errors={errors}
+        />
       </div>
-      asdasd
-      {/* <FormField /> */}
+      <FormField
+        id='description'
+        label='Nội dung'
+        placeholder='Hoa sim là loài hoa đẹp...'
+        required={!initialData}
+        register={register}
+        errors={errors}
+      />
       <div className='grid grid-cols-2 gap-4'>
-        adasd
-        {/* <FormField />
-        <FormField /> */}
+        <FormField
+          id='price'
+          label='Giá hiện tại (VNĐ)'
+          placeholder='Giá hiện tại'
+          required
+          register={register}
+          errors={errors}
+        />
+
+        <FormField
+          id='original_price'
+          label='Giá gốc (VNĐ)'
+          placeholder='Giá gốc'
+          register={register}
+          errors={errors}
+        />
       </div>
+
+      <SwitchField
+        id='is_new'
+        label='Sản phẩm mới'
+        description='Đánh dấu sản phẩm này là sản phẩm mới'
+        value={watch('is_new')}
+        onChange={(val) => setValue('is_new', val)}
+      />
+
+      <SwitchField
+        id='is_best_seller'
+        label='Sản bán chạy'
+        description='Đánh dấu sản phẩm này là sản phẩm bán chạy'
+        value={watch('is_best_seller')}
+        onChange={(val) => setValue('is_best_seller', val)}
+      />
     </FormDialog>
   )
 }

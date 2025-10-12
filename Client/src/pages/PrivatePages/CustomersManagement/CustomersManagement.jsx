@@ -107,10 +107,10 @@ function CustomersManagement() {
       render: (item) => (
         <img
           src={item.avatar_url || '/image/Nuvexa.png'}
-          className='h-20 w-20 object-cover rounded-2xl'
+          className='h-20 min-w-[80px] object-cover rounded-md'
         />
       ),
-      skeletonClassName: 'h-20 w-20'
+      skeletonClassName: 'h-20 min-w-[80px]'
     },
     { title: 'Họ', key: 'lastname' },
     { title: 'Tên', key: 'name' },

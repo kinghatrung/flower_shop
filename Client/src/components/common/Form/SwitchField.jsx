@@ -8,7 +8,7 @@ function SwitchField({ id, label, description, value, onChange }) {
         <Label htmlFor={id}>{label}</Label>
         {description && <p className='text-sm text-muted-foreground'>{description}</p>}
       </div>
-      <Switch id={id} checked={value} onCheckedChange={onChange} />
+      <Switch id={id} checked={value} onCheckedChange={onChange} className='cursor-pointer' />
     </div>
   )
 }
