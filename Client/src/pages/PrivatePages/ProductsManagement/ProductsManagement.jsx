@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { MoreVertical } from 'lucide-react'
 import dayjs from 'dayjs'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import numeral from 'numeral'
 
 import { Button } from '~/components/ui/button'
@@ -12,20 +12,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '~/components/ui/table'
 import HeaderTable from '~/components/common/HeaderTable'
-import { getProducts } from '~/api'
+import { getProducts, createProduct, editProduct } from '~/api'
 import ProductFormDialog from '~/components/common/ProductFormDialog'
 import DataTable from '~/components/common/DataTable'
 
 function ProductsManagement() {
+  const queryClient = useQueryClient()
+
   const [search, setSearch] = useState('')
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
@@ -43,6 +37,28 @@ function ProductsManagement() {
     setIsEditDialogOpen(true)
   }
 
+  const handleEditProduct = async (data) => {
+    const { name, category_id, description, is_new, is_best_seller, price, original_price } = data
+    await editProduct(selectedProduct.id, {
+      name,
+      category_id,
+      description,
+      is_new,
+      is_best_seller,
+      price,
+      original_price
+    })
+    await queryClient.invalidateQueries(['products'])
+    setIsEditDialogOpen(!isEditDialogOpen)
+    setSelectedProduct(null)
+  }
+
+  const handleAddProduct = async (productData) => {
+    await createProduct(productData)
+    setIsAddDialogOpen(!isAddDialogOpen)
+    await queryClient.invalidateQueries(['products'])
+  }
+
   const columns = [
     {
       title: 'ID',
@@ -56,7 +72,8 @@ function ProductsManagement() {
           src={item.image || '/image/Nuvexa.png'}
           className='h-20 min-w-[80px] object-cover rounded-md'
         />
-      )
+      ),
+      skeletonClassName: 'h-20 min-w-[80px]'
     },
     { title: 'Tên', key: 'name' },
     { title: 'Giá hiện tại (VNĐ)', render: (item) => numeral(item.price).format('0,0') + ' đ' },
@@ -114,13 +131,13 @@ function ProductsManagement() {
       <ProductFormDialog
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
-        // onSubmit={handleAddCategory}
+        onSubmit={handleAddProduct}
       />
 
       <ProductFormDialog
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
-        // onSubmit={handleEditCategory}
+        onSubmit={handleEditProduct}
         initialData={selectedProduct}
       />
     </div>

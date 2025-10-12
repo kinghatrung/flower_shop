@@ -24,6 +24,17 @@ export const getProducts = async (filters = {}) => {
   return res.data
 }
 
+export const createProduct = async (productData) => {
+  return await authorizedAxiosInstance.post(`${API_URL}/api/products/post`, productData)
+}
+
+export const editProduct = async (productId, newProductData) => {
+  return await authorizedAxiosInstance.patch(
+    `${API_URL}/api/products/edit/${productId}`,
+    newProductData
+  )
+}
+
 // CATEGORIES
 export const getCategories = async (filters = {}) => {
   const params = new URLSearchParams(filters).toString()

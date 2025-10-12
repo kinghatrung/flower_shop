@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { MoreVertical } from 'lucide-react'
 import dayjs from 'dayjs'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -108,6 +108,7 @@ function CustomersManagement() {
         <img
           src={item.avatar_url || '/image/Nuvexa.png'}
           className='h-20 min-w-[80px] object-cover rounded-md'
+          alt='Ảnh khách hàng'
         />
       ),
       skeletonClassName: 'h-20 min-w-[80px]'

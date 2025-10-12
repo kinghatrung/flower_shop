@@ -1,20 +1,30 @@
 import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
 
-import { FormDialog, FormField, SwitchField } from '~/components/common/Form'
+import { FormDialog, FormField, SwitchField, SelectField } from '~/components/common/Form'
+import { getCategories } from '~/api'
 
 function ProductFormDialog({ open, onOpenChange, initialData, onSubmit }) {
+  const { data } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => getCategories()
+  })
+
+  const categories = data?.data
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    control,
     reset,
     setValue,
     watch
   } = useForm({
     defaultValues: initialData || {
       name: '',
-      category_type: '',
+      category_id: '',
       description: '',
       price: '',
       original_price: '',
@@ -53,13 +63,17 @@ function ProductFormDialog({ open, onOpenChange, initialData, onSubmit }) {
           register={register}
           errors={errors}
         />
-        <FormField
-          id='category_type'
+        <SelectField
+          id='category_id'
           label='Loại hoa'
-          placeholder='Hoa sim...'
+          placeholder='Chọn loại hoa'
           required
-          register={register}
           errors={errors}
+          control={control}
+          options={categories?.map((category) => ({
+            value: String(category.id),
+            label: category.name
+          }))}
         />
       </div>
       <FormField
