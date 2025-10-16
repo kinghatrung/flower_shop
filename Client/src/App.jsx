@@ -8,6 +8,7 @@ import DefaultLayout from '~/layouts/DefaultLayout'
 import AdminLayout from './layouts/AdminLayout/AdminLayout'
 import { Toaster } from '~/components/ui/sonner'
 import ScrollToTop from '~/components/common/ScrollToTop'
+import ButtonZalo from './components/common/ButtonZalo'
 import RbacRouter from './components/core/RbacRouter'
 import { selectCurrentUser } from '~/redux/slices/authSlice'
 
@@ -33,6 +34,7 @@ import Products from '~/pages/PublicPages/Products'
 import Services from '~/pages/PublicPages/Services'
 import Contact from '~/pages/PublicPages/Contact'
 import Product from '~/pages/PublicPages/Products/[id]'
+import ButtonFacebook from './components/common/ButtonFacebook'
 
 const ProtectedRoute = ({ user }) => {
   if (!user) return <Navigate to={ROUTES.LOGIN} replace />
@@ -55,6 +57,16 @@ function App() {
     <div className='App'>
       <ScrollToTop />
       <Toaster richColors position='bottom-right' />
+      <ButtonZalo
+        phone={import.meta.env.VITE_ZALO_PHONE}
+        size={60}
+        position={{ bottom: 30, right: 30 }}
+      />
+      <ButtonFacebook
+        pageId={import.meta.env.VITE_FACEBOOK_URL}
+        size={60}
+        position={{ bottom: 110, right: 30 }}
+      />
 
       <Routes>
         {/* Public */}

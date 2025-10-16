@@ -7,7 +7,6 @@ import { useScrollAnimation } from '~/hooks/useScrollAnimationOptions'
 import { getProducts } from '~/api'
 import { useQuery } from '@tanstack/react-query'
 import CardSkeletonProduct from '~/components/common/CardSkeletonProduct'
-import useDebounce from '~/hooks/useDebounce'
 import useQueryParams from '~/hooks/useQueryParams'
 
 function Products() {
