@@ -16,18 +16,40 @@ import HeaderTable from '~/components/common/HeaderTable'
 import { getProducts, createProduct, editProduct } from '~/api'
 import ProductFormDialog from '~/components/common/ProductFormDialog'
 import DataTable from '~/components/common/DataTable'
+import { FilterContainer, FilterInput, FilterSelect } from '~/components/common/Filters'
+import useDebounce from '~/hooks/useDebounce'
 
 function ProductsManagement() {
   const queryClient = useQueryClient()
 
   const [search, setSearch] = useState('')
+  const [productStatusFilter, setProductStatusFilter] = useState('all')
+  // const [productPriceFilter, setProductPriceFilter] = useState('all')
+  const [productPriceFilter, setProductPriceFilter] = useState('0-10000000')
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState(null)
+  const debouncedSearch = useDebounce(search, 500)
+
+  const getPriceRangeParam = (range) => {
+    const [minStr, maxStr] = range.split('-')
+    const min = Number(minStr)
+    const max = Number(maxStr)
+    if (min === 0 && max === 10000000) return ''
+    if (max === Infinity) return `${min / 1000}+`
+    return `${min / 1000}-${max / 1000}`
+  }
+
+  const filter = {
+    search: debouncedSearch?.trim(),
+    status: productStatusFilter,
+    priceRange: getPriceRangeParam(productPriceFilter)
+  }
 
   const { data, isLoading } = useQuery({
-    queryKey: ['products'],
-    queryFn: () => getProducts()
+    queryKey: ['products', filter],
+    queryFn: () => getProducts(filter),
+    keepPreviousData: true
   })
 
   const products = data?.data
@@ -125,6 +147,35 @@ function ProductsManagement() {
       />
 
       <div className='space-y-4'>
+        <FilterContainer>
+          <FilterInput placeholder='Tìm kiếm theo tên...' value={search} onChange={setSearch} />
+
+          <FilterSelect
+            getKey
+            placeholder='Lọc theo giá...'
+            value={productPriceFilter}
+            onChange={setProductPriceFilter}
+            options={[
+              { label: 'Lọc theo giá...', value: '0-10000000' },
+              { label: 'Dưới 500k', value: '0-500000' },
+              { label: '500k - 1tr', value: '500000-1000000' },
+              { label: '1tr - 2tr', value: '1000000-2000000' },
+              { label: 'Trên 2tr', value: '2000000-Infinity' }
+            ]}
+          />
+
+          <FilterSelect
+            placeholder='Lọc theo trạng thái...'
+            value={productStatusFilter}
+            onChange={setProductStatusFilter}
+            options={[
+              { label: 'Lọc trạng thái...', value: 'all' },
+              { label: 'Bán chạy', value: 'is_best_seller' },
+              { label: 'Sản phẩm mới', value: 'is_new' }
+            ]}
+          />
+        </FilterContainer>
+
         <DataTable columns={columns} actions={actions} data={products} isLoading={isLoading} />
       </div>
 

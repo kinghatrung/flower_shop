@@ -15,13 +15,11 @@ function ProductFilters({
   selectedCategory,
   onCategoryChange,
   priceRange,
-  onPriceRangeChange,
-  sortBy,
-  onSortChange
+  onPriceRangeChange
 }) {
   const [showFilters, setShowFilters] = useState(false)
 
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ['categories'],
     queryFn: () => getCategories()
   })

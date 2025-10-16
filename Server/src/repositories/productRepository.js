@@ -2,7 +2,7 @@ import pool from '../config/db.js';
 
 const productRepository = {
   getProducts: async (filters) => {
-    const { category_type, search, priceRange } = filters;
+    const { category_type, search, priceRange, status } = filters;
     try {
       let query = `
       SELECT p.*, c.type AS category_type, c.name AS category_name
@@ -17,6 +17,15 @@ const productRepository = {
       if (category_type && category_type.toLowerCase() !== 'tất cả') {
         query += ` AND LOWER(c.type) = LOWER($${index++})`;
         values.push(category_type);
+      }
+
+      // Lọc theo trạng thái
+      if (status && status.toLowerCase() !== 'tất cả') {
+        if (status.toLowerCase() === 'is_new') {
+          query += ` AND p.is_new = true`;
+        } else if (status.toLowerCase() === 'is_best_seller') {
+          query += ` AND p.is_best_seller = true`;
+        }
       }
 
       // Lọc theo khoảng giá
@@ -47,6 +56,7 @@ const productRepository = {
       throw err;
     }
   },
+
   createProduct: async (
     name,
     category_id,
