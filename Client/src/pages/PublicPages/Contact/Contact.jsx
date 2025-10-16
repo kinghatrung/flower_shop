@@ -99,7 +99,9 @@ function Contact() {
                   <form onSubmit={handleSubmit} className='space-y-6'>
                     <div className='grid sm:grid-cols-2 gap-4'>
                       <div>
-                        <Label htmlFor='name'>Họ và tên *</Label>
+                        <Label className='mb-2' htmlFor='name'>
+                          Họ và tên *
+                        </Label>
                         <Input
                           id='name'
                           value={formData.name}
@@ -109,7 +111,9 @@ function Contact() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor='phone'>Số điện thoại</Label>
+                        <Label className='mb-2' htmlFor='phone'>
+                          Số điện thoại
+                        </Label>
                         <Input
                           id='phone'
                           value={formData.phone}
@@ -120,7 +124,9 @@ function Contact() {
                     </div>
 
                     <div>
-                      <Label htmlFor='email'>Email *</Label>
+                      <Label className='mb-2' htmlFor='email'>
+                        Email *
+                      </Label>
                       <Input
                         id='email'
                         type='email'
@@ -132,7 +138,9 @@ function Contact() {
                     </div>
 
                     <div>
-                      <Label htmlFor='subject'>Chủ đề</Label>
+                      <Label className='mb-2' htmlFor='subject'>
+                        Chủ đề
+                      </Label>
                       <Input
                         id='subject'
                         value={formData.subject}
@@ -142,7 +150,9 @@ function Contact() {
                     </div>
 
                     <div>
-                      <Label htmlFor='message'>Tin nhắn *</Label>
+                      <Label className='mb-2' htmlFor='message'>
+                        Tin nhắn *
+                      </Label>
                       <Textarea
                         id='message'
                         value={formData.message}
@@ -156,7 +166,7 @@ function Contact() {
                     <Button
                       type='submit'
                       disabled={!isFormValid || isLoading}
-                      className='w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground'
+                      className='w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground cursor-pointer'
                     >
                       <Send className='h-4 w-4 mr-2' />
                       {isLoading ? 'Đang gửi...' : 'Gửi tin nhắn'}

@@ -8,6 +8,7 @@ import DefaultLayout from '~/layouts/DefaultLayout'
 import AdminLayout from './layouts/AdminLayout/AdminLayout'
 import { Toaster } from '~/components/ui/sonner'
 import ScrollToTop from '~/components/common/ScrollToTop'
+import ButtonZalo from './components/common/ButtonZalo'
 import RbacRouter from './components/core/RbacRouter'
 import { selectCurrentUser } from '~/redux/slices/authSlice'
 
@@ -55,6 +56,7 @@ function App() {
     <div className='App'>
       <ScrollToTop />
       <Toaster richColors position='bottom-right' />
+      <ButtonZalo phone='0961753837' size={60} position={{ bottom: 30, right: 30 }} />
 
       <Routes>
         {/* Public */}

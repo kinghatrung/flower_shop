@@ -29,7 +29,7 @@ createRoot(document.getElementById('root')).render(
           <PersistGate persistor={persistor}>
             <StoreProvider>
               <App />
-              <ReactQueryDevtools initialIsOpen={false} />
+              {/* <ReactQueryDevtools initialIsOpen={false} /> */}
             </StoreProvider>
           </PersistGate>
         </Provider>
