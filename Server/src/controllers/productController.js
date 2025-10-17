@@ -3,7 +3,14 @@ import productService from '../services/productService.js';
 const productController = {
   getProducts: async (req, res) => {
     try {
-      const { search, category_type, priceRange, status } = req.query;
+      const {
+        search,
+        category_type,
+        priceRange,
+        status,
+        page = 1,
+        limit = 5,
+      } = req.query;
 
       const filters = {
         search: search || '',
@@ -11,8 +18,15 @@ const productController = {
         priceRange: priceRange || '',
         status: status || '',
       };
-      const products = await productService.getProducts(filters);
-      res.status(200).json({ data: products });
+
+      const result = await productService.getProducts(
+        filters,
+        Number(page),
+        Number(limit)
+      );
+      res
+        .status(200)
+        .json({ data: result.products, pagination: result.pagination });
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
