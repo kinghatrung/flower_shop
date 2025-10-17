@@ -24,6 +24,11 @@ export const getProducts = async (filters = {}) => {
   return res.data
 }
 
+export const getProduct = async (id) => {
+  const res = await authorizedAxiosInstance.get(`${API_URL}/api/products/product/${id}`)
+  return res.data
+}
+
 export const createProduct = async (productData) => {
   return await authorizedAxiosInstance.post(`${API_URL}/api/products/post`, productData)
 }

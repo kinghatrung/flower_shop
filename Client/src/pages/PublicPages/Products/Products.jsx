@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 
 import ProductCard from '~/components/common/products/ProductCard'
 import ProductFilters from '~/components/common/products/ProductFilters'
 import { useScrollAnimation } from '~/hooks/useScrollAnimationOptions'
 import { getProducts } from '~/api'
-import { useQuery } from '@tanstack/react-query'
 import CardSkeletonProduct from '~/components/common/CardSkeletonProduct'
 import useQueryParams from '~/hooks/useQueryParams'
 

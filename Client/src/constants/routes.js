@@ -2,7 +2,7 @@ export const ROUTES = {
   // public
   HOME: '/',
   PRODUCTS: '/products',
-  PRODUCT: '/products/product/:id',
+  PRODUCT: '/products/product/:slug',
   LOGIN: '/login',
   REGISTER: '/register',
   FORGOT_PASSWORD: '/forgot-password',
