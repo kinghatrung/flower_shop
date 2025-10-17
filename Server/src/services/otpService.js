@@ -1,6 +1,5 @@
 import crypto from 'crypto';
 
-import authRepository from '../repositories/authRepository.js';
 import { sendOtpEmail } from '../utils/mailer.js';
 import { getRedis } from '../config/redis.js';
 
