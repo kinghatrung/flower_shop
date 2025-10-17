@@ -1,25 +1,47 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Star, Heart, ShoppingCart, Minus, Plus, Truck, Shield, RotateCcw } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
 
 import { Button } from '~/components/ui/button'
 import { Badge } from '~/components/ui/badge'
 import ProductCard from '~/components/common/products/ProductCard'
-import { products } from '~/data'
 import { useCart } from '~/context'
 import { ROUTES } from '~/constants'
+import { getProducts, getProduct } from '~/api'
 
-function Product({ params }) {
+function Product() {
+  const [product, setProduct] = useState([])
   const [quantity, setQuantity] = useState(1)
   const [isLiked, setIsLiked] = useState(false)
   const [selectedImage, setSelectedImage] = useState(0)
   const { dispatch: cartDispatch } = useCart()
-  const { id } = useParams()
+  const { slug } = useParams()
 
-  const product = products.find((p) => p.id === id)
+  const [pureSlug, idPart] = slug.split(/-i\./)
+
+  const { data } = useQuery({
+    queryKey: ['products'],
+    queryFn: () => getProducts()
+  })
+
+  const products = data?.data
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await getProduct(idPart)
+        setProduct(res.data)
+      } catch (err) {
+        console.log('Lỗi:', err)
+      }
+    }
+
+    fetchData()
+  }, [idPart])
 
   const relatedProducts = products
-    .filter((p) => p.category === product.category && p.id !== product.id)
+    ?.filter((p) => p.category_type === product.category_type && p.id !== product.id)
     .slice(0, 4)
 
   const formatPrice = (price) => {
@@ -36,7 +58,7 @@ function Product({ params }) {
   }
 
   // Giả lập hình ảnh bổ sung cho thư viện
-  const productImages = [product.image, product.image, product.image]
+  // const productImages = [product.image, product.image, product.image]
 
   return (
     <div className='pt-24 pb-16 px-4'>
@@ -59,8 +81,8 @@ function Product({ params }) {
           <div className='space-y-4'>
             <div className='aspect-square rounded-2xl overflow-hidden bg-muted'>
               <img
-                // src={productImages[selectedImage] || '/placeholder.svg'}
-                src='../src/assets/icons/placeholder.svg'
+                // src={productImages[selectedImage]}
+                src={product.image}
                 alt={product.name}
                 width={600}
                 height={600}
@@ -69,7 +91,7 @@ function Product({ params }) {
             </div>
 
             {/* Image Thumbnails */}
-            <div className='flex gap-2'>
+            {/* <div className='flex gap-2'>
               {productImages.map((image, index) => (
                 <button
                   key={index}
@@ -88,17 +110,17 @@ function Product({ params }) {
                   />
                 </button>
               ))}
-            </div>
+            </div> */}
           </div>
 
           {/* Product Info */}
           <div className='space-y-6'>
             <div>
               <div className='flex items-center gap-2 mb-2'>
-                {product.isNew && (
+                {product.is_new && (
                   <Badge className='bg-secondary text-secondary-foreground'>Mới</Badge>
                 )}
-                {product.isBestSeller && (
+                {product.is_best_seller && (
                   <Badge className='bg-primary text-primary-foreground'>Bán chạy</Badge>
                 )}
               </div>
@@ -131,9 +153,9 @@ function Product({ params }) {
               <span className='font-bold text-3xl text-foreground'>
                 {formatPrice(product.price)}
               </span>
-              {product.originalPrice && (
+              {product.original_price && (
                 <span className='text-xl text-muted-foreground line-through'>
-                  {formatPrice(product.originalPrice)}
+                  {formatPrice(product.original_price)}
                 </span>
               )}
             </div>
@@ -202,18 +224,18 @@ function Product({ params }) {
         </div>
 
         {/* Related Products */}
-        {relatedProducts.length > 0 && (
-          <div>
-            <h2 className='font-serif text-2xl font-bold text-foreground mb-8'>
-              Sản phẩm liên quan
-            </h2>
+        <div>
+          <h2 className='font-serif text-2xl font-bold text-foreground mb-8'>Sản phẩm liên quan</h2>
+          {relatedProducts?.length > 0 ? (
             <div className='grid sm:grid-cols-2 lg:grid-cols-4 gap-6'>
               {relatedProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <div>'Không có sản phẩm nào'</div>
+          )}
+        </div>
       </div>
     </div>
   )

@@ -57,6 +57,22 @@ const productRepository = {
     }
   },
 
+  getProduct: async (id) => {
+    const query = `
+      SELECT p.*, c.type AS category_type, c.name AS category_name
+      FROM products p
+      JOIN categories c ON p.category_id = c.id
+      WHERE p.id = $1
+    `;
+    try {
+      const result = await pool.query(query, [id]);
+
+      return result.rows[0];
+    } catch (err) {
+      throw err;
+    }
+  },
+
   createProduct: async (
     name,
     category_id,

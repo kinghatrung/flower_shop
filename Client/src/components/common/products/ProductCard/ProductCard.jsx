@@ -30,9 +30,12 @@ function ProductCard({ product }) {
   return (
     <Card className='group hover-lift overflow-hidden border-border p-0'>
       <div className='relative aspect-square overflow-hidden'>
-        <Link to={`${ROUTES.PRODUCTS}/product/${product.id}`}>
+        <Link
+          to={`${ROUTES.PRODUCTS}/product/${product.slug}-i.${product.id}`}
+          className='cursor-pointer'
+        >
           <img
-            src={product.image || '../src/assets/icons/placeholder.svg'}
+            src={product.image || '/image/Nuvexa.png'}
             alt={product.name}
             className='object-cover group-hover:scale-105 transition-transform duration-300'
           />
@@ -71,7 +74,7 @@ function ProductCard({ product }) {
 
       <CardContent className='px-4 pb-4'>
         <div className='space-y-2'>
-          <Link to={`${ROUTES.PRODUCTS}/product/${product.id}`}>
+          <Link to={`${ROUTES.PRODUCTS}/product/${product.slug}-i.${product.id}`}>
             <h3 className='font-semibold text-card-foreground hover:text-primary transition-colors line-clamp-2'>
               {product.name}
             </h3>
