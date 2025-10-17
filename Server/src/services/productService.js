@@ -10,6 +10,16 @@ const productService = {
     }
   },
 
+  getProduct: async (id) => {
+    try {
+      const product = await productRepository.getProduct(id);
+
+      return product;
+    } catch (err) {
+      throw err;
+    }
+  },
+
   createProduct: async (
     name,
     category_id,
