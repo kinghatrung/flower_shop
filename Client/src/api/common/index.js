@@ -60,3 +60,8 @@ export const createCategory = async (data) => {
 export const editCategory = async (idCategory, data) => {
   return await authorizedAxiosInstance.patch(`${API_URL}/api/categories/edit/${idCategory}`, data)
 }
+
+// SEND EMAIL
+export const sendEmail = async (data) => {
+  return await authorizedAxiosInstance.post(`${API_URL}/api/email/send`, data)
+}

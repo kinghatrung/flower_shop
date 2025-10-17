@@ -1,59 +1,38 @@
 import { useState } from 'react'
-import { MapPin, Phone, Mail, Clock, Send, MessageCircle } from 'lucide-react'
+import { MapPin, Phone, Mail, Clock, Send, MessageCircle, Sandwich } from 'lucide-react'
+import { useForm } from 'react-hook-form'
 
 import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
-import { Textarea } from '~/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { useScrollAnimation } from '~/hooks/useScrollAnimationOptions'
+import { FormBase, FormField , FormTextarea} from '~/components/common/Form'
+import { sendEmail } from '~/api'
 
 function Contact() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: ''
-  })
-  const [isLoading, setIsLoading] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
 
   const { isVisible: headerVisible, ref: headerRef } = useScrollAnimation()
   const { isVisible: formVisible, ref: formRef } = useScrollAnimation()
   const { isVisible: contactInfoVisible, ref: contactInfoRef } = useScrollAnimation()
 
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value
-    }))
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      name: '',
+      phone: '',
+      email: '',
+      subject: '',
+      message: '',
+    }
+  })
+
+  const handleSubmits = async (data) => {
+    await sendEmail(data)
+    setIsSubmitted(!isSubmitted)
   }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
-
-    // Giả lập API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-
-    setIsLoading(false)
-    setIsSubmitted(true)
-
-    // Reset form sau 3 giây
-    setTimeout(() => {
-      setIsSubmitted(false)
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: ''
-      })
-    }, 3000)
-  }
-
-  const isFormValid = formData.name && formData.email && formData.message
 
   return (
     <div className='pt-24 pb-16 px-4'>
@@ -96,82 +75,63 @@ function Contact() {
                     </p>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} className='space-y-6'>
-                    <div className='grid sm:grid-cols-2 gap-4'>
-                      <div>
-                        <Label className='mb-2' htmlFor='name'>
-                          Họ và tên *
-                        </Label>
-                        <Input
-                          id='name'
-                          value={formData.name}
-                          onChange={(e) => handleInputChange('name', e.target.value)}
-                          placeholder='Nhập họ và tên'
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label className='mb-2' htmlFor='phone'>
-                          Số điện thoại
-                        </Label>
-                        <Input
-                          id='phone'
-                          value={formData.phone}
-                          onChange={(e) => handleInputChange('phone', e.target.value)}
-                          placeholder='0123456789'
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label className='mb-2' htmlFor='email'>
-                        Email *
-                      </Label>
-                      <Input
-                        id='email'
-                        type='email'
-                        value={formData.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
-                        placeholder='example@email.com'
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <Label className='mb-2' htmlFor='subject'>
-                        Chủ đề
-                      </Label>
-                      <Input
-                        id='subject'
-                        value={formData.subject}
-                        onChange={(e) => handleInputChange('subject', e.target.value)}
-                        placeholder='Tư vấn hoa cưới, đặt hoa sinh nhật...'
-                      />
-                    </div>
-
-                    <div>
-                      <Label className='mb-2' htmlFor='message'>
-                        Tin nhắn *
-                      </Label>
-                      <Textarea
-                        id='message'
-                        value={formData.message}
-                        onChange={(e) => handleInputChange('message', e.target.value)}
-                        placeholder='Mô tả chi tiết yêu cầu của bạn...'
-                        className='min-h-[120px]'
-                        required
-                      />
-                    </div>
-
-                    <Button
-                      type='submit'
-                      disabled={!isFormValid || isLoading}
-                      className='w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground cursor-pointer'
-                    >
+                  <FormBase
+                  onSubmit={handleSubmit(handleSubmits)}
+                  className='space-y-6'
+                  submitLabel={
+                    <>
                       <Send className='h-4 w-4 mr-2' />
-                      {isLoading ? 'Đang gửi...' : 'Gửi tin nhắn'}
-                    </Button>
-                  </form>
+                      Gửi tin nhắn
+                    </>
+                  }
+                  >
+                    <div className='grid sm:grid-cols-2 gap-4'>
+                      <FormField
+                        id='name'
+                        label='Họ và tên'
+                        placeholder='Nhập họ và tên'
+                        required
+                        register={register}
+                        errors={errors}
+                      />
+
+                      <FormField
+                        id='phone'
+                        label='Số điện thoại'
+                        placeholder='0123456789'
+                        required
+                        register={register}
+                        errors={errors}
+                      />
+                    </div>
+
+                    <FormField
+                      id='email'
+                      label='Email'
+                      placeholder='example@email.com'
+                      required
+                      register={register}
+                      errors={errors}
+                    />
+
+                    <FormField
+                      id='subject'
+                      label='Chủ đề'
+                      placeholder='Tư vấn hoa cưới, đặt hoa sinh nhật...'
+                      required
+                      register={register}
+                      errors={errors}
+                    />
+
+                    <FormTextarea
+                      id='message'
+                      label='Tin nhắn'
+                      placeholder='Mô tả chi tiết yêu cầu của bạn...'
+                      required
+                      register={register}
+                      errors={errors}
+                    />
+                  </FormBase>
                 )}
               </CardContent>
             </Card>
@@ -192,7 +152,7 @@ function Contact() {
                   <MapPin className='h-6 w-6 text-primary flex-shrink-0 mt-1' />
                   <div>
                     <h3 className='font-semibold mb-1'>Địa chỉ cửa hàng</h3>
-                    <p className='text-muted-foreground'>Cổ Nhuế, Bắc Từ Liêm, Hà Nội, Việt Nam</p>
+                    <p className='text-muted-foreground'>Mễ Trì Thượng, Quận Từ Liêm, Hà Nội</p>
                   </div>
                 </div>
 
@@ -200,7 +160,7 @@ function Contact() {
                   <Phone className='h-6 w-6 text-primary flex-shrink-0 mt-1' />
                   <div>
                     <h3 className='font-semibold mb-1'>Hotline</h3>
-                    <p className='text-muted-foreground'>0123 456 789</p>
+                    <p className='text-muted-foreground'>0123 242 558</p>
                     <p className='text-sm text-muted-foreground'>Hỗ trợ 24/7</p>
                   </div>
                 </div>
@@ -209,7 +169,7 @@ function Contact() {
                   <Mail className='h-6 w-6 text-primary flex-shrink-0 mt-1' />
                   <div>
                     <h3 className='font-semibold mb-1'>Email</h3>
-                    <p className='text-muted-foreground'>hello@Nuvexa.vn</p>
+                    <p className='text-muted-foreground'>myzlucky2706@gmail.com</p>
                     <p className='text-muted-foreground'>support@Nuvexa.vn</p>
                   </div>
                 </div>
