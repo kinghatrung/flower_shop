@@ -3,6 +3,7 @@ import { MoreVertical } from 'lucide-react'
 import dayjs from 'dayjs'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import numeral from 'numeral'
+import { useNavigate } from 'react-router-dom'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -12,24 +13,30 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
+import useQueryParams from '~/hooks/useQueryParams'
 import HeaderTable from '~/components/common/HeaderTable'
 import { getProducts, createProduct, editProduct } from '~/api'
 import ProductFormDialog from '~/components/common/ProductFormDialog'
 import DataTable from '~/components/common/DataTable'
 import { FilterContainer, FilterInput, FilterSelect } from '~/components/common/Filters'
 import useDebounce from '~/hooks/useDebounce'
+import CustomPagination from '~/components/common/CustomPagination'
 
 function ProductsManagement() {
-  const queryClient = useQueryClient()
-
   const [search, setSearch] = useState('')
   const [productStatusFilter, setProductStatusFilter] = useState('all')
-  // const [productPriceFilter, setProductPriceFilter] = useState('all')
   const [productPriceFilter, setProductPriceFilter] = useState('0-10000000')
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState(null)
+
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const debouncedSearch = useDebounce(search, 500)
+  const queryString = useQueryParams()
+
+  const page = queryString.page || 1
+  const limit = 5
 
   const getPriceRangeParam = (range) => {
     const [minStr, maxStr] = range.split('-')
@@ -47,11 +54,13 @@ function ProductsManagement() {
   }
 
   const { data, isLoading } = useQuery({
-    queryKey: ['products', filter],
-    queryFn: () => getProducts(filter),
+    queryKey: ['products', page, filter],
+    queryFn: () => getProducts(page, limit, filter),
     keepPreviousData: true
   })
 
+  const currentPage = Number(page)
+  const totalPages = data?.pagination?.totalPages || 1
   const products = data?.data
 
   const handleEditClick = (product) => {
@@ -79,6 +88,12 @@ function ProductsManagement() {
     await createProduct(productData)
     setIsAddDialogOpen(!isAddDialogOpen)
     await queryClient.invalidateQueries(['products'])
+  }
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      navigate(`?page=${newPage}`)
+    }
   }
 
   const columns = [
@@ -176,7 +191,25 @@ function ProductsManagement() {
           />
         </FilterContainer>
 
-        <DataTable columns={columns} actions={actions} data={products} isLoading={isLoading} />
+        <DataTable
+          columns={columns}
+          actions={actions}
+          data={products}
+          isLoading={isLoading}
+          limit={5}
+        />
+
+        {data?.pagination?.totalProducts && (
+          <CustomPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={data?.pagination?.totalProducts}
+            onPageChange={handlePageChange}
+            hasNext={data?.pagination?.hasNext}
+            hasPrev={data?.pagination?.hasPrev}
+            label='Sản phẩm'
+          />
+        )}
       </div>
 
       <ProductFormDialog

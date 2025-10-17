@@ -1,10 +1,21 @@
 import productRepository from '../repositories/productRepository.js';
+import { slugify } from '../utils/slugify.js';
 
 const productService = {
-  getProducts: async (filters) => {
+  getProducts: async (filters, page, limit) => {
     try {
-      const products = await productRepository.getProducts(filters);
-      return products;
+      const { products, total, totalPages, currentPage } =
+        await productRepository.getProducts(filters, page, limit);
+      return {
+        products,
+        pagination: {
+          currentPage,
+          totalPages,
+          totalProducts: total,
+          hasNext: page < totalPages,
+          hasPrev: page > 1,
+        },
+      };
     } catch (err) {
       throw err;
     }
@@ -30,6 +41,8 @@ const productService = {
     is_best_seller
   ) => {
     try {
+      const slug = slugify(name);
+
       const product = await productRepository.createProduct(
         name,
         category_id,
@@ -37,13 +50,15 @@ const productService = {
         price,
         original_price,
         is_new,
-        is_best_seller
+        is_best_seller,
+        slug
       );
       return product;
     } catch (err) {
       throw err;
     }
   },
+
   editProduct: async (
     productId,
     name,
@@ -55,6 +70,8 @@ const productService = {
     is_best_seller
   ) => {
     try {
+      const slug = name ? slugify(name) : '';
+
       const product = await productRepository.editProduct(
         productId,
         name,
@@ -63,7 +80,8 @@ const productService = {
         price,
         original_price,
         is_new,
-        is_best_seller
+        is_best_seller,
+        slug
       );
 
       return product;
