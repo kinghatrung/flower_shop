@@ -9,7 +9,8 @@ function FormField({
   register,
   errors,
   required,
-  validation
+  validation,
+  accept
 }) {
   return (
     <div className='space-y-2'>
@@ -18,6 +19,7 @@ function FormField({
       </Label>
       <Input
         id={id}
+        accept={accept}
         type={type}
         placeholder={placeholder}
         {...register(id, { required: required ? `${label} là bắt buộc` : false, ...validation })}

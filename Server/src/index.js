@@ -13,6 +13,7 @@ import otpRouter from './routes/otpRouter.js';
 import productRouter from './routes/productRouter.js';
 import categoryRouter from './routes/categoryRouter.js';
 import emailRouter from './routes/emailRouter.js';
+import uploadRouter from './routes/uploadRouter.js';
 
 dotenv.config();
 const app = express();
@@ -55,6 +56,7 @@ app.use('/api/otp', otpRouter);
 app.use('/api/products', productRouter);
 app.use('/api/categories', categoryRouter);
 app.use('/api/email', emailRouter);
+app.use('/api/upload', uploadRouter);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../Client/dist')));

@@ -85,9 +85,10 @@ function ProductsManagement() {
   }
 
   const handleAddProduct = async (productData) => {
-    await createProduct(productData)
-    setIsAddDialogOpen(!isAddDialogOpen)
-    await queryClient.invalidateQueries(['products'])
+    // await createProduct(productData)
+    // setIsAddDialogOpen(!isAddDialogOpen)
+    // await queryClient.invalidateQueries(['products'])
+    console.log(productData)
   }
 
   const handlePageChange = (newPage) => {

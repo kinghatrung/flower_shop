@@ -2,7 +2,13 @@ import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 
-import { FormDialog, FormField, SwitchField, SelectField } from '~/components/common/Form'
+import {
+  FormDialog,
+  FormField,
+  SwitchField,
+  SelectField,
+  FormImageField
+} from '~/components/common/Form'
 import { getCategories } from '~/api'
 
 function ProductFormDialog({ open, onOpenChange, initialData, onSubmit }) {
@@ -102,7 +108,6 @@ function ProductFormDialog({ open, onOpenChange, initialData, onSubmit }) {
           errors={errors}
         />
       </div>
-
       <SwitchField
         id='is_new'
         label='Sản phẩm mới'
@@ -110,7 +115,6 @@ function ProductFormDialog({ open, onOpenChange, initialData, onSubmit }) {
         value={watch('is_new')}
         onChange={(val) => setValue('is_new', val)}
       />
-
       <SwitchField
         id='is_best_seller'
         label='Sản bán chạy'
@@ -118,6 +122,18 @@ function ProductFormDialog({ open, onOpenChange, initialData, onSubmit }) {
         value={watch('is_best_seller')}
         onChange={(val) => setValue('is_best_seller', val)}
       />
+
+      <FormField
+        id='image'
+        type='file'
+        accept='image/*'
+        label='Ảnh sản phẩm'
+        description='Chọn ảnh cho sản phẩm'
+        register={register}
+        errors={errors}
+      />
+
+      <FormImageField />
     </FormDialog>
   )
 }

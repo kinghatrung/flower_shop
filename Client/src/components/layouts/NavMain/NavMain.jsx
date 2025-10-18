@@ -21,8 +21,11 @@ function NavMain({ items }) {
             defaultOpen={item.isActive}
             className='group/collapsible cursor-pointer'
           >
-            <SidebarMenuItem>
-              <NavLink to={item.url}>
+            <SidebarMenuItem key={item.title}>
+              <NavLink
+                to={item.url}
+                // className={({ isActive }) => (isActive ? 'bg-[#e56d7a]' : '')}
+              >
                 <SidebarMenuButton className='cursor-pointer h-[42px]' tooltip={item.title}>
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
