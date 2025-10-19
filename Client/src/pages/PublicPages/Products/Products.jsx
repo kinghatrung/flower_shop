@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 
 import ProductCard from '~/components/common/products/ProductCard'
 import ProductFilters from '~/components/common/products/ProductFilters'
@@ -25,19 +25,6 @@ function Products() {
   const { isVisible: filtersVisible, ref: filtersRef } = useScrollAnimation()
   const { isVisible: productsVisible, ref: productsRef } = useScrollAnimation()
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['products', appliedSearch, selectedCategory, priceRange],
-    queryFn: () =>
-      getProducts({
-        search: appliedSearch,
-        category_type: selectedCategory === 'all' ? '' : selectedCategory,
-        priceRange: getPriceRangeParam(priceRange)
-      }),
-    keepPreviousData: true
-  })
-
-  const products = data?.data
-
   const getPriceRangeParam = (range) => {
     const [min, max] = range
     if (min === 0 && max === 10000000) return ''
@@ -45,7 +32,54 @@ function Products() {
     return `${min / 1000}-${max / 1000}`
   }
 
-  // Cập nhật URL khi filter hoặc appliedSearch thay đổi
+  const filter = {
+    search: appliedSearch,
+    category_type: selectedCategory === 'all' ? '' : selectedCategory,
+    priceRange: getPriceRangeParam(priceRange)
+  }
+
+  const limit = 6
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
+    useInfiniteQuery({
+      queryKey: ['products', filter],
+      queryFn: ({ pageParam = 1 }) => getProducts(pageParam, limit, filter),
+      getNextPageParam: (lastPage) => {
+        if (lastPage.pagination?.hasNext) {
+          return lastPage.pagination.currentPage + 1
+        }
+        return undefined
+      },
+      initialPageParam: 1
+    })
+
+  const allProducts = data?.pages.flatMap((page) => page.products || page.data || []) || []
+
+  const loadMoreRef = useRef(null)
+
+  useEffect(() => {
+    if (!hasNextPage || isFetchingNextPage) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchNextPage()
+        }
+      },
+      { threshold: 1 }
+    )
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current)
+    }
+
+    return () => {
+      if (loadMoreRef.current) {
+        observer.unobserve(loadMoreRef.current)
+      }
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
+
   useEffect(() => {
     const params = {}
     if (appliedSearch) params.search = appliedSearch
@@ -107,7 +141,7 @@ function Products() {
               }`}
             >
               <div className='flex items-center justify-between mb-6'>
-                <p className='text-muted-foreground'>Hiển thị {products?.length} sản phẩm</p>
+                <p className='text-muted-foreground'>Hiển thị {allProducts.length} sản phẩm</p>
               </div>
               {isLoading ? (
                 <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-6'>
@@ -115,9 +149,13 @@ function Products() {
                   <CardSkeletonProduct />
                   <CardSkeletonProduct />
                 </div>
-              ) : products?.length > 0 ? (
+              ) : isError ? (
+                <div className='text-center py-12'>
+                  <p className='text-muted-foreground text-lg'>Đã xảy ra lỗi: {error?.message}</p>
+                </div>
+              ) : allProducts.length > 0 ? (
                 <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-6'>
-                  {products?.map((product, index) => (
+                  {allProducts.map((product, index) => (
                     <div
                       key={product.id}
                       className={`transition-all duration-500 ${
@@ -140,6 +178,20 @@ function Products() {
                     Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm
                   </p>
                 </div>
+              )}
+              <div ref={loadMoreRef} className='mt-6'>
+                {isFetchingNextPage && (
+                  <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-6'>
+                    <CardSkeletonProduct />
+                    <CardSkeletonProduct />
+                    <CardSkeletonProduct />
+                  </div>
+                )}
+              </div>
+              {!hasNextPage && allProducts.length > 0 && (
+                <p className='text-center mt-20 text-muted-foreground'>
+                  Không còn sản phẩm nào để tải thêm.
+                </p>
               )}
             </div>
           </div>

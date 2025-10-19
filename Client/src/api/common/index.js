@@ -18,8 +18,8 @@ export const updateUser = async (userId, updatedFields) => {
 }
 
 // PRODUCTS
-export const getProducts = async (filters = {}) => {
-  const params = new URLSearchParams(filters).toString()
+export const getProducts = async (page, limit, filters = {}) => {
+  const params = new URLSearchParams({ page, limit, ...filters }).toString()
   const res = await authorizedAxiosInstance.get(`${API_URL}/api/products?${params}`)
   return res.data
 }
@@ -64,4 +64,9 @@ export const editCategory = async (idCategory, data) => {
 // SEND EMAIL
 export const sendEmail = async (data) => {
   return await authorizedAxiosInstance.post(`${API_URL}/api/email/send`, data)
+}
+
+// UPLOAD IMAGES
+export const uploadImage = async (formData) => {
+  return await authorizedAxiosInstance.post(`${API_URL}/api/upload/images`, formData)
 }

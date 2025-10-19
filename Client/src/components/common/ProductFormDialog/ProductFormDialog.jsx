@@ -2,7 +2,13 @@ import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 
-import { FormDialog, FormField, SwitchField, SelectField } from '~/components/common/Form'
+import {
+  FormDialog,
+  FormField,
+  SwitchField,
+  SelectField,
+  FormImageField
+} from '~/components/common/Form'
 import { getCategories } from '~/api'
 
 function ProductFormDialog({ open, onOpenChange, initialData, onSubmit }) {
@@ -29,6 +35,7 @@ function ProductFormDialog({ open, onOpenChange, initialData, onSubmit }) {
       price: '',
       original_price: '',
       is_new: false,
+      images: [],
       is_best_seller: false
     }
   })
@@ -102,7 +109,6 @@ function ProductFormDialog({ open, onOpenChange, initialData, onSubmit }) {
           errors={errors}
         />
       </div>
-
       <SwitchField
         id='is_new'
         label='Sản phẩm mới'
@@ -110,13 +116,30 @@ function ProductFormDialog({ open, onOpenChange, initialData, onSubmit }) {
         value={watch('is_new')}
         onChange={(val) => setValue('is_new', val)}
       />
-
       <SwitchField
         id='is_best_seller'
         label='Sản bán chạy'
         description='Đánh dấu sản phẩm này là sản phẩm bán chạy'
         value={watch('is_best_seller')}
         onChange={(val) => setValue('is_best_seller', val)}
+      />
+
+      <FormImageField
+        id='images'
+        label='Ảnh'
+        errors={errors}
+        required
+        maxImages={4}
+        value={watch('images')}
+        onImagesChange={(images) =>
+          setValue(
+            'images',
+            images.map((img) => ({
+              url: img.url,
+              public_id: img.publicId
+            }))
+          )
+        }
       />
     </FormDialog>
   )

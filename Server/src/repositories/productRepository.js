@@ -1,14 +1,20 @@
 import pool from '../config/db.js';
 
 const productRepository = {
-  getProducts: async (filters) => {
+  getProducts: async (filters, page, limit) => {
     const { category_type, search, priceRange, status } = filters;
     try {
       let query = `
-      SELECT p.*, c.type AS category_type, c.name AS category_name
+      SELECT 
+        p.*, 
+        c.type AS category_type, 
+        c.name AS category_name,
+        COALESCE(array_agg(pi.image_url) FILTER (WHERE pi.image_url IS NOT NULL), '{}') AS images_url
       FROM products p
       JOIN categories c ON p.category_id = c.id
+      LEFT JOIN product_images pi ON pi.product_id = p.id
       WHERE 1=1
+      GROUP BY p.id, c.type, c.name
     `;
       const values = [];
       let index = 1;
@@ -47,11 +53,26 @@ const productRepository = {
         values.push(`%${search}%`);
       }
 
-      // Sắp xếp mặc định mới nhất
+      // Tạo query đếm tổng số sản phẩm
+      const countQuery = `SELECT COUNT(*) FROM (${query})`;
+      const countResult = await pool.query(countQuery, values);
+      const total = parseInt(countResult.rows[0].count, 10);
+      const totalPages = Math.ceil(total / limit);
+
+      // Sắp xếp mặc định mới nhất và thêm phân trang
       query += ` ORDER BY p.created_at DESC`;
+      query += ` LIMIT $${index++} OFFSET $${index++}`;
+      values.push(limit);
+      values.push((page - 1) * limit);
 
       const result = await pool.query(query, values);
-      return result.rows;
+      return {
+        products: result.rows,
+        total,
+        totalPages,
+        currentPage: page,
+        pageSize: limit,
+      };
     } catch (err) {
       throw err;
     }
@@ -80,12 +101,15 @@ const productRepository = {
     price,
     original_price,
     is_new,
-    is_best_seller
+    is_best_seller,
+    slug,
+    images
   ) => {
     try {
       const query = `
-        INSERT INTO products (name, price, original_price, category_id, description, is_new, is_best_seller)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        INSERT INTO products (name, price, original_price, category_id, description, is_new, is_best_seller, slug)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        RETURNING id
       `;
       const result = await pool.query(query, [
         name,
@@ -95,7 +119,28 @@ const productRepository = {
         description,
         is_new,
         is_best_seller,
+        slug,
       ]);
+
+      const productId = result.rows[0].id;
+
+      if (images && images.length > 0) {
+        await Promise.all(
+          images.map((image, idx) =>
+            pool.query(
+              `UPDATE product_images
+               SET 
+                 product_id = $1,
+                 image_url = $2,
+                 is_main = $3,
+                 sort_order = $4,
+                 is_temp = $5
+               WHERE public_id = $6`,
+              [productId, image.url, idx === 0, idx, false, image.public_id]
+            )
+          )
+        );
+      }
 
       return result;
     } catch (err) {
@@ -111,7 +156,8 @@ const productRepository = {
     price,
     original_price,
     is_new,
-    is_best_seller
+    is_best_seller,
+    slug
   ) => {
     try {
       const query = `
@@ -123,8 +169,9 @@ const productRepository = {
           price = COALESCE($4, price), 
           original_price = COALESCE($5, original_price), 
           is_new = COALESCE($6, is_new), 
-          is_best_seller = COALESCE($7, is_best_seller) 
-        WHERE id = $8 
+          is_best_seller = COALESCE($7, is_best_seller),
+          slug = COALESCE($8, slug)
+        WHERE id = $9
         RETURNING *;
       `;
       const result = pool.query(query, [
@@ -135,6 +182,7 @@ const productRepository = {
         original_price,
         is_new,
         is_best_seller,
+        slug,
         productId,
       ]);
 
