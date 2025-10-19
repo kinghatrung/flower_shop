@@ -53,6 +53,7 @@ const productController = {
         original_price,
         is_new,
         is_best_seller,
+        images,
       } = req.body;
       const product = await productService.createProduct(
         name,
@@ -61,7 +62,8 @@ const productController = {
         price,
         original_price,
         is_new,
-        is_best_seller
+        is_best_seller,
+        images
       );
 
       res

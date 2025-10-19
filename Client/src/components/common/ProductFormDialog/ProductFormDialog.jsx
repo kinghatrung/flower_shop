@@ -35,6 +35,7 @@ function ProductFormDialog({ open, onOpenChange, initialData, onSubmit }) {
       price: '',
       original_price: '',
       is_new: false,
+      images: [],
       is_best_seller: false
     }
   })
@@ -123,17 +124,20 @@ function ProductFormDialog({ open, onOpenChange, initialData, onSubmit }) {
         onChange={(val) => setValue('is_best_seller', val)}
       />
 
-      <FormField
-        id='image'
-        type='file'
-        accept='image/*'
-        label='Ảnh sản phẩm'
-        description='Chọn ảnh cho sản phẩm'
-        register={register}
+      <FormImageField
+        id='images'
+        label='Ảnh'
         errors={errors}
+        required
+        maxImages={4}
+        value={watch('images')}
+        onImagesChange={(images) =>
+          setValue(
+            'images',
+            images.map((img) => img.url)
+          )
+        }
       />
-
-      <FormImageField />
     </FormDialog>
   )
 }
