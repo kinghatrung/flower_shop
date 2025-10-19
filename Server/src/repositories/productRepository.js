@@ -108,6 +108,7 @@ const productRepository = {
       const query = `
         INSERT INTO products (name, price, original_price, category_id, description, is_new, is_best_seller, slug)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        RETURNING id
       `;
       const result = await pool.query(query, [
         name,
