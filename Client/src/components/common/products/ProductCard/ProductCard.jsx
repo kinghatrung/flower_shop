@@ -35,7 +35,7 @@ function ProductCard({ product }) {
           className='cursor-pointer'
         >
           <img
-            src={product.image || '/image/Nuvexa.png'}
+            src={product.images_url[0] || '/image/Nuvexa.png'}
             alt={product.name}
             className='object-cover group-hover:scale-105 transition-transform duration-300'
           />

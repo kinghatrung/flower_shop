@@ -134,7 +134,10 @@ function ProductFormDialog({ open, onOpenChange, initialData, onSubmit }) {
         onImagesChange={(images) =>
           setValue(
             'images',
-            images.map((img) => img.url)
+            images.map((img) => ({
+              url: img.url,
+              public_id: img.publicId
+            }))
           )
         }
       />
