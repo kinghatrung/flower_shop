@@ -46,6 +46,7 @@ function FormImageField({ id, label, errors, register, required, maxImages = 5, 
             ...img,
             uploading: false,
             preview: uploaded.image_url,
+            publicId: uploaded.public_id,
             url: uploaded.image_url
           }
         }

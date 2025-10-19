@@ -106,7 +106,7 @@ function ProductsManagement() {
       title: 'Ảnh',
       render: (item) => (
         <img
-          src={item.image || '/image/Nuvexa.png'}
+          src={item.images_url[0] || '/image/Nuvexa.png'}
           className='h-20 min-w-[80px] object-cover rounded-md'
         />
       ),

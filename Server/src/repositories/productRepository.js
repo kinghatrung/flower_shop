@@ -9,11 +9,12 @@ const productRepository = {
         p.*, 
         c.type AS category_type, 
         c.name AS category_name,
-        pi.image_url AS pi_images
+        COALESCE(array_agg(pi.image_url) FILTER (WHERE pi.image_url IS NOT NULL), '{}') AS images_url
       FROM products p
       JOIN categories c ON p.category_id = c.id
       LEFT JOIN product_images pi ON pi.product_id = p.id
       WHERE 1=1
+      GROUP BY p.id, c.type, c.name
     `;
       const values = [];
       let index = 1;
@@ -125,11 +126,17 @@ const productRepository = {
 
       if (images && images.length > 0) {
         await Promise.all(
-          images.map((url, idx) =>
+          images.map((image, idx) =>
             pool.query(
-              `INSERT INTO product_images (product_id, image_url, is_main, sort_order)
-               VALUES ($1, $2, $3, $4)`,
-              [productId, url, idx === 0, idx]
+              `UPDATE product_images
+               SET 
+                 product_id = $1,
+                 image_url = $2,
+                 is_main = $3,
+                 sort_order = $4,
+                 is_temp = $5
+               WHERE public_id = $6`,
+              [productId, image.url, idx === 0, idx, false, image.public_id]
             )
           )
         );
