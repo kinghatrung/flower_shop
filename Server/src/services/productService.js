@@ -38,7 +38,8 @@ const productService = {
     price,
     original_price,
     is_new,
-    is_best_seller
+    is_best_seller,
+    images
   ) => {
     try {
       const slug = slugify(name);
@@ -51,7 +52,8 @@ const productService = {
         original_price,
         is_new,
         is_best_seller,
-        slug
+        slug,
+        images
       );
       return product;
     } catch (err) {

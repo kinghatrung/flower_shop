@@ -1,29 +1,41 @@
-import { promises as fs } from 'fs';
 import cloudinary from '../config/cloudinary.js';
+import fs from 'fs/promises';
+
+import uploadRepository from '../repositories/uploadRepository.js';
 
 const uploadService = {
-  uploadImage: async (file) => {
-    try {
-      const result = await cloudinary.uploader.upload(file.path, {
-        folder: 'BANK',
+  uploadImages: async (files) => {
+    if (!files || files.length === 0) {
+      throw new Error('Không có ảnh nào được upload');
+    }
+
+    // Upload từng ảnh lên Cloudinary song song
+    const uploadPromises = files.map((file) =>
+      cloudinary.uploader.upload(file.path, {
+        folder: process.env.CLOUDINARY_FOLDER_NAME,
         format: 'webp',
         resource_type: 'image',
         quality: 'auto:good',
-      });
+      })
+    );
 
-      // Xóa file local sau khi upload thành công
-      await fs.unlink(file.path);
+    const results = await Promise.all(uploadPromises);
 
-      return {
-        originalName: file.originalname,
-        cloudinaryUrl: result.secure_url,
+    // Xóa file tạm trên disk sau khi upload thành công
+    await Promise.all(files.map((file) => fs.unlink(file.path)));
+
+    // Lưu metadata vào DB song song
+    const savePromises = results.map((result) =>
+      uploadRepository.saveImageMetadata({
+        url: result.secure_url,
         publicId: result.public_id,
-        size: file.size,
-      };
-    } catch (err) {
-      await fs.unlink(file.path);
-      throw err;
-    }
+        productId: null,
+        isTemp: true,
+      })
+    );
+    const savedImages = await Promise.all(savePromises);
+
+    return savedImages;
   },
 };
 

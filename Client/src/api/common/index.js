@@ -65,3 +65,8 @@ export const editCategory = async (idCategory, data) => {
 export const sendEmail = async (data) => {
   return await authorizedAxiosInstance.post(`${API_URL}/api/email/send`, data)
 }
+
+// UPLOAD IMAGES
+export const uploadImage = async (formData) => {
+  return await authorizedAxiosInstance.post(`${API_URL}/api/upload/images`, formData)
+}

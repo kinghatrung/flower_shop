@@ -5,9 +5,14 @@ const productRepository = {
     const { category_type, search, priceRange, status } = filters;
     try {
       let query = `
-      SELECT p.*, c.type AS category_type, c.name AS category_name
+      SELECT 
+        p.*, 
+        c.type AS category_type, 
+        c.name AS category_name,
+        pi.image_url AS pi_images
       FROM products p
       JOIN categories c ON p.category_id = c.id
+      LEFT JOIN product_images pi ON pi.product_id = p.id
       WHERE 1=1
     `;
       const values = [];
@@ -96,12 +101,14 @@ const productRepository = {
     original_price,
     is_new,
     is_best_seller,
-    slug
+    slug,
+    images
   ) => {
     try {
       const query = `
         INSERT INTO products (name, price, original_price, category_id, description, is_new, is_best_seller, slug)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        RETURNING id
       `;
       const result = await pool.query(query, [
         name,
@@ -113,6 +120,20 @@ const productRepository = {
         is_best_seller,
         slug,
       ]);
+
+      const productId = result.rows[0].id;
+
+      if (images && images.length > 0) {
+        await Promise.all(
+          images.map((url, idx) =>
+            pool.query(
+              `INSERT INTO product_images (product_id, image_url, is_main, sort_order)
+               VALUES ($1, $2, $3, $4)`,
+              [productId, url, idx === 0, idx]
+            )
+          )
+        );
+      }
 
       return result;
     } catch (err) {
