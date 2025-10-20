@@ -32,6 +32,18 @@ const productController = {
     }
   },
 
+  getProductsByCategory: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const products = await productService.getProductsByCategory(id);
+
+      res.status(200).json({ data: products });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  },
+
   getProduct: async (req, res) => {
     try {
       const { id } = req.params;

@@ -7,6 +7,9 @@ const productRouter = Router();
 // GET /api/products - Get all products
 productRouter.get('/', productController.getProducts);
 
+// GET /api/products/category/:id - Get products by category Id
+productRouter.get('/category/:id', productController.getProductsByCategory);
+
 // GET /api/product - Get product
 productRouter.get('/product/:id', productController.getProduct);
 
