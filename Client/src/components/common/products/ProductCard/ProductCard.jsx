@@ -13,6 +13,8 @@ function ProductCard({ product }) {
   const [isLoading, setIsLoading] = useState(false)
   const { dispatch: cartDispatch } = useCart()
 
+  const mainImage = product?.images?.find((img) => img.is_main === true)?.url
+
   const handleAddToCart = async () => {
     setIsLoading(true)
     cartDispatch({ type: 'ADD_ITEM', payload: product })
@@ -35,7 +37,7 @@ function ProductCard({ product }) {
           className='cursor-pointer'
         >
           <img
-            src={product.images_url[0] || '/image/Nuvexa.png'}
+            src={mainImage || '/image/Nuvexa.png'}
             alt={product.name}
             className='object-cover group-hover:scale-105 transition-transform duration-300'
           />

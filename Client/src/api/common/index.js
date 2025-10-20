@@ -24,6 +24,11 @@ export const getProducts = async (page, limit, filters = {}) => {
   return res.data
 }
 
+export const getProductsByCategoryId = async (id) => {
+  const res = await authorizedAxiosInstance.get(`${API_URL}/api/products/category/${id}`)
+  return res.data
+}
+
 export const getProduct = async (id) => {
   const res = await authorizedAxiosInstance.get(`${API_URL}/api/products/product/${id}`)
   return res.data

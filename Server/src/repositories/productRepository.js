@@ -78,12 +78,56 @@ const productRepository = {
     }
   },
 
+  getProductsByCategory: async (id) => {
+    try {
+      const query = `
+        SELECT 
+          p.*, 
+          c.type AS category_type,
+          COALESCE(
+            json_agg(
+              json_build_object(
+                'url', pi.image_url,
+                'is_main', pi.is_main
+              )
+            ) FILTER (WHERE pi.image_url IS NOT NULL),
+            '[]'
+          ) AS images
+        FROM products p
+        JOIN categories c ON p.category_id = c.id
+        LEFT JOIN product_images pi ON pi.product_id = p.id
+        WHERE p.category_id = $1
+        GROUP BY p.id, c.type
+      `;
+
+      const result = await pool.query(query, [id]);
+
+      return result.rows;
+    } catch (err) {
+      throw err;
+    }
+  },
+
   getProduct: async (id) => {
     const query = `
-      SELECT p.*, c.type AS category_type, c.name AS category_name
+      SELECT 
+        p.*, 
+        c.type AS category_type, 
+        c.name AS category_name,
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'url', pi.image_url,
+              'is_main', pi.is_main
+            )
+          ) FILTER (WHERE pi.image_url IS NOT NULL),
+          '[]'
+        ) AS images
       FROM products p
       JOIN categories c ON p.category_id = c.id
+      LEFT JOIN product_images pi ON pi.product_id = p.id
       WHERE p.id = $1
+      GROUP BY p.id, c.type, c.name
     `;
     try {
       const result = await pool.query(query, [id]);
