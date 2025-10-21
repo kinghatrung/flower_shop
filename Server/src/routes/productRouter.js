@@ -19,4 +19,7 @@ productRouter.post('/post', productController.createProduct);
 // PATCH /api/products/post - Edit product
 productRouter.patch('/edit/:productId', productController.editProduct);
 
+// PATCH /api/products/delete/:productId - Delete product
+productRouter.delete('/delete/:productId', productController.deleteProductById);
+
 export default productRouter;

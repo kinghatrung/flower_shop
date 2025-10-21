@@ -45,6 +45,10 @@ export const editProduct = async (productId, newProductData) => {
   )
 }
 
+export const deleteProductById = async (productId) => {
+  return await authorizedAxiosInstance.delete(`${API_URL}/api/products/delete/${productId}`)
+}
+
 // CATEGORIES
 export const getCategories = async (filters = {}) => {
   const params = new URLSearchParams(filters).toString()

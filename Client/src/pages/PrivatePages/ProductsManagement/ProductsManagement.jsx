@@ -15,7 +15,7 @@ import {
 } from '~/components/ui/dropdown-menu'
 import useQueryParams from '~/hooks/useQueryParams'
 import HeaderTable from '~/components/common/HeaderTable'
-import { getProducts, createProduct, editProduct } from '~/api'
+import { getProducts, createProduct, editProduct, deleteProductById } from '~/api'
 import ProductFormDialog from '~/components/common/ProductFormDialog'
 import DataTable from '~/components/common/DataTable'
 import { FilterContainer, FilterInput, FilterSelect } from '~/components/common/Filters'
@@ -96,20 +96,29 @@ function ProductsManagement() {
     }
   }
 
+  const handleDeleteProductById = async (productId) => {
+    await deleteProductById(productId)
+    await queryClient.invalidateQueries(['products'])
+  }
+
   const columns = [
     {
       title: 'ID',
-      render: (item, index) => index + 1,
+      render: (item, index) => (page - 1) * limit + index + 1,
       skeletonClassName: 'h-4 w-8'
     },
     {
       title: 'Ảnh',
-      render: (item) => (
-        <img
-          src={item.images_url[0] || '/image/Nuvexa.png'}
-          className='h-20 min-w-[80px] object-cover rounded-md'
-        />
-      ),
+      render: (item) => {
+        const mainImage = item?.images?.find((img) => img.is_main === true)?.url
+
+        return (
+          <img
+            src={mainImage || '/image/Nuvexa.png'}
+            className='h-20 min-w-[80px] object-cover rounded-md'
+          />
+        )
+      },
       skeletonClassName: 'h-20 min-w-[80px]'
     },
     { title: 'Tên', key: 'name' },
@@ -146,7 +155,12 @@ function ProductsManagement() {
           Sửa thông tin
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className='text-red-600 cursor-pointer'>Xóa sản phẩm</DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => handleDeleteProductById(item.id)}
+          className='text-red-600 cursor-pointer'
+        >
+          Xóa sản phẩm
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

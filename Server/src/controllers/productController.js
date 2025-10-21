@@ -115,6 +115,17 @@ const productController = {
       res.status(500).json({ message: err.message });
     }
   },
+
+  deleteProductById: async (req, res) => {
+    try {
+      const { productId } = req.params;
+      await productService.deleteProductById(productId);
+
+      res.status(200).json({ message: 'Xóa sản phẩm thành công' });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  },
 };
 
 export default productController;

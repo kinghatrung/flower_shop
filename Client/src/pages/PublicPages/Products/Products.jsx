@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useInfiniteQuery } from '@tanstack/react-query'
@@ -88,8 +89,6 @@ function Products() {
     if (priceRange[1] !== 10000000) params.maxPrice = priceRange[1]
 
     setSearchParams(params)
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appliedSearch, selectedCategory, priceRange])
 
   return (

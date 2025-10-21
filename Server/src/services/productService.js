@@ -101,6 +101,16 @@ const productService = {
       throw err;
     }
   },
+
+  deleteProductById: async (productId) => {
+    try {
+      await productRepository.deleteProductById(productId);
+
+      return;
+    } catch (err) {
+      throw err;
+    }
+  },
 };
 
 export default productService;
