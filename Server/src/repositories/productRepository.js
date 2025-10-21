@@ -7,7 +7,7 @@ const productRepository = {
       // --- Phần SELECT ---
       let query = `
         SELECT 
-          p.id, p.name, p.price, p.created_at, p.is_new, p.is_best_seller,
+          p.*,
           c.type AS category_type, c.name AS category_name,
           COALESCE(
             json_agg(
@@ -110,6 +110,36 @@ const productRepository = {
         currentPage: page,
         pageSize: limit,
       };
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  getProductsAll: async () => {
+    try {
+      const query = `
+        SELECT 
+          p.*,
+          c.type AS category_type, c.name AS category_name,
+          COALESCE(
+          json_agg(
+            json_build_object(
+            'url', pi.image_url,
+            'is_main', pi.is_main
+            )
+          ) FILTER (WHERE pi.image_url IS NOT NULL),
+          '[]'
+          ) AS images
+        FROM products p
+        JOIN categories c ON p.category_id = c.id
+        LEFT JOIN product_images pi ON pi.product_id = p.id
+        GROUP BY p.id, c.type, c.name
+        ORDER BY p.created_at DESC
+      `;
+
+      const result = await pool.query(query);
+
+      return result.rows;
     } catch (err) {
       throw err;
     }

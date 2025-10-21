@@ -29,6 +29,11 @@ export const getProductsByCategoryId = async (id) => {
   return res.data
 }
 
+export const getProductsAll = async () => {
+  const res = await authorizedAxiosInstance.get(`${API_URL}/api/products/all`)
+  return res.data
+}
+
 export const getProduct = async (id) => {
   const res = await authorizedAxiosInstance.get(`${API_URL}/api/products/product/${id}`)
   return res.data

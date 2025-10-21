@@ -21,6 +21,16 @@ const productService = {
     }
   },
 
+  getProductsAll: async () => {
+    try {
+      const result = await productRepository.getProductsAll();
+
+      return result;
+    } catch (err) {
+      throw err;
+    }
+  },
+
   getProductsByCategory: async (id) => {
     try {
       const products = await productRepository.getProductsByCategory(id);
