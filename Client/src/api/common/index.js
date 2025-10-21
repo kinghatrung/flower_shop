@@ -29,6 +29,11 @@ export const getProductsByCategoryId = async (id) => {
   return res.data
 }
 
+export const getProductsAll = async () => {
+  const res = await authorizedAxiosInstance.get(`${API_URL}/api/products/all`)
+  return res.data
+}
+
 export const getProduct = async (id) => {
   const res = await authorizedAxiosInstance.get(`${API_URL}/api/products/product/${id}`)
   return res.data
@@ -43,6 +48,10 @@ export const editProduct = async (productId, newProductData) => {
     `${API_URL}/api/products/edit/${productId}`,
     newProductData
   )
+}
+
+export const deleteProductById = async (productId) => {
+  return await authorizedAxiosInstance.delete(`${API_URL}/api/products/delete/${productId}`)
 }
 
 // CATEGORIES

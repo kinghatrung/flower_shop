@@ -57,8 +57,6 @@ function FormImageField({ id, label, errors, register, required, maxImages = 5, 
     })
   }
 
-  console.log(images)
-
   const handleDragOver = (e) => {
     e.preventDefault()
     setIsDragging(true)

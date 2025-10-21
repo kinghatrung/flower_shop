@@ -21,6 +21,16 @@ const productService = {
     }
   },
 
+  getProductsAll: async () => {
+    try {
+      const result = await productRepository.getProductsAll();
+
+      return result;
+    } catch (err) {
+      throw err;
+    }
+  },
+
   getProductsByCategory: async (id) => {
     try {
       const products = await productRepository.getProductsByCategory(id);
@@ -97,6 +107,16 @@ const productService = {
       );
 
       return product;
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  deleteProductById: async (productId) => {
+    try {
+      await productRepository.deleteProductById(productId);
+
+      return;
     } catch (err) {
       throw err;
     }
