@@ -29,7 +29,7 @@ function Cart() {
 
   if (cartState.items.length === 0) {
     return (
-      <div className='min-h-screen bg-background'>
+      <div className='min-h-screen bg-background flex justify-center items-center'>
         <div className='pt-24 pb-16 px-4'>
           <div className='max-w-4xl mx-auto text-center'>
             <div className='space-y-6'>
