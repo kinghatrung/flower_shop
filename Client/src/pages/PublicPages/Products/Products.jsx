@@ -98,7 +98,7 @@ function Products() {
         <div
           ref={headerRef}
           className={`text-center space-y-4 mb-12 transition-all duration-700 ${
-            headerVisible ? 'animate-fade-in-up' : ''
+            headerVisible ? 'animate-fade-in-up' : 'opacity-0'
           }`}
         >
           <h1 className='font-serif text-4xl lg:text-5xl font-bold text-foreground'>
@@ -116,7 +116,7 @@ function Products() {
             <div
               ref={filtersRef}
               className={`sticky top-24 transition-all duration-700 ${
-                filtersVisible ? 'animate-slide-in-left' : ''
+                filtersVisible ? 'animate-slide-in-left' : 'opacity-0'
               }`}
             >
               <ProductFilters
@@ -136,7 +136,7 @@ function Products() {
             <div
               ref={productsRef}
               className={`transition-all duration-700 ${
-                productsVisible ? 'animate-fade-in-up' : ''
+                productsVisible ? 'animate-fade-in-up' : 'opacity-0'
               }`}
             >
               <div className='flex items-center justify-between mb-6'>
@@ -158,7 +158,7 @@ function Products() {
                     <div
                       key={product.id}
                       className={`transition-all duration-500 ${
-                        productsVisible ? 'animate-fade-in-up' : ''
+                        productsVisible ? 'animate-fade-in-up' : 'opacity-0'
                       }`}
                       style={{
                         animationDelay: productsVisible ? `${index * 0.1}s` : '0s'

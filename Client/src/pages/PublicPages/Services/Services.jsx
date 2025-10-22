@@ -34,7 +34,7 @@ function Services() {
         {/* Services Grid */}
         <div
           ref={servicesRef}
-          className={`grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16 stagger-children animate ${servicesVisible ? '' : 'opacity-0'}`}
+          className={`grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16 stagger-children animate ${servicesVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
         >
           {services.map((service, index) => {
             const IconComponent = service.icon
