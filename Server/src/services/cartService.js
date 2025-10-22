@@ -24,6 +24,26 @@ const cartService = {
       throw err;
     }
   },
+
+  updateQuantity: async (userId, productId, quantity) => {
+    try {
+      await cartRepository.updateQuantity(userId, productId, quantity);
+
+      return;
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  deleteProductCart: async (userId, productId) => {
+    try {
+      await cartRepository.deleteProductCart(userId, productId);
+
+      return;
+    } catch (err) {
+      throw err;
+    }
+  },
 };
 
 export default cartService;

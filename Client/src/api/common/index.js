@@ -84,3 +84,24 @@ export const sendEmail = async (data) => {
 export const uploadImage = async (formData) => {
   return await authorizedAxiosInstance.post(`${API_URL}/api/upload/images`, formData)
 }
+
+// CART USER
+export const getProductCart = async (userId) => {
+  const res = await authorizedAxiosInstance.get(`${API_URL}/api/cart/${userId}`)
+  return res.data
+}
+
+export const createProductCartUser = async (payload) => {
+  return await authorizedAxiosInstance.post(`${API_URL}/api/cart/create`, payload)
+}
+
+export const updateProductCartUser = async (payload) => {
+  const res = await authorizedAxiosInstance.put(`${API_URL}/api/cart/update`, payload)
+  return res.data
+}
+
+export const deleteProductCartUser = async (userId, productId) => {
+  return await authorizedAxiosInstance.delete(`${API_URL}/api/cart/delete/${productId}`, {
+    data: { userId }
+  })
+}

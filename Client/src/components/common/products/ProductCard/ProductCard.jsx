@@ -9,6 +9,7 @@ import { Card, CardContent } from '~/components/ui/card'
 import { useCart } from '~/context'
 import { ROUTES } from '~/constants'
 import { selectCurrentUser } from '~/redux/slices/authSlice'
+import { createProductCartUser } from '~/api'
 
 function ProductCard({ product }) {
   const navigate = useNavigate()
@@ -22,10 +23,15 @@ function ProductCard({ product }) {
 
   const handleAddToCart = async () => {
     if (!user) return navigate(ROUTES.LOGIN)
+    const payload = {
+      userId: user?.user_id,
+      productId: product?.id,
+      quantity: 1
+    }
 
     setIsLoading(true)
-    cartDispatch({ type: 'ADD_ITEM', payload: product })
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    await createProductCartUser(payload)
+    // cartDispatch({ type: 'ADD_ITEM', payload: product })
     setIsLoading(false)
   }
 
