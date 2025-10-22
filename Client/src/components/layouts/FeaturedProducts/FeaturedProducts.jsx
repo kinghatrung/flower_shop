@@ -1,16 +1,25 @@
 import { useState, useEffect } from 'react'
-import { Star, Heart, ShoppingCart, IceCreamBowl } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 
 import { Button } from '~/components/ui/button'
-import { Card, CardContent } from '~/components/ui/card'
 import { Badge } from '~/components/ui/badge'
 import { ROUTES } from '~/constants/'
 import { getProductsAll } from '~/api'
 import ProductCard from '~/components/common/products/ProductCard'
+import { useScrollAnimation } from '~/hooks/useScrollAnimationOptions'
 
 function FeaturedProducts() {
+  const { data } = useQuery({
+    queryKey: ['products'],
+    queryFn: () => getProductsAll()
+  })
+
+  const products = data?.data
+    ?.filter((product) => product.is_new && product.is_best_seller)
+    .slice(0, 3)
+
+  const { isVisible: productsVisible, ref: productsRef } = useScrollAnimation()
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
@@ -28,16 +37,6 @@ function FeaturedProducts() {
 
     return () => observer.disconnect()
   }, [])
-
-  const { data } = useQuery({
-    queryKey: ['products'],
-    queryFn: () => getProductsAll(),
-    keepPreviousData: true
-  })
-
-  const products = data?.data
-    ?.filter((product) => product.is_new && product.is_best_seller)
-    .slice(0, 3)
 
   return (
     <section
@@ -57,9 +56,17 @@ function FeaturedProducts() {
           </p>
         </div>
 
-        <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-8'>
-          {products?.map((product) => (
-            <ProductCard product={product} />
+        <div ref={productsRef} className='grid md:grid-cols-2 lg:grid-cols-3 gap-8'>
+          {products?.map((product, index) => (
+            <div
+              key={product.id}
+              className={`transition-all duration-500 ${productsVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
+              style={{
+                animationDelay: productsVisible ? `${index * 0.1}s` : '0s'
+              }}
+            >
+              <ProductCard product={product} />
+            </div>
           ))}
         </div>
 

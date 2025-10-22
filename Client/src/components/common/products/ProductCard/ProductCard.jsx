@@ -1,14 +1,19 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Star, Heart, ShoppingCart } from 'lucide-react'
+import { useSelector } from 'react-redux'
 
 import { Button } from '~/components/ui/button'
 import { Badge } from '~/components/ui/badge'
 import { Card, CardContent } from '~/components/ui/card'
 import { useCart } from '~/context'
 import { ROUTES } from '~/constants'
+import { selectCurrentUser } from '~/redux/slices/authSlice'
 
 function ProductCard({ product }) {
+  const navigate = useNavigate()
+  const user = useSelector(selectCurrentUser)
+
   const [isLiked, setIsLiked] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const { dispatch: cartDispatch } = useCart()
@@ -16,6 +21,8 @@ function ProductCard({ product }) {
   const mainImage = product?.images?.find((img) => img.is_main === true)?.url
 
   const handleAddToCart = async () => {
+    if (!user) return navigate(ROUTES.LOGIN)
+
     setIsLoading(true)
     cartDispatch({ type: 'ADD_ITEM', payload: product })
     await new Promise((resolve) => setTimeout(resolve, 500))

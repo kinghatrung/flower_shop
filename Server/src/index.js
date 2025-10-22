@@ -14,6 +14,7 @@ import productRouter from './routes/productRouter.js';
 import categoryRouter from './routes/categoryRouter.js';
 import emailRouter from './routes/emailRouter.js';
 import uploadRouter from './routes/uploadRouter.js';
+import cartRouter from './routes/cartRouter.js';
 
 dotenv.config();
 const app = express();
@@ -57,6 +58,7 @@ app.use('/api/products', productRouter);
 app.use('/api/categories', categoryRouter);
 app.use('/api/email', emailRouter);
 app.use('/api/upload', uploadRouter);
+app.use('/api/cart', cartRouter);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../Client/dist')));

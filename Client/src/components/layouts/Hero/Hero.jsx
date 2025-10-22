@@ -35,7 +35,7 @@ function Hero() {
       <div className='max-w-7xl mx-auto'>
         <div className='grid lg:grid-cols-2 gap-12 items-center'>
           {/* Left Content */}
-          <div className={`space-y-8 ${isVisible ? 'animate-slide-in-left' : ''}`}>
+          <div className={`space-y-8 ${isVisible ? 'animate-slide-in-left' : 'opacity-0'}`}>
             <div className='flex items-center space-x-4'>
               <Badge variant='secondary' className='bg-primary/10 text-primary hover:bg-primary/20'>
                 <Star className='w-4 h-4 mr-1 fill-current' />
@@ -57,7 +57,7 @@ function Hero() {
               </p>
             </div>
 
-            <div className={`${isVisible ? 'animate-bounce-in animate-delay-1000' : ''}`}>
+            <div className={`${isVisible ? 'animate-bounce-in animate-delay-1000' : 'opacity-0'}`}>
               <Link to={ROUTES.CONTACT}>
                 <Button
                   size='lg'
@@ -72,7 +72,7 @@ function Hero() {
           </div>
 
           {/* Right Content - Flower Image */}
-          <div className={`relative ${isVisible ? 'animate-slide-in-right' : ''}`}>
+          <div className={`relative ${isVisible ? 'animate-slide-in-right' : 'opacity-0'}`}>
             <div className='relative'>
               <Badge className='absolute top-4 right-4 z-10 bg-secondary text-secondary-foreground'>
                 <Star className='w-4 h-4 mr-1 fill-current' />
