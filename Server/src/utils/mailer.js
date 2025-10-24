@@ -272,3 +272,158 @@ export const sendEmailContact = async (data) => {
 
   await transporter.sendMail(sendEmailOption);
 };
+
+export const sendOrderSuccessEmail = async (
+  orderData,
+  cartItems,
+  totalAmount,
+  orderCode
+) => {
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: orderData.email,
+    subject: `Đơn hàng ${orderCode} của bạn đã được đặt thành công`,
+    text: `Xin chào ${orderData.fullName}, đơn hàng ${orderCode} của bạn đã được đặt thành công.`,
+    html: `
+      <!DOCTYPE html>
+        <html lang="vi">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Đơn hàng thành công - Nuvexa Luxury Flowers</title>
+        </head>
+        <body style="margin:0; padding:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #fef3f5; min-height:100vh;">
+
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="padding:40px 20px; background: linear-gradient(135deg, #fef3f5 0%, #f5e6f8 100%);">
+            <tr>
+              <td align="center">
+                <table role="presentation" width="100%" style="max-width:600px; border-collapse:collapse; background:#ffffff; border-radius:24px; overflow:hidden; box-shadow:0 20px 60px rgba(139,92,246,0.15);">
+                  
+                  <!-- Header -->
+                  <tr>
+                    <td style="background:linear-gradient(135deg, #f8c8d3 0%, #c084fc 100%); padding:40px 30px; text-align:center;">
+                      <h1 style="margin:0; font-size:32px; font-weight:700; color:#fff; text-shadow:0 2px 10px rgba(0,0,0,0.1);">🌸 Nuvexa Luxury Flowers</h1>
+                      <p style="margin:10px 0 0 0; font-size:16px; font-weight:500; color:rgba(255,255,255,0.95);">Nơi mỗi bông hoa kể một câu chuyện</p>
+                    </td>
+                  </tr>
+
+                  <!-- Body -->
+                  <tr>
+                    <td style="padding:50px 40px;">
+                      <h2 style="margin:0 0 10px 0; font-size:26px; font-weight:700; color:#1f2937; text-align:center;">✅ Đơn hàng đã được đặt thành công</h2>
+                      <p style="margin:0 0 30px 0; font-size:16px; color:#6b7280; text-align:center;">Cảm ơn bạn, ${orderData.fullName}! Đơn hàng của bạn đã được xác nhận và sẽ được xử lý sớm.</p>
+
+                      <!-- Order Info -->
+                      <table role="presentation" width="100%" style="border-collapse:collapse; background:#fef3f5; border-radius:12px; padding:24px; margin-bottom:30px;">
+                        <tr>
+                          <td style="padding:0;">
+                            <table role="presentation" width="100%" style="border-collapse:collapse;">
+                              <tr>
+                                <td style="padding:12px 0; border-bottom:1px solid #f5e6f8;">
+                                  <p style="margin:0 0 4px 0; font-size:12px; font-weight:700; color:#8b5cf6; text-transform:uppercase;">Mã đơn hàng</p>
+                                  <p style="margin:0; font-size:16px; font-weight:600; color:#1f2937;">${orderCode}</p>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding:12px 0; border-bottom:1px solid #f5e6f8;">
+                                  <p style="margin:0 0 4px 0; font-size:12px; font-weight:700; color:#8b5cf6; text-transform:uppercase;">Họ tên khách hàng</p>
+                                  <p style="margin:0; font-size:16px; font-weight:600; color:#1f2937;">${orderData.fullName}</p>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding:12px 0; border-bottom:1px solid #f5e6f8;">
+                                  <p style="margin:0 0 4px 0; font-size:12px; font-weight:700; color:#8b5cf6; text-transform:uppercase;">Số điện thoại</p>
+                                  <p style="margin:0; font-size:16px; font-weight:600; color:#1f2937;">${orderData.phone}</p>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding:12px 0; border-bottom:1px solid #f5e6f8;">
+                                  <p style="margin:0 0 4px 0; font-size:12px; font-weight:700; color:#8b5cf6; text-transform:uppercase;">Email</p>
+                                  <p style="margin:0; font-size:16px; font-weight:600; color:#1f2937;">${orderData.email}</p>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding:12px 0; border-bottom:1px solid #f5e6f8;">
+                                  <p style="margin:0 0 4px 0; font-size:12px; font-weight:700; color:#8b5cf6; text-transform:uppercase;">Địa chỉ giao hàng</p>
+                                  <p style="margin:0; font-size:16px; font-weight:600; color:#1f2937;">${orderData.address}</p>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding:12px 0;">
+                                  <p style="margin:0 0 4px 0; font-size:12px; font-weight:700; color:#8b5cf6; text-transform:uppercase;">Phương thức thanh toán</p>
+                                  <p style="margin:0; font-size:16px; font-weight:600; color:#1f2937;">${orderData.payment_method}</p>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <!-- Cart Items -->
+                      <table role="presentation" width="100%" style="border-collapse:collapse; background:#fef3f5; border-left:4px solid #f8c8d3; border-radius:8px; padding:20px; margin-bottom:30px;">
+                        <tr>
+                          <td>
+                            <p style="margin:0 0 15px 0; font-size:15px; font-weight:600; color:#1f2937;">📦 Danh sách sản phẩm:</p>
+                            <table role="presentation" width="100%" style="border-collapse:collapse;">
+                              ${cartItems
+                                .map(
+                                  (item) => `
+                                <tr>
+                                  <td style="padding:12px 0; border-bottom:1px solid #f5e6f8; vertical-align:top;">
+                                    ${item.image ? `<img src="${item.image}" alt="${item.name}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;margin-right:12px;display:inline-block;vertical-align:top;">` : ''}
+                                    <div style="display:inline-block; vertical-align:top; width:calc(100% - 100px);">
+                                      <p style="margin:0 0 4px 0; font-size:14px; font-weight:600; color:#1f2937;">${item.name}</p>
+                                      <p style="margin:0 0 4px 0; font-size:13px; color:#6b7280;">Số lượng: <strong>${item.quantity}</strong></p>
+                                      <p style="margin:0; font-size:14px; font-weight:600; color:#8b5cf6;">${item.price.toLocaleString('vi-VN', { maximumFractionDigits: 0 })} VNĐ</p>
+                                    </div>
+                                  </td>
+                                </tr>`
+                                )
+                                .join('')}
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <!-- Total Amount -->
+                      <table role="presentation" width="100%" style="border-collapse:collapse; background:#f3f4f6; border-radius:8px; padding:20px; margin-bottom:30px;">
+                        <tr>
+                          <td style="text-align:right;">
+                            <p style="margin:0 0 10px 0; font-size:14px; color:#6b7280;">Tổng cộng:</p>
+                            <p style="margin:0; font-size:24px; font-weight:700; color:#8b5cf6;">${totalAmount.toLocaleString('vi-VN', { maximumFractionDigits: 0 })} VNĐ</p>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <p style="margin:0; font-size:14px; line-height:1.6; color:#6b7280; text-align:center;">Bạn sẽ nhận được email cập nhật về tình trạng đơn hàng của mình. Nếu có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi.</p>
+                    </td>
+                  </tr>
+
+                  <!-- Footer -->
+                  <tr>
+                    <td style="background:linear-gradient(135deg, #1f2937 0%, #374151 100%); padding:30px 40px; text-align:center;">
+                      <p style="margin:0 0 15px 0; font-size:16px; font-weight:600; color:#fff;">Nuvexa Luxury Flowers</p>
+                      <p style="margin:0 0 15px 0; font-size:14px; line-height:1.6; color:#d1d5db;">
+                        📍 Mễ Trì Thượng, Quận Từ Liêm, Hà Nội<br>
+                        📞 0961 753 837 | 📧 myzlucky2706@gmail.com
+                      </p>
+                      <div style="margin:20px 0 0 0;">
+                        <a href="#" style="margin:0 8px; color:#f8c8d3; text-decoration:none; font-size:24px;">📘</a>
+                        <a href="#" style="margin:0 8px; color:#f8c8d3; text-decoration:none; font-size:24px;">📷</a>
+                        <a href="#" style="margin:0 8px; color:#f8c8d3; text-decoration:none; font-size:24px;">🐦</a>
+                      </div>
+                      <p style="margin:20px 0 0 0; font-size:12px; color:#9ca3af;">© 2025 Nuvexa Luxury Flowers. All rights reserved.</p>
+                    </td>
+                  </tr>
+
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
