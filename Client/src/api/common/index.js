@@ -105,3 +105,9 @@ export const deleteProductCartUser = async (userId, productId) => {
     data: { userId }
   })
 }
+
+// ORDER PRODUCTS
+export const createOrder = async (payload) => {
+  const res = await authorizedAxiosInstance.post(`${API_URL}/api/order/create`, payload)
+  return res.data
+}
