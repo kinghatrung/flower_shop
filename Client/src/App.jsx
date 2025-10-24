@@ -25,6 +25,7 @@ import ProductsManagement from '~/pages/PrivatePages/ProductsManagement'
 import DashBoard from '~/pages/PrivatePages/DashBoard'
 import SystemSettings from '~/pages/PrivatePages/SystemSettings'
 import OrdersManagement from '~/pages/PrivatePages/OrdersManagement'
+import Success from '~/pages/PrivatePages/Checkout/Success'
 
 import ForgotPassword from '~/pages/PublicPages/Auth/ForgotPassword'
 import Login from '~/pages/PublicPages/Auth/Login'
@@ -34,7 +35,7 @@ import Products from '~/pages/PublicPages/Products'
 import Services from '~/pages/PublicPages/Services'
 import Contact from '~/pages/PublicPages/Contact'
 import Product from '~/pages/PublicPages/Products/[id]'
-import ButtonFacebook from './components/common/ButtonFacebook'
+import ButtonFacebook from '~/components/common/ButtonFacebook'
 
 const ProtectedRoute = ({ user }) => {
   if (!user) return <Navigate to={ROUTES.LOGIN} replace />
@@ -87,6 +88,7 @@ function App() {
             <Route element={<RbacRouter requiredPermission={permissions.PLACE_ORDER} />}>
               <Route path={ROUTES.CART} element={<Cart />} />
               <Route path={ROUTES.CHECKOUT} element={<Checkout />} />
+              <Route path={ROUTES.SUCCESS} element={<Success />} />
             </Route>
           </Route>
 

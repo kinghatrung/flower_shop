@@ -2,11 +2,12 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Star, Heart, ShoppingCart } from 'lucide-react'
 import { useSelector } from 'react-redux'
+import { useQueryClient } from '@tanstack/react-query'
+import numeral from 'numeral'
 
 import { Button } from '~/components/ui/button'
 import { Badge } from '~/components/ui/badge'
 import { Card, CardContent } from '~/components/ui/card'
-import { useCart } from '~/context'
 import { ROUTES } from '~/constants'
 import { selectCurrentUser } from '~/redux/slices/authSlice'
 import { createProductCartUser } from '~/api'
@@ -14,10 +15,10 @@ import { createProductCartUser } from '~/api'
 function ProductCard({ product }) {
   const navigate = useNavigate()
   const user = useSelector(selectCurrentUser)
+  const queryClient = useQueryClient()
 
   const [isLiked, setIsLiked] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const { dispatch: cartDispatch } = useCart()
 
   const mainImage = product?.images?.find((img) => img.is_main === true)?.url
 
@@ -31,15 +32,8 @@ function ProductCard({ product }) {
 
     setIsLoading(true)
     await createProductCartUser(payload)
-    // cartDispatch({ type: 'ADD_ITEM', payload: product })
+    await queryClient.invalidateQueries(['cart', user?.user_id])
     setIsLoading(false)
-  }
-
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
-    }).format(price)
   }
 
   return (
@@ -118,10 +112,12 @@ function ProductCard({ product }) {
 
           {/* Price */}
           <div className='flex items-center gap-2'>
-            <span className='font-bold text-foreground'>{formatPrice(product.price)}</span>
+            <span className='font-bold text-foreground'>
+              {numeral(product.price).format('0,0') + ' đ'}
+            </span>
             {product.original_price && (
               <span className='text-sm text-muted-foreground line-through'>
-                {formatPrice(product.original_price)}
+                {numeral(product.original_price).format('0,0') + ' đ'}
               </span>
             )}
           </div>

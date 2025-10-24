@@ -3,9 +3,9 @@ import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { Search, ShoppingCart, Menu, X, Heart, User } from 'lucide-react'
 import clsx from 'clsx'
 import { useSelector, useDispatch } from 'react-redux'
+import { useQuery } from '@tanstack/react-query'
 
 import { Button } from '~/components/ui/button'
-import { useCart } from '~/context'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
+import { getProductCart } from '~/api'
 import { ROUTES } from '~/constants'
 import { selectCurrentUser, logoutUser } from '~/redux/slices/authSlice'
 
@@ -22,11 +23,18 @@ function Header() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+  const { data } = useQuery({
+    queryKey: ['cart', user?.user_id],
+    queryFn: () => getProductCart(user?.user_id)
+  })
+
+  const products = data?.data
+  const totalProducts = products?.reduce((total, product) => total + product.quantity, 0)
+
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isHeaderVisible, setIsHeaderVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
-  const { state: cartState } = useCart()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -137,12 +145,12 @@ function Header() {
                 variant='ghost'
                 size='icon'
                 className='hover:bg-accent/10 hover:text-primary hover:scale-110 transition-all duration-300 relative cursor-pointer'
-                aria-label={`Giỏ hàng (${cartState.itemCount} sản phẩm)`}
+                aria-label={`Giỏ hàng (${products?.length} sản phẩm)`}
               >
                 <ShoppingCart className='h-5 w-5' />
-                {cartState.itemCount > 0 && (
+                {totalProducts > 0 && (
                   <span className='absolute -top-1 -right-1 bg-secondary text-secondary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse cursor-pointer'>
-                    {cartState.itemCount}
+                    {totalProducts}
                   </span>
                 )}
               </Button>

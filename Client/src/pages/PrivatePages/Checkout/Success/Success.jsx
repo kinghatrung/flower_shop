@@ -5,6 +5,7 @@ import { CheckCircle, Package, Truck, Phone } from 'lucide-react'
 
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { ROUTES } from '~/constants'
 
 function Success() {
   // const searchParams = useSearchParams()
@@ -115,14 +116,12 @@ function Success() {
                 </div>
               </div>
               <div className='flex gap-4'>
-                <Link href='/products'>
-                  <Button variant='outline'>Tiếp tục mua sắm</Button>
-                </Link>
-                <Link href='/'>
-                  <Button className='bg-secondary hover:bg-secondary/90 text-secondary-foreground'>
-                    Về trang chủ
-                  </Button>
-                </Link>
+                <Button className='cursor-pointer' variant='outline'>
+                  <Link to={ROUTES.PRODUCTS}>Tiếp tục mua sắm</Link>
+                </Button>
+                <Button className='bg-secondary hover:bg-secondary/90 text-secondary-foreground cursor-pointer'>
+                  <Link to={ROUTES.HOME}>Về trang chủ</Link>
+                </Button>
               </div>
             </div>
           </CardContent>

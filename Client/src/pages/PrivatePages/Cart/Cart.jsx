@@ -2,11 +2,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Minus, Plus, Trash2, ArrowLeft, ShoppingBag } from 'lucide-react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useSelector } from 'react-redux'
+import numeral from 'numeral'
 
 import { Button } from '~/components/ui/button'
 import { Card, CardContent } from '~/components/ui/card'
 import { Separator } from '~/components/ui/separator'
-import { useCart } from '~/context'
 import { ROUTES } from '~/constants'
 import { getProductCart, deleteProductCartUser, updateProductCartUser } from '~/api'
 import { selectCurrentUser } from '~/redux/slices/authSlice'
@@ -15,23 +15,13 @@ function Cart() {
   const user = useSelector(selectCurrentUser)
   const queryClient = useQueryClient()
   const navigate = useNavigate()
-  const { state: cartState, dispatch: cartDispatch } = useCart()
 
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ['cart', user?.user_id],
     queryFn: () => getProductCart(user?.user_id)
   })
 
   const products = data?.data
-
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
-    }).format(price)
-  }
-
-  // const totalPrice = products.map(product =>)
 
   const updateQuantity = async (product, quantity) => {
     const payload = {
@@ -118,7 +108,7 @@ function Cart() {
                       </p>
                       <div className='flex items-center justify-between'>
                         <span className='font-bold text-foreground'>
-                          {formatPrice(product.price)}
+                          {numeral(product.price).format('0,0') + ' đ'}
                         </span>
 
                         <div className='flex items-center gap-3'>
@@ -167,13 +157,13 @@ function Cart() {
           {/* Order Summary */}
           <div className='lg:col-span-1'>
             <Card className='sticky top-24'>
-              <CardContent className='p-6 space-y-4'>
+              <CardContent className=' space-y-4'>
                 <h2 className='font-semibold text-lg'>Tóm tắt đơn hàng</h2>
 
                 <div className='space-y-2'>
                   <div className='flex justify-between text-sm'>
                     <span>Tạm tính ({products?.length} sản phẩm)</span>
-                    <span>{formatPrice(products[0].total_amount)}</span>
+                    <span>{numeral(products?.[0]?.total_amount).format('0,0') + ' đ'}</span>
                   </div>
                   <div className='flex justify-between text-sm'>
                     <span>Phí vận chuyển</span>
@@ -185,7 +175,7 @@ function Cart() {
 
                 <div className='flex justify-between font-bold text-lg'>
                   <span>Tổng cộng</span>
-                  <span>{formatPrice(products[0].total_amount)}</span>
+                  <span>{numeral(products?.[0]?.total_amount).format('0,0') + ' đ'}</span>
                 </div>
 
                 <Link to={ROUTES.CHECKOUT} className='block'>
