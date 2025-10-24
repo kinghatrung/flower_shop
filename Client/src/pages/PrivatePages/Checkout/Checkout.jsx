@@ -13,8 +13,9 @@ import { Separator } from '~/components/ui/separator'
 import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group'
 import { ROUTES } from '~/constants'
 import { selectCurrentUser } from '~/redux/slices/authSlice'
-import { getProductCart } from '~/api'
+import { getProductCart, createOrder } from '~/api'
 import { FormBase, FormField, FormTextarea } from '~/components/common/Form'
+import StepIndicator from '~/components/common/StepIndicator'
 
 function Checkout() {
   const navigate = useNavigate()
@@ -29,6 +30,7 @@ function Checkout() {
 
   const [isLoading, setIsLoading] = useState(false)
   const [currentStep, setCurrentStep] = useState(1)
+  const steps = ['Thông tin', 'Địa chỉ', 'Thanh toán']
 
   const {
     register,
@@ -47,7 +49,7 @@ function Checkout() {
       district: '',
       city: '',
       note: '',
-      paymentMethod: 'cod'
+      payment_method: 'cod'
     }
   })
 
@@ -66,7 +68,7 @@ function Checkout() {
       case 2:
         return values.address && values.ward && values.district && values.city
       case 3:
-        return values.paymentMethod
+        return values.payment_method
       default:
         return false
     }
@@ -74,14 +76,20 @@ function Checkout() {
 
   const handleSubmitOrder = async () => {
     const values = getValues()
-    console.log('Dữ liệu đầy đủ:', values)
+    // Lấy các trường cần thiết của sản phẩm trong giỏ hàng
+    const items = products.map((p) => ({
+      product_id: p.id,
+      quantity: p.quantity,
+      price: p.price,
+      name: p.name,
+      image: p.images?.find((img) => img.is_main === true)?.url
+    }))
+    const payload = { order: { ...values, user_id: user?.user_id }, items }
 
     if (!validateStep(3)) return
-
     setIsLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    const orderId = `BL${Date.now().toString().slice(-6)}`
+    const res = await createOrder(payload)
+    const orderId = res.order_code
     navigate(`/checkout/success?orderId=${orderId}`)
   }
 
@@ -118,26 +126,7 @@ function Checkout() {
 
         {/* Progress Steps */}
         <div className='flex items-center justify-center mb-8'>
-          <div className='flex items-center space-x-4'>
-            {[1, 2, 3].map((step) => (
-              <div key={step} className='flex items-center'>
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                    step <= currentStep
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted text-muted-foreground'
-                  }`}
-                >
-                  {step < currentStep ? <Check className='h-4 w-4' /> : step}
-                </div>
-                {step < 3 && (
-                  <div
-                    className={`w-12 h-0.5 mx-2 ${step < currentStep ? 'bg-primary' : 'bg-muted'}`}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
+          <StepIndicator currentStep={currentStep} totalSteps={steps.length} steps={steps} />
         </div>
 
         <div className='grid lg:grid-cols-3 gap-8'>
@@ -259,8 +248,8 @@ function Checkout() {
                 </CardHeader>
                 <CardContent className='space-y-4'>
                   <RadioGroup
-                    value={watch('paymentMethod')}
-                    onValueChange={(value) => setValue('paymentMethod', value)}
+                    value={watch('payment_method')}
+                    onValueChange={(value) => setValue('payment_method', value)}
                   >
                     <div className='flex items-center space-x-2 p-4 border border-border rounded-lg'>
                       <RadioGroupItem value='cod' id='cod' />

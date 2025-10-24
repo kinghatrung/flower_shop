@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { ROUTES } from '~/constants'
 
 function Success() {
-  // const searchParams = useSearchParams()
   const [searchParams, setSearchParams] = useSearchParams()
   const [orderId, setOrderId] = useState(null)
 

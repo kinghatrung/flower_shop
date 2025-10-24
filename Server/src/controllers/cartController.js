@@ -5,6 +5,10 @@ const cartController = {
     try {
       const { userId } = req.params;
 
+      if (!userId || isNaN(userId)) {
+        return res.status(200).json({ data: [] });
+      }
+
       const items = await cartService.getUserProductCart(userId);
 
       res.status(200).json({ data: items });

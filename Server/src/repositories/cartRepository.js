@@ -84,6 +84,19 @@ const cartRepository = {
       throw err;
     }
   },
+
+  clearCart: async (client, userId) => {
+    try {
+      const query = `
+        DELETE FROM cart_products
+        WHERE user_id = $1
+      `;
+      await client.query(query, [userId]);
+      return;
+    } catch (err) {
+      throw err;
+    }
+  },
 };
 
 export default cartRepository;

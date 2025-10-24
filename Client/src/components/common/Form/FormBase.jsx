@@ -16,7 +16,7 @@ function FormBase({ onSubmit, children, submitLabel = 'Lưu', className, isActiv
       {isActive && (
         <Button
           type='submit'
-          className='mt-5  cursor-pointer w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground'
+          className='mt-5 cursor-pointer w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground'
         >
           {submitLabel}
         </Button>
