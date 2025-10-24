@@ -80,16 +80,17 @@ function Checkout() {
     const items = products.map((p) => ({
       product_id: p.id,
       quantity: p.quantity,
-      price: p.price
+      price: p.price,
+      name: p.name,
+      image: p.images?.find((img) => img.is_main === true)?.url
     }))
     const payload = { order: { ...values, user_id: user?.user_id }, items }
-    console.log(payload)
 
     if (!validateStep(3)) return
-    // setIsLoading(true)
-    // const res = await createOrder(payload)
-    // const orderId = res.order_code
-    // navigate(`/checkout/success?orderId=${orderId}`)
+    setIsLoading(true)
+    const res = await createOrder(payload)
+    const orderId = res.order_code
+    navigate(`/checkout/success?orderId=${orderId}`)
   }
 
   if (totalProducts === 0) {

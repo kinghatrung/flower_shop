@@ -18,7 +18,10 @@ const orderService = {
       // 2️⃣ Tạo mã đơn hàng
       const orderCode = `ORD-${Date.now()}`;
 
-      // 3️⃣ Lưu đơn hàng
+      // 3️⃣ (Tuỳ chọn) Xoá giỏ hàng sau khi đặt hàng
+      await cartRepository.clearCart(client, orderData.user_id);
+
+      // 4️⃣ Lưu đơn hàng
       const order = await orderRepository.createOrder(
         client,
         orderData,
@@ -26,9 +29,7 @@ const orderService = {
         orderCode
       );
 
-      // 4️⃣ (Tuỳ chọn) Xoá giỏ hàng sau khi đặt hàng
-      await cartRepository.clearCart(client, orderData.user_id);
-      await sendOrderSuccessEmail(orderData, cartItems, totalAmount);
+      await sendOrderSuccessEmail(orderData, cartItems, totalAmount, orderCode);
 
       await client.query('COMMIT');
 
