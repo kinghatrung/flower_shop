@@ -1,20 +1,51 @@
-import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { CheckCircle, Package, Truck, Phone } from 'lucide-react'
+import { CheckCircle, Package, Truck, Phone, Flower, CheckCircle2 } from 'lucide-react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { ROUTES } from '~/constants'
+import useQueryParams from '~/hooks/useQueryParams'
+import { getUsers, registerUser, deleteUser, updateUser } from '~/api'
 
 function Success() {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [orderId, setOrderId] = useState(null)
+  const queryString = useQueryParams()
+  const orderId = queryString.orderId
+  const [time] = useState(() => new Date().toLocaleString('vi-VN'))
 
-  useEffect(() => {
-    const id = searchParams.get('orderId')
-    setOrderId(id)
-  }, [searchParams])
+  // const { data, isLoading } = useQuery({
+  //   queryKey: ['order'],
+  //   queryFn: () => getUsers(page, limit, filters),
+  //   keepPreviousData: true
+  // })
+
+  const steps = [
+    {
+      number: 1,
+      icon: <Phone className='w-6 h-6' />,
+      title: 'Xác nhận đơn hàng',
+      description: 'Chúng tôi sẽ gọi điện xác nhận trong 30 phút',
+      isActive: true,
+      isCompleted: false
+    },
+    {
+      number: 2,
+      icon: <Flower className='w-6 h-6' />,
+      title: 'Chuẩn bị hoa',
+      description: 'Hoa tươi được chuẩn bị và đóng gói cẩn thận',
+      isActive: false,
+      isCompleted: false
+    },
+    {
+      number: 3,
+      icon: <Truck className='w-6 h-6' />,
+      title: 'Giao hàng',
+      description: 'Giao hàng trong vòng 1-2 giờ tại nội thành',
+      isActive: false,
+      isCompleted: false
+    }
+  ]
 
   return (
     <div className='pt-24 pb-16 px-4'>
@@ -48,7 +79,7 @@ function Success() {
               </div>
               <div>
                 <p className='text-sm text-muted-foreground'>Thời gian đặt hàng</p>
-                <p className='font-medium'>{new Date().toLocaleString('vi-VN')}</p>
+                <p className='font-medium'>{time}</p>
               </div>
               <div>
                 <p className='text-sm text-muted-foreground'>Phương thức thanh toán</p>
@@ -57,47 +88,60 @@ function Success() {
             </CardContent>
           </Card>
 
-          {/* Next Steps */}
           <Card>
-            <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <Truck className='h-5 w-5' />
+            <CardHeader className='pb-6'>
+              <CardTitle className='text-2xl font-bold flex items-center gap-3'>
+                <div className='w-10 h-10 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center'>
+                  <Truck className='w-5 h-5 text-white' />
+                </div>
                 Các bước tiếp theo
               </CardTitle>
             </CardHeader>
-            <CardContent className='space-y-4'>
-              <div className='flex items-start gap-3'>
-                <div className='w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center flex-shrink-0 mt-0.5'>
-                  1
-                </div>
-                <div>
-                  <p className='font-medium'>Xác nhận đơn hàng</p>
-                  <p className='text-sm text-muted-foreground'>
-                    Chúng tôi sẽ gọi điện xác nhận trong 30 phút
-                  </p>
-                </div>
+            <CardContent>
+              <div className='space-y-0'>
+                {steps.map((step, index) => (
+                  <div key={step.number} className='relative'>
+                    {index < steps.length - 1 && (
+                      <div className='absolute left-8 top-16 w-0.5 h-12 bg-gradient-to-b from-rose-300 to-rose-100' />
+                    )}
+
+                    <div className='flex gap-4 pb-8'>
+                      <div className='relative flex-shrink-0'>
+                        <div
+                          className={`w-16 h-16 rounded-full flex items-center justify-center font-semibold text-lg transition-all duration-300 ${
+                            step.isCompleted
+                              ? 'bg-green-100 text-green-700'
+                              : step.isActive
+                                ? 'bg-gradient-to-br from-rose-400 to-rose-600 text-white shadow-lg scale-110'
+                                : 'bg-gray-100 text-gray-400'
+                          }`}
+                        >
+                          {step.isCompleted ? (
+                            <CheckCircle2 className='w-7 h-7' />
+                          ) : (
+                            <div className='flex items-center justify-center gap-1'>
+                              {step.icon}
+                            </div>
+                          )}
+                        </div>
+                        {step.isActive && (
+                          <div className='absolute inset-0 rounded-full bg-rose-400 opacity-20 animate-pulse' />
+                        )}
+                      </div>
+
+                      <div className='flex-1 pt-2'>
+                        <h3 className='font-semibold text-lg text-gray-900 mb-1'>{step.title}</h3>
+                        <p className='text-gray-600 text-sm leading-relaxed'>{step.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div className='flex items-start gap-3'>
-                <div className='w-6 h-6 rounded-full bg-muted text-muted-foreground text-xs flex items-center justify-center flex-shrink-0 mt-0.5'>
-                  2
-                </div>
-                <div>
-                  <p className='font-medium'>Chuẩn bị hoa</p>
-                  <p className='text-sm text-muted-foreground'>
-                    Hoa tươi được chuẩn bị và đóng gói cẩn thận
-                  </p>
-                </div>
-              </div>
-              <div className='flex items-start gap-3'>
-                <div className='w-6 h-6 rounded-full bg-muted text-muted-foreground text-xs flex items-center justify-center flex-shrink-0 mt-0.5'>
-                  3
-                </div>
-                <div>
-                  <p className='font-medium'>Giao hàng</p>
-                  <p className='text-sm text-muted-foreground'>
-                    Giao hàng trong vòng 1-2 giờ tại nội thành
-                  </p>
-                </div>
+
+              <div className='mt-8 pt-6 border-t border-gray-200'>
+                <p className='text-sm text-gray-500 text-center'>
+                  ✓ Chúng tôi cam kết giao hàng đúng giờ hoặc hoàn tiền 100%
+                </p>
               </div>
             </CardContent>
           </Card>
