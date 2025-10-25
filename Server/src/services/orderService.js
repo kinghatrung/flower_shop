@@ -29,6 +29,10 @@ const orderService = {
         orderCode
       );
 
+      for (const item of cartItems) {
+        await orderRepository.createOrderItem(client, order.id, item);
+      }
+
       await sendOrderSuccessEmail(orderData, cartItems, totalAmount, orderCode);
 
       await client.query('COMMIT');

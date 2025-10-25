@@ -74,11 +74,13 @@ function Checkout() {
     }
   }
 
+  console.log(products)
+
   const handleSubmitOrder = async () => {
     const values = getValues()
     // Lấy các trường cần thiết của sản phẩm trong giỏ hàng
     const items = products.map((p) => ({
-      product_id: p.id,
+      product_id: p.product_id,
       quantity: p.quantity,
       price: p.price,
       name: p.name,

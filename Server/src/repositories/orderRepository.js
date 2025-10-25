@@ -45,6 +45,24 @@ const orderRepository = {
       throw err;
     }
   },
+
+  createOrderItem: async (client, orderId, item) => {
+    try {
+      const query = `
+        INSERT INTO order_items (order_id, product_id, quantity, price)
+        VALUES ($1, $2, $3, $4);
+      `;
+
+      await client.query(query, [
+        orderId,
+        item.product_id,
+        item.quantity,
+        item.price,
+      ]);
+    } catch (err) {
+      throw err;
+    }
+  },
 };
 
 export default orderRepository;
