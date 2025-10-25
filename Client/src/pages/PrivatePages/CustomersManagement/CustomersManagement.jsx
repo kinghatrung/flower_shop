@@ -148,10 +148,15 @@ function CustomersManagement() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end'>
-        <DropdownMenuItem onClick={() => handleEditClick(item)}>Sửa thông tin</DropdownMenuItem>
-        <DropdownMenuItem>Khóa người dùng</DropdownMenuItem>
+        <DropdownMenuItem className='cursor-pointer' onClick={() => handleEditClick(item)}>
+          Sửa thông tin
+        </DropdownMenuItem>
+        <DropdownMenuItem className='cursor-pointer'>Khóa người dùng</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => handleDeleteUser(item.email)} className='text-destructive'>
+        <DropdownMenuItem
+          onClick={() => handleDeleteUser(item.email)}
+          className='text-destructive cursor-pointer'
+        >
           Xóa người dùng
         </DropdownMenuItem>
       </DropdownMenuContent>

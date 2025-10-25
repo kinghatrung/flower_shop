@@ -78,7 +78,7 @@ function Checkout() {
     const values = getValues()
     // Lấy các trường cần thiết của sản phẩm trong giỏ hàng
     const items = products.map((p) => ({
-      product_id: p.id,
+      product_id: p.product_id,
       quantity: p.quantity,
       price: p.price,
       name: p.name,
@@ -205,6 +205,7 @@ function Checkout() {
                       <FormField
                         id='ward'
                         label='Phường/Xã'
+                        placeholder='Ninh Thôn'
                         required
                         register={register}
                         errors={errors}
@@ -212,6 +213,7 @@ function Checkout() {
                       <FormField
                         id='district'
                         label='Quận/Huyện'
+                        placeholder='Hà Trung'
                         required
                         register={register}
                         errors={errors}
@@ -219,6 +221,7 @@ function Checkout() {
                       <FormField
                         id='city'
                         label='Tỉnh/Thành phố'
+                        placeholder='Thanh Hóa'
                         required
                         register={register}
                         errors={errors}
