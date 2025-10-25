@@ -74,8 +74,6 @@ function Checkout() {
     }
   }
 
-  console.log(products)
-
   const handleSubmitOrder = async () => {
     const values = getValues()
     // Lấy các trường cần thiết của sản phẩm trong giỏ hàng
@@ -207,6 +205,7 @@ function Checkout() {
                       <FormField
                         id='ward'
                         label='Phường/Xã'
+                        placeholder='Ninh Thôn'
                         required
                         register={register}
                         errors={errors}
@@ -214,6 +213,7 @@ function Checkout() {
                       <FormField
                         id='district'
                         label='Quận/Huyện'
+                        placeholder='Hà Trung'
                         required
                         register={register}
                         errors={errors}
@@ -221,6 +221,7 @@ function Checkout() {
                       <FormField
                         id='city'
                         label='Tỉnh/Thành phố'
+                        placeholder='Thanh Hóa'
                         required
                         register={register}
                         errors={errors}
