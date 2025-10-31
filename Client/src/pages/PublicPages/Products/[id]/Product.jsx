@@ -1,18 +1,23 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Star, Heart, ShoppingCart, Minus, Plus, Truck, Shield, RotateCcw } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { Button } from '~/components/ui/button'
 import { Badge } from '~/components/ui/badge'
 import ProductCard from '~/components/common/products/ProductCard'
-import { useCart } from '~/context'
 import { ROUTES } from '~/constants'
-import { getProduct, getProductsByCategoryId } from '~/api'
+import { getProduct, getProductsByCategoryId, createProductCartUser } from '~/api'
+import { useSelector } from 'react-redux'
+import { selectCurrentUser } from '~/redux/slices/authSlice'
+import useTimeoutLoading from '~/hooks/useTimeoutLoading'
 
 function Product() {
   const { slug } = useParams()
+  const user = useSelector(selectCurrentUser)
+  const queryClient = useQueryClient()
   const [pureSlug, idPart] = slug.split(/-i\./)
+  const [isLoading, startLoading] = useTimeoutLoading(1000)
 
   const { data } = useQuery({
     queryKey: ['product', idPart],
@@ -35,7 +40,6 @@ function Product() {
 
   const [quantity, setQuantity] = useState(1)
   const [isLiked, setIsLiked] = useState(false)
-  const { dispatch: cartDispatch } = useCart()
 
   const relatedProducts = productItems?.filter((p) => p.id !== product.id)
 
@@ -46,10 +50,15 @@ function Product() {
     }).format(price)
   }
 
-  const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) {
-      cartDispatch({ type: 'ADD_ITEM', payload: product })
+  const handleAddToCart = async () => {
+    startLoading()
+    const payload = {
+      userId: user?.user_id,
+      productId: product?.id,
+      quantity: quantity
     }
+    await createProductCartUser(payload)
+    await queryClient.invalidateQueries(['cart', user?.user_id])
   }
 
   return (
@@ -185,10 +194,11 @@ function Product() {
 
                 <Button
                   onClick={handleAddToCart}
-                  className='bg-secondary hover:bg-secondary/90 text-secondary-foreground cursor-pointer'
+                  disabled={isLoading}
+                  className='flex-1 bg-secondary hover:bg-secondary/90 text-secondary-foreground cursor-pointer'
                 >
                   <ShoppingCart className='h-5 w-5 mr-2' />
-                  Thêm vào giỏ hàng
+                  {isLoading ? 'Đang thêm...' : 'Thêm vào giỏ hàng'}
                 </Button>
 
                 <Button

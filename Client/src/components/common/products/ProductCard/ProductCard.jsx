@@ -11,29 +11,27 @@ import { Card, CardContent } from '~/components/ui/card'
 import { ROUTES } from '~/constants'
 import { selectCurrentUser } from '~/redux/slices/authSlice'
 import { createProductCartUser } from '~/api'
+import useTimeoutLoading from '~/hooks/useTimeoutLoading'
 
 function ProductCard({ product }) {
   const navigate = useNavigate()
   const user = useSelector(selectCurrentUser)
   const queryClient = useQueryClient()
-
   const [isLiked, setIsLiked] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, startLoading] = useTimeoutLoading(1000)
 
   const mainImage = product?.images?.find((img) => img.is_main === true)?.url
 
   const handleAddToCart = async () => {
     if (!user) return navigate(ROUTES.LOGIN)
+    startLoading()
     const payload = {
       userId: user?.user_id,
       productId: product?.id,
       quantity: 1
     }
-
-    setIsLoading(true)
     await createProductCartUser(payload)
     await queryClient.invalidateQueries(['cart', user?.user_id])
-    setIsLoading(false)
   }
 
   return (

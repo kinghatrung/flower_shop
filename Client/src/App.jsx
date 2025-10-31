@@ -10,7 +10,7 @@ import { Toaster } from '~/components/ui/sonner'
 import ScrollToTop from '~/components/common/ScrollToTop'
 import ButtonZalo from './components/common/ButtonZalo'
 import RbacRouter from './components/core/RbacRouter'
-import { selectCurrentUser } from '~/redux/slices/authSlice'
+import { selectCurrentUser, selectAuth } from '~/redux/slices/authSlice'
 
 import AccessDenied from '~/pages/CommonPages/AccessDenied/AccessDenied'
 import NotFound from '~/pages/CommonPages/NotFound'
@@ -36,11 +36,8 @@ import Services from '~/pages/PublicPages/Services'
 import Contact from '~/pages/PublicPages/Contact'
 import Product from '~/pages/PublicPages/Products/[id]'
 import ButtonFacebook from '~/components/common/ButtonFacebook'
-
-const ProtectedRoute = ({ user }) => {
-  if (!user) return <Navigate to={ROUTES.LOGIN} replace />
-  return <Outlet />
-}
+import ProtectedRoute from '~/components/common/ProtectedRoute'
+import Loading from '~/components/common/Loading'
 
 const Wrapper = ({ layout }) => {
   const Component = layout || Fragment
@@ -53,6 +50,11 @@ const Wrapper = ({ layout }) => {
 
 function App() {
   const currentUser = useSelector(selectCurrentUser)
+  const auth = useSelector(selectAuth)
+
+  if (auth.loading) {
+    return <Loading />
+  }
 
   return (
     <div className='App'>

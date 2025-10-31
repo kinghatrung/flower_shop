@@ -35,7 +35,8 @@ export const logoutUser = createAsyncThunk('auth/logoutUser', async (showSuccess
 export const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    currentUser: null
+    currentUser: null,
+    loading: true
   },
   // Nơi xử lý dữ liệu đồng bộ
   reducers: {},
@@ -43,19 +44,44 @@ export const authSlice = createSlice({
   extraReducers: (builder) => {
     // fulfilled: Bắt trường hợp Api thành công
     // Nếu không thành công Api sẽ chết ở tầng axios, nên không cần bắt các trường hợp khác
-    builder.addCase(loginUser.fulfilled, (state, action) => {
-      // action.payload chính là dữ liệu trả về từ Api ở trên
-      state.currentUser = action.payload
-    })
-    builder.addCase(loginUserByGoogle.fulfilled, (state, action) => {
-      state.currentUser = action.payload
-    })
-    builder.addCase(loginUserByFacebook.fulfilled, (state, action) => {
-      state.currentUser = action.payload
-    })
-    builder.addCase(logoutUser.fulfilled, (state) => {
-      state.currentUser = null
-    })
+    builder
+      // Login user
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        // action.payload chính là dữ liệu trả về từ Api ở trên
+        state.currentUser = action.payload
+        state.loading = false
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false
+      })
+      // Login user by Google
+      .addCase(loginUserByGoogle.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(loginUserByGoogle.fulfilled, (state, action) => {
+        state.currentUser = action.payload
+        state.loading = false
+      })
+      // Login user by Facebook
+      .addCase(loginUserByFacebook.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(loginUserByFacebook.fulfilled, (state, action) => {
+        state.currentUser = action.payload
+        state.loading = false
+      })
+
+      // Logout user
+      .addCase(logoutUser.pending, (state) => {
+        state.loading = true
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.currentUser = null
+        state.loading = false
+      })
   }
 })
 
@@ -68,6 +94,7 @@ export const authSlice = createSlice({
 export const selectCurrentUser = (state) => {
   return state.auth.currentUser
 }
+export const selectAuth = (state) => state.auth
 
 // Phải export reducer của slice này ra, luôn luôn phải export reducer ra
 export const authReducer = authSlice.reducer

@@ -10,13 +10,14 @@ import { Separator } from '~/components/ui/separator'
 import { ROUTES } from '~/constants'
 import { getProductCart, deleteProductCartUser, updateProductCartUser } from '~/api'
 import { selectCurrentUser } from '~/redux/slices/authSlice'
+import { Skeleton } from '~/components/ui/skeleton'
 
 function Cart() {
   const user = useSelector(selectCurrentUser)
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['cart', user?.user_id],
     queryFn: () => getProductCart(user?.user_id)
   })
@@ -77,81 +78,100 @@ function Cart() {
         <div className='grid lg:grid-cols-3 gap-8'>
           {/* Cart Items */}
           <div className='lg:col-span-2 space-y-4'>
-            {products?.map((product) => (
-              <Card key={product.id}>
-                <CardContent className='p-6'>
-                  <div className='flex gap-4'>
-                    <div className='w-24 h-24 rounded-lg overflow-hidden bg-muted flex-shrink-0'>
-                      <Link
-                        to={`${ROUTES.PRODUCTS}/product/${product.slug}-i.${product.product_id}`}
-                      >
-                        <img
-                          src={product?.images?.find((img) => img.is_main === true)?.url}
-                          alt={product.name}
-                          width={96}
-                          height={96}
-                          className='w-full h-full object-cover'
-                        />
-                      </Link>
-                    </div>
-
-                    <div className='flex-1 space-y-2'>
-                      <Link
-                        to={`${ROUTES.PRODUCTS}/product/${product.slug}-i.${product.product_id}`}
-                      >
-                        <h3 className='font-semibold text-foreground hover:text-primary transition-colors'>
-                          {product.name}
-                        </h3>
-                      </Link>
-                      <p className='text-sm text-muted-foreground line-clamp-2'>
-                        {product.description}
-                      </p>
-                      <div className='flex items-center justify-between'>
-                        <span className='font-bold text-foreground'>
-                          {numeral(product.price).format('0,0') + ' đ'}
-                        </span>
-
-                        <div className='flex items-center gap-3'>
-                          {/* Quantity Controls */}
-                          <div className='flex items-center border border-border rounded-lg'>
-                            <Button
-                              variant='ghost'
-                              size='icon'
-                              className='h-8 w-8 cursor-pointer'
-                              onClick={() => updateQuantity(product, product.quantity - 1)}
-                              disabled={product.quantity <= 1}
-                            >
-                              <Minus className='h-3 w-3' />
-                            </Button>
-                            <span className='px-3 py-1 text-sm min-w-[2rem] text-center'>
-                              {product.quantity}
-                            </span>
-                            <Button
-                              variant='ghost'
-                              size='icon'
-                              className='h-8 w-8 cursor-pointer'
-                              onClick={() => updateQuantity(product, product.quantity + 1)}
-                            >
-                              <Plus className='h-3 w-3' />
-                            </Button>
+            {isLoading
+              ? Array.from({ length: 3 }).map((_, index) => (
+                  <Card key={index}>
+                    <CardContent className='p-6'>
+                      <div className='flex gap-4'>
+                        <Skeleton className='w-24 h-24 rounded-lg flex-shrink-0' />
+                        <div className='flex-1 space-y-3'>
+                          <Skeleton className='h-5 w-3/4' />
+                          <Skeleton className='h-4 w-full' />
+                          <Skeleton className='h-4 w-2/3' />
+                          <div className='flex justify-end gap-3 mt-2'>
+                            <Skeleton className='h-8 w-24 rounded-lg' />
+                            <Skeleton className='h-8 w-8 rounded-lg' />
                           </div>
-
-                          {/* Remove Button */}
-                          <Button
-                            variant='ghost'
-                            size='icon'
-                            className='h-8 w-8 cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10'
-                            onClick={() => removeItem(product)}
-                          >
-                            <Trash2 className='h-4 w-4' />
-                          </Button>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    </CardContent>
+                  </Card>
+                ))
+              : products?.map((product) => (
+                  <Card key={product.id}>
+                    <CardContent className='p-6'>
+                      <div className='flex gap-4'>
+                        <div className='w-24 h-24 rounded-lg overflow-hidden bg-muted flex-shrink-0'>
+                          <Link
+                            to={`${ROUTES.PRODUCTS}/product/${product.slug}-i.${product.product_id}`}
+                          >
+                            <img
+                              src={product?.images?.find((img) => img.is_main === true)?.url}
+                              alt={product.name}
+                              width={96}
+                              height={96}
+                              className='w-full h-full object-cover'
+                            />
+                          </Link>
+                        </div>
+
+                        <div className='flex-1 space-y-2'>
+                          <Link
+                            to={`${ROUTES.PRODUCTS}/product/${product.slug}-i.${product.product_id}`}
+                          >
+                            <h3 className='font-semibold text-foreground hover:text-primary transition-colors'>
+                              {product.name}
+                            </h3>
+                          </Link>
+                          <p className='text-sm text-muted-foreground line-clamp-2'>
+                            {product.description}
+                          </p>
+                          <div className='flex items-center justify-between'>
+                            <span className='font-bold text-foreground'>
+                              {numeral(product.price).format('0,0') + ' đ'}
+                            </span>
+
+                            <div className='flex items-center gap-3'>
+                              {/* Quantity Controls */}
+                              <div className='flex items-center border border-border rounded-lg'>
+                                <Button
+                                  variant='ghost'
+                                  size='icon'
+                                  className='h-8 w-8 cursor-pointer'
+                                  onClick={() => updateQuantity(product, product.quantity - 1)}
+                                  disabled={product.quantity <= 1}
+                                >
+                                  <Minus className='h-3 w-3' />
+                                </Button>
+                                <span className='px-3 py-1 text-sm min-w-[2rem] text-center'>
+                                  {product.quantity}
+                                </span>
+                                <Button
+                                  variant='ghost'
+                                  size='icon'
+                                  className='h-8 w-8 cursor-pointer'
+                                  onClick={() => updateQuantity(product, product.quantity + 1)}
+                                >
+                                  <Plus className='h-3 w-3' />
+                                </Button>
+                              </div>
+
+                              {/* Remove Button */}
+                              <Button
+                                variant='ghost'
+                                size='icon'
+                                className='h-8 w-8 cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10'
+                                onClick={() => removeItem(product)}
+                              >
+                                <Trash2 className='h-4 w-4' />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
           </div>
 
           {/* Order Summary */}

@@ -7,7 +7,6 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import './index.css'
 import App from '~/App'
-import { StoreProvider } from '~/context'
 import { store } from '~/redux/store'
 
 // Cấu hình redux presist
@@ -27,10 +26,8 @@ createRoot(document.getElementById('root')).render(
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
         <Provider store={store}>
           <PersistGate persistor={persistor}>
-            <StoreProvider>
-              <App />
-              {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-            </StoreProvider>
+            <App />
+            {/* <ReactQueryDevtools initialIsOpen={false} /> */}
           </PersistGate>
         </Provider>
       </GoogleOAuthProvider>
