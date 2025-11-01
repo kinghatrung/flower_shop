@@ -20,7 +20,7 @@ export const sidebarMenu = {
       title: 'Dash Board',
       url: '/admin/dashboard',
       icon: LayoutDashboard,
-      isActive: true
+      isActive: false
     },
     {
       title: 'Quản lý sản phẩm',
@@ -46,36 +46,36 @@ export const sidebarMenu = {
       icon: Users,
       isActive: true
     },
-    {
-      title: 'Khuyến mãi & Mã giảm giá',
-      url: '/admin/promotions',
-      icon: TicketPercent,
-      isActive: true
-    },
-    {
-      title: 'Giao hàng',
-      url: '/admin/transport',
-      icon: Truck,
-      isActive: true
-    },
+    // {
+    //   title: 'Khuyến mãi & Mã giảm giá',
+    //   url: '/admin/promotions',
+    //   icon: TicketPercent,
+    //   isActive: true
+    // },
+    // {
+    //   title: 'Giao hàng',
+    //   url: '/admin/transport',
+    //   icon: Truck,
+    //   isActive: true
+    // },
     {
       title: 'Nội dung Website',
       url: '/admin',
       icon: FileText,
       isActive: true
-    },
-    {
-      title: 'Thanh toán',
-      url: '/admin',
-      icon: CreditCard,
-      isActive: true
-    },
-    {
-      title: 'Cài đặt hệ thống',
-      url: '/admin/settings',
-      icon: Settings,
-      isActive: false
     }
+    // {
+    //   title: 'Thanh toán',
+    //   url: '/admin',
+    //   icon: CreditCard,
+    //   isActive: true
+    // },
+    // {
+    //   title: 'Cài đặt hệ thống',
+    //   url: '/admin/settings',
+    //   icon: Settings,
+    //   isActive: false
+    // }
   ],
   projects: [
     {

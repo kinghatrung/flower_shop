@@ -21,7 +21,7 @@ dotenv.config();
 const app = express();
 const __dirname = path.resolve();
 const PORT = process.env.PORT || 2708;
-const DELAY = 500;
+const DELAY = 0;
 
 // init redis
 await initRedis();
@@ -60,7 +60,7 @@ app.use('/api/categories', categoryRouter);
 app.use('/api/email', emailRouter);
 app.use('/api/upload', uploadRouter);
 app.use('/api/cart', cartRouter);
-app.use('/api/order', orderRouter);
+app.use('/api/orders', orderRouter);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../Client/dist')));

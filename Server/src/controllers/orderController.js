@@ -1,6 +1,16 @@
 import orderService from '../services/orderService.js';
 
 const orderController = {
+  getOrders: async (req, res) => {
+    try {
+      const orders = await orderService.getOrders();
+
+      res.status(200).json({ data: orders });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  },
+
   createOrder: async (req, res) => {
     try {
       const { order, items } = req.body;

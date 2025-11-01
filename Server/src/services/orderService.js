@@ -4,6 +4,16 @@ import cartRepository from '../repositories/cartRepository.js';
 import { sendOrderSuccessEmail } from '../utils/mailer.js';
 
 const orderService = {
+  getOrders: async () => {
+    try {
+      const orders = await orderRepository.getAllOrders();
+
+      return orders;
+    } catch (err) {
+      throw err;
+    }
+  },
+
   createOrder: async (orderData, cartItems) => {
     const client = await pool.connect();
     try {

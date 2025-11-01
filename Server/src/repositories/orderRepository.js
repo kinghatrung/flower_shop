@@ -1,6 +1,20 @@
 import pool from '../config/db.js';
 
 const orderRepository = {
+  getAllOrders: async () => {
+    try {
+      const query = `
+        SELECT * FROM orders;
+      `;
+
+      const result = await pool.query(query);
+
+      return result.rows;
+    } catch (err) {
+      throw err;
+    }
+  },
+
   createOrder: async (client, orderData, totalAmount, orderCode) => {
     const {
       user_id,
