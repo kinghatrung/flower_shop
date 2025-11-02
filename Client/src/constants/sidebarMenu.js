@@ -60,7 +60,7 @@ export const sidebarMenu = {
     // },
     {
       title: 'Nội dung Website',
-      url: '/admin',
+      url: '/admin/content',
       icon: FileText,
       isActive: true
     }

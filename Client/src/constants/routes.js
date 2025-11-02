@@ -8,6 +8,8 @@ export const ROUTES = {
   FORGOT_PASSWORD: '/forgot-password',
   SERVICES: '/services',
   CONTACT: '/contact',
+  ABOUTUS: '/aboutus',
+  QAA: '/qaa',
   // customer
   CART: '/cart',
   CHECKOUT: '/checkout',
@@ -19,6 +21,7 @@ export const ROUTES = {
   ADMIN_PRODUCTS: '/admin/products',
   ADMIN_SETTINGS: '/admin/settings',
   ADMIN_ORDERS: '/admin/orders',
+  ADMIN_CONTENT: '/admin/content',
   // common
   PRIVACY: '/privacy',
   TERMS: '/terms',

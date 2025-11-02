@@ -129,6 +129,30 @@ function Header() {
               Liên hệ
               <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full group-focus-within:w-full'></span>
             </NavLink>
+            <NavLink
+              to={ROUTES.QAA}
+              className={({ isActive }) =>
+                clsx(
+                  'hover:text-primary transition-all duration-300 relative group',
+                  isActive ? ' text-primary' : ' text-muted-foreground'
+                )
+              }
+            >
+              Hỏi đáp
+              <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full group-focus-within:w-full'></span>
+            </NavLink>
+            <NavLink
+              to={ROUTES.ABOUTUS}
+              className={({ isActive }) =>
+                clsx(
+                  'hover:text-primary transition-all duration-300 relative group',
+                  isActive ? ' text-primary' : ' text-muted-foreground'
+                )
+              }
+            >
+              Về chúng tôi
+              <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full group-focus-within:w-full'></span>
+            </NavLink>
           </nav>
 
           <div className='flex items-center space-x-2'>
@@ -289,6 +313,30 @@ function Header() {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Liên hệ
+              </NavLink>
+              <NavLink
+                to={ROUTES.QAA}
+                className={({ isActive }) =>
+                  clsx(
+                    'hover:text-primary transition-colors hover:translate-x-2 transition-transform duration-300',
+                    isActive ? ' text-primary' : ' text-muted-foreground'
+                  )
+                }
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Hỏi đáp
+              </NavLink>
+              <NavLink
+                to={ROUTES.ABOUTUS}
+                className={({ isActive }) =>
+                  clsx(
+                    'hover:text-primary transition-colors hover:translate-x-2 transition-transform duration-300',
+                    isActive ? ' text-primary' : ' text-muted-foreground'
+                  )
+                }
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Về chúng tôi
               </NavLink>
               <div className='border-t border-border pt-4 mt-4'>
                 {!user?.isauth ? (
