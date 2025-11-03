@@ -4,14 +4,12 @@ import { useScrollAnimation } from '~/hooks/useScrollAnimationOptions'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 
 function AboutUs() {
-  const [isSubmitted, setIsSubmitted] = useState(false)
-
   const { isVisible: headerVisible, ref: headerRef } = useScrollAnimation()
   const { isVisible: formVisible, ref: formRef } = useScrollAnimation()
   const { isVisible: contactInfoVisible, ref: contactInfoRef } = useScrollAnimation()
 
   return (
-    <div className='pt-24 pb-16 px-4'>
+    <div className='pt-24 pb-16 px-8 lg:px-20'>
       <div className='max-w-7xl mx-auto'>
         <div
           ref={headerRef}
@@ -35,7 +33,7 @@ function AboutUs() {
             <img
               src='/image/anhbanner.jpg'
               alt='Nuvexa flower arrangements showcase'
-              className='w-200 h-auto aspect-square object-cover group-hover:scale-105 transition-transform duration-500'
+              className='w-full h-auto aspect-square object-cover group-hover:scale-105 transition-transform duration-500'
             />
             <div className='absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
           </div>
