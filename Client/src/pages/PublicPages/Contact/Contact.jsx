@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { MapPin, Phone, Mail, Clock, Send, MessageCircle, Sandwich } from 'lucide-react'
+import { MapPin, Phone, Mail, Clock, Send, MessageCircle } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { useScrollAnimation } from '~/hooks/useScrollAnimationOptions'
-import { FormBase, FormField , FormTextarea} from '~/components/common/Form'
+import { FormBase, FormField, FormTextarea } from '~/components/common/Form'
 import { sendEmail } from '~/api'
 
 function Contact() {
@@ -18,14 +18,14 @@ function Contact() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors }
   } = useForm({
     defaultValues: {
       name: '',
       phone: '',
       email: '',
       subject: '',
-      message: '',
+      message: ''
     }
   })
 
@@ -76,14 +76,14 @@ function Contact() {
                   </div>
                 ) : (
                   <FormBase
-                  onSubmit={handleSubmit(handleSubmits)}
-                  className='space-y-6'
-                  submitLabel={
-                    <>
-                      <Send className='h-4 w-4 mr-2' />
-                      Gửi tin nhắn
-                    </>
-                  }
+                    onSubmit={handleSubmit(handleSubmits)}
+                    className='space-y-6'
+                    submitLabel={
+                      <>
+                        <Send className='h-4 w-4 mr-2' />
+                        Gửi tin nhắn
+                      </>
+                    }
                   >
                     <div className='grid sm:grid-cols-2 gap-4'>
                       <FormField

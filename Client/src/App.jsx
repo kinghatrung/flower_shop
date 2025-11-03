@@ -25,6 +25,7 @@ import ProductsManagement from '~/pages/PrivatePages/ProductsManagement'
 import DashBoard from '~/pages/PrivatePages/DashBoard'
 import SystemSettings from '~/pages/PrivatePages/SystemSettings'
 import OrdersManagement from '~/pages/PrivatePages/OrdersManagement'
+import ContentWebsiteManagement from './pages/PrivatePages/ContentWebsiteManagement'
 import Success from '~/pages/PrivatePages/Checkout/Success'
 
 import ForgotPassword from '~/pages/PublicPages/Auth/ForgotPassword'
@@ -38,6 +39,8 @@ import Product from '~/pages/PublicPages/Products/[id]'
 import ButtonFacebook from '~/components/common/ButtonFacebook'
 import ProtectedRoute from '~/components/common/ProtectedRoute'
 import Loading from '~/components/common/Loading'
+import AboutUs from '~/pages/PublicPages/AboutUs'
+import Qaa from '~/pages/PublicPages/Qaa'
 
 const Wrapper = ({ layout }) => {
   const Component = layout || Fragment
@@ -82,6 +85,8 @@ function App() {
           <Route path={ROUTES.PRODUCT} element={<Product />} />
           <Route path={ROUTES.SERVICES} element={<Services />} />
           <Route path={ROUTES.CONTACT} element={<Contact />} />
+          <Route path={ROUTES.ABOUTUS} element={<AboutUs />} />
+          <Route path={ROUTES.QAA} element={<Qaa />} />
         </Route>
 
         {/* Private */}
@@ -102,11 +107,7 @@ function App() {
               <Route path={ROUTES.ADMIN_PRODUCTS} element={<ProductsManagement />} />
               <Route path={ROUTES.ADMIN_SETTINGS} element={<SystemSettings />} />
               <Route path={ROUTES.ADMIN_ORDERS} element={<OrdersManagement />} />
-              {/* <Route path={ROUTES.ADMIN_PRODUCTS} element={<ProductsManagement />} /> */}
-              {/* <Route path={ROUTES.ADMIN_PRODUCTS} element={<ProductsManagement />} /> */}
-              {/* <Route path={ROUTES.ADMIN_PRODUCTS} element={<ProductsManagement />} /> */}
-              {/* <Route path={ROUTES.ADMIN_PRODUCTS} element={<ProductsManagement />} /> */}
-              {/* <Route path={ROUTES.ADMIN_PRODUCTS} element={<ProductsManagement />} /> */}
+              <Route path={ROUTES.ADMIN_CONTENT} element={<ContentWebsiteManagement />} />
             </Route>
           </Route>
         </Route>

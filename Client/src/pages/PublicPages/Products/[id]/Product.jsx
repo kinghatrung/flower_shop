@@ -188,10 +188,6 @@ function Product() {
               </div>
 
               <div className='flex gap-4'>
-                <Button className='flex-1 bg-secondary hover:bg-secondary/90 text-secondary-foreground cursor-pointer'>
-                  Mua ngay
-                </Button>
-
                 <Button
                   onClick={handleAddToCart}
                   disabled={isLoading}
