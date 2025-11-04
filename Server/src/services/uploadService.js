@@ -37,6 +37,25 @@ const uploadService = {
 
     return savedImages;
   },
+
+  deleteTempImages: async () => {
+    const oldImages = await uploadRepository.getTempImages('1 hour');
+
+    if (!oldImages.length) {
+      console.log('✅ [CRON] Không có ảnh tạm cần xoá.');
+      return;
+    }
+
+    for (const img of oldImages) {
+      try {
+        await cloudinary.uploader.destroy(img.public_id);
+        await uploadRepository.deleteImageById(img.id);
+        console.log(`🗑️ [CRON] Đã xoá ảnh tạm ${img.public_id}`);
+      } catch (err) {
+        console.error(`❌ [CRON] Lỗi xoá ảnh ${img.public_id}:`, err.message);
+      }
+    }
+  },
 };
 
 export default uploadService;

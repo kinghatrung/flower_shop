@@ -5,6 +5,17 @@ import clsx from 'clsx'
 import { useSelector, useDispatch } from 'react-redux'
 import { useQuery } from '@tanstack/react-query'
 
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '~/components/ui/dialog'
+import { Input } from '~/components/ui/input'
 import { Button } from '~/components/ui/button'
 import {
   DropdownMenu,
@@ -32,9 +43,23 @@ function Header() {
   const totalProducts = products?.reduce((total, product) => total + product.quantity, 0)
 
   const [isScrolled, setIsScrolled] = useState(false)
+  const [open, setOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isHeaderVisible, setIsHeaderVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // ví dụ Ctrl + K
+      if (e.ctrlKey && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setOpen((prev) => !prev)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -156,14 +181,43 @@ function Header() {
           </nav>
 
           <div className='flex items-center space-x-2'>
-            <Button
-              variant='ghost'
-              size='icon'
-              className='hover:bg-accent/10 hover:text-primary hover:scale-110 transition-all duration-300 cursor-pointer'
-              aria-label='Tìm kiếm'
-            >
-              <Search className='h-5 w-5' />
-            </Button>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <form>
+                <DialogTrigger asChild>
+                  <Button
+                    variant='ghost'
+                    size='icon'
+                    className='hover:bg-accent/10 hover:text-primary hover:scale-110 transition-all duration-300 cursor-pointer'
+                    aria-label='Tìm kiếm'
+                  >
+                    <Search className='h-5 w-5' />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className='sm:max-w-[600px] top-[20%]'>
+                  <DialogHeader>
+                    <div className='flex items-center gap-5'>
+                      <DialogTitle className='flex gap-2 items-center'>
+                        <Search className='h-5 w-5' />
+                        Tìm kiếm
+                      </DialogTitle>
+                      <DialogTitle className='flex gap-2'>
+                        <div className='p-2 bg-black text-white rounded-sm'>Ctrl + K</div>
+                      </DialogTitle>
+                    </div>
+                    <DialogDescription>Tìm kiếm sản phẩm bạn muốn đặt.</DialogDescription>
+                  </DialogHeader>
+                  <div className='relative w-full max-w-xl'>
+                    <Search className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4' />
+                    <Input
+                      type='text'
+                      placeholder='Nhập để tìm sản phẩm...'
+                      className='pl-9 pr-4 py-2 rounded-full border border-gray-300 focus-visible:ring-0 focus-visible:ring-offset-0 text-sm'
+                    />
+                  </div>
+                </DialogContent>
+              </form>
+            </Dialog>
+
             <Link to={ROUTES.CART}>
               <Button
                 variant='ghost'

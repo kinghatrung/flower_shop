@@ -183,7 +183,7 @@ function CustomersManagement() {
             value={roleFilter}
             onChange={setRoleFilter}
             options={[
-              { label: 'Tất cả vai trò', value: 'all' },
+              { label: 'Lọc theo vai trò...', value: 'all' },
               { label: 'Admin', value: 'admin' },
               { label: 'User', value: 'customer' }
             ]}
@@ -194,7 +194,7 @@ function CustomersManagement() {
             value={statusFilter}
             onChange={setStatusFilter}
             options={[
-              { label: 'Tất cả trạng thái', value: 'all' },
+              { label: 'Lọc theo trạng thái...', value: 'all' },
               { label: 'Đang hoạt động', value: 'active' },
               { label: 'Tạm khóa', value: 'inactive' }
             ]}
@@ -205,7 +205,7 @@ function CustomersManagement() {
             value={verifiedFilter}
             onChange={setVerifiedFilter}
             options={[
-              { label: 'Tất cả', value: 'all' },
+              { label: 'Lọc theo trạng thái xác thực...', value: 'all' },
               { label: 'Đã xác thực', value: 'verified' },
               { label: 'Chưa xác thực', value: 'unverified' }
             ]}

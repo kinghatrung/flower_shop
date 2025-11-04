@@ -127,13 +127,13 @@ function CategoriesManagement() {
             value={search}
             onChange={setSearch}
           />
-
+          {/* 
           <FilterSelect
             placeholder='Lọc danh mục'
             value={typeFilter}
             onChange={setTypeFilter}
             options={[{ label: 'Tất cả', value: 'all' }]}
-          />
+          /> */}
         </FilterContainer>
 
         <DataTable columns={columns} data={categories} isLoading={isLoading} actions={actions} />

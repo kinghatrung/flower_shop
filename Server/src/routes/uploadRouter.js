@@ -8,7 +8,7 @@ const uploadRouter = Router();
 // POST /api/upload/images - Post images
 uploadRouter.post(
   '/images',
-  upload.array('images', 5),
+  upload.array('images', 4),
   uploadController.uploadImage
 );
 
