@@ -10,7 +10,11 @@ function FormImageField({ id, label, errors, register, required, maxImages = 5, 
   const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef(null)
 
+  const isMaxReached = images.length >= maxImages
+
   const handleFiles = async (files) => {
+    if (isMaxReached) return
+
     const fileArray = Array.from(files).filter((file) => file.type.startsWith('image/'))
 
     if (fileArray.length === 0) return
@@ -59,6 +63,7 @@ function FormImageField({ id, label, errors, register, required, maxImages = 5, 
 
   const handleDragOver = (e) => {
     e.preventDefault()
+    if (isMaxReached) return
     setIsDragging(true)
   }
 
@@ -69,10 +74,12 @@ function FormImageField({ id, label, errors, register, required, maxImages = 5, 
   const handleDrop = (e) => {
     e.preventDefault()
     setIsDragging(false)
+    if (isMaxReached) return
     handleFiles(e.dataTransfer.files)
   }
 
   const handleInputChange = (e) => {
+    if (isMaxReached) return
     handleFiles(e.target.files)
   }
 
@@ -92,9 +99,15 @@ function FormImageField({ id, label, errors, register, required, maxImages = 5, 
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        onClick={() => fileInputRef.current && fileInputRef.current.click()}
+        onClick={() => {
+          if (!isMaxReached && fileInputRef.current) fileInputRef.current.click()
+        }}
         className={`relative border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
-          isDragging ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+          isDragging
+            ? 'border-primary bg-primary/5'
+            : isMaxReached
+              ? 'border-muted-foreground/50 bg-muted cursor-not-allowed opacity-70'
+              : 'border-border hover:border-primary/50'
         }`}
       >
         <Input
@@ -104,13 +117,20 @@ function FormImageField({ id, label, errors, register, required, maxImages = 5, 
           multiple
           accept='image/*'
           onChange={handleInputChange}
+          disabled={isMaxReached}
           className='hidden'
           {...(register
             ? register(id, { required: required ? `${label} là bắt buộc` : false })
             : {})}
         />
-        <Upload className='mx-auto h-8 w-8 text-muted-foreground mb-2' />
-        <p className='text-sm font-medium'>Kéo thả ảnh hoặc nhấp để chọn</p>
+        <Upload
+          className={`mx-auto h-8 w-8 mb-2 ${
+            isMaxReached ? 'text-muted-foreground/50' : 'text-muted-foreground'
+          }`}
+        />
+        <p className='text-sm font-medium'>
+          {isMaxReached ? 'Đã đạt số lượng ảnh tối đa' : 'Kéo thả ảnh hoặc nhấp để chọn'}
+        </p>
         <p className='text-xs text-muted-foreground mt-1'>
           Tối đa {maxImages} ảnh ({images.length}/{maxImages})
         </p>

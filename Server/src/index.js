@@ -16,6 +16,7 @@ import emailRouter from './routes/emailRouter.js';
 import uploadRouter from './routes/uploadRouter.js';
 import cartRouter from './routes/cartRouter.js';
 import orderRouter from './routes/orderRouter.js';
+import '../src/cron/cleanupImages.cron.js';
 
 dotenv.config();
 const app = express();
