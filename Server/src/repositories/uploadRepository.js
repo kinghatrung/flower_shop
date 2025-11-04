@@ -24,12 +24,12 @@ const uploadRepository = {
       WHERE is_temp = true
         AND created_at < NOW() - INTERVAL '${interval}'
     `;
-    const { rows } = await db.query(query);
+    const { rows } = await pool.query(query);
     return rows;
   },
 
   deleteImageById: async (id) => {
-    await db.query('DELETE FROM product_images WHERE id = $1', [id]);
+    await pool.query('DELETE FROM product_images WHERE id = $1', [id]);
   },
 };
 
