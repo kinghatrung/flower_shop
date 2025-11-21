@@ -55,9 +55,9 @@ function App() {
   const currentUser = useSelector(selectCurrentUser)
   const auth = useSelector(selectAuth)
 
-  if (auth.loading) {
-    return <Loading />
-  }
+  // if (auth.loading) {
+  //   return <Loading />
+  // }
 
   return (
     <div className='App'>

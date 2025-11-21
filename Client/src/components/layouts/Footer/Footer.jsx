@@ -55,6 +55,22 @@ function Footer() {
                   Liên hệ
                 </Link>
               </li>
+              <li>
+                <Link
+                  to={ROUTES.QAA}
+                  className='text-muted-foreground hover:text-primary transition-colors'
+                >
+                  Hỏi đáp
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={ROUTES.ABOUTUS}
+                  className='text-muted-foreground hover:text-primary transition-colors'
+                >
+                  Về chúng tôi
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -62,10 +78,46 @@ function Footer() {
           <div className='space-y-4'>
             <h3 className='font-semibold text-foreground'>Dịch vụ</h3>
             <ul className='space-y-2 text-sm'>
-              <li className='text-muted-foreground'>Hoa sinh nhật</li>
-              <li className='text-muted-foreground'>Hoa cưới</li>
-              <li className='text-muted-foreground'>Hoa khai trương</li>
-              <li className='text-muted-foreground'>Hoa chia buồn</li>
+              <li>
+                <Link
+                  to={ROUTES.CONTACT}
+                  className='text-muted-foreground hover:text-primary transition-colors'
+                >
+                  Hoa cưới
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={ROUTES.CONTACT}
+                  className='text-muted-foreground hover:text-primary transition-colors'
+                >
+                  Hoa sinh nhật
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={ROUTES.CONTACT}
+                  className='text-muted-foreground hover:text-primary transition-colors'
+                >
+                  Hoa khai trương
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={ROUTES.CONTACT}
+                  className='text-muted-foreground hover:text-primary transition-colors'
+                >
+                  Hoa sự kiện
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={ROUTES.CONTACT}
+                  className='text-muted-foreground hover:text-primary transition-colors'
+                >
+                  Đặt hoa định kỳ
+                </Link>
+              </li>
             </ul>
           </div>
 

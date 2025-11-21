@@ -201,7 +201,7 @@ function Header() {
                         Tìm kiếm
                       </DialogTitle>
                       <DialogTitle className='flex gap-2'>
-                        <div className='p-2 bg-black text-white rounded-sm'>Ctrl + K</div>
+                        <div className='p-1 bg-accent text-white rounded-sm'>Ctrl + K</div>
                       </DialogTitle>
                     </div>
                     <DialogDescription>Tìm kiếm sản phẩm bạn muốn đặt.</DialogDescription>
