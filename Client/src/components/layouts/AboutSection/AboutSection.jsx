@@ -75,7 +75,7 @@ function AboutSection() {
                 <div className='text-sm text-muted-foreground'>Loại hoa khác nhau</div>
               </div>
             </div>
-            <Link to={ROUTES.SERVICES}>
+            <Link to={ROUTES.ABOUTUS}>
               <Button
                 size='lg'
                 className='cursor-pointer bg-secondary hover:bg-secondary/90 text-secondary-foreground'

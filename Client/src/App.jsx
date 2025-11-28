@@ -53,7 +53,6 @@ const Wrapper = ({ layout }) => {
 
 function App() {
   const currentUser = useSelector(selectCurrentUser)
-  const auth = useSelector(selectAuth)
 
   // if (auth.loading) {
   //   return <Loading />
@@ -73,7 +72,6 @@ function App() {
         size={60}
         position={{ bottom: 110, right: 30 }}
       />
-
       <Routes>
         {/* Public */}
         <Route element={<Wrapper layout={DefaultLayout} />}>
@@ -88,7 +86,6 @@ function App() {
           <Route path={ROUTES.ABOUTUS} element={<AboutUs />} />
           <Route path={ROUTES.QAA} element={<Qaa />} />
         </Route>
-
         {/* Private */}
         <Route element={<ProtectedRoute user={currentUser} />}>
           <Route element={<Wrapper layout={DefaultLayout} />}>
@@ -98,7 +95,6 @@ function App() {
               <Route path={ROUTES.SUCCESS} element={<Success />} />
             </Route>
           </Route>
-
           <Route element={<Wrapper layout={AdminLayout} user={currentUser} />}>
             <Route element={<RbacRouter requiredPermission={permissions.VIEW_DASHBOARD} />}>
               <Route path={ROUTES.ADMIN_DASHBOARD} element={<DashBoard />} />
@@ -111,7 +107,6 @@ function App() {
             </Route>
           </Route>
         </Route>
-
         {/* Common */}
         <Route path={ROUTES.PRIVACY} element={<Privacy />} />
         <Route path={ROUTES.TERMS} element={<Terms />} />

@@ -3,112 +3,127 @@ import pool from '../config/db.js';
 const productRepository = {
   getProducts: async (filters, page, limit) => {
     const { category_type, search, priceRange, status } = filters;
-    try {
-      // --- Phần SELECT ---
-      let query = `
-        SELECT 
-          p.*,
-          c.type AS category_type, c.name AS category_name,
-          COALESCE(
-            json_agg(
-              json_build_object(
-                'url', pi.image_url,
-                'is_main', pi.is_main
-              )
-            ) FILTER (WHERE pi.image_url IS NOT NULL),
-            '[]'
-          ) AS images
-        FROM products p
-        JOIN categories c ON p.category_id = c.id
-        LEFT JOIN product_images pi ON pi.product_id = p.id
-        WHERE 1=1
-      `;
 
-      const values = [];
+    // 💡 Sửa đổi quan trọng: Xác định xem có cần phân trang hay không
+    // Chỉ phân trang khi cả page và limit đều là số dương hợp lệ.
+    const hasPagination =
+      page && limit && !isNaN(page) && !isNaN(limit) && page > 0 && limit > 0;
+
+    // Nếu không có phân trang, đặt page/limit về giá trị an toàn cho kết quả trả về
+    const actualPage = hasPagination ? page : 1;
+    const actualLimit = hasPagination ? limit : Infinity; // Giả định lấy tất cả
+
+    try {
+      let whereClauses = ' WHERE 1=1'; // Chuỗi điều kiện WHERE chung
+      const whereValues = []; // Mảng tham số chung cho WHERE
       let index = 1;
 
-      // --- Filter danh mục ---
+      // --- Bắt đầu xây dựng mệnh đề WHERE chung cho cả truy vấn DATA và COUNT ---
+
       if (category_type && category_type.toLowerCase() !== 'tất cả') {
-        query += ` AND LOWER(c.type) = LOWER($${index++})`;
-        values.push(category_type.toString());
+        whereClauses += ` AND LOWER(c.type) = LOWER($${index++})`;
+        whereValues.push(category_type.toString());
       }
 
-      // --- Filter trạng thái ---
       if (status && status.toLowerCase() !== 'tất cả') {
         if (status.toLowerCase() === 'is_new') {
-          query += ` AND p.is_new = true`;
+          whereClauses += ` AND p.is_new = true`;
         } else if (status.toLowerCase() === 'is_best_seller') {
-          query += ` AND p.is_best_seller = true`;
+          whereClauses += ` AND p.is_best_seller = true`;
         }
       }
 
-      // --- Filter khoảng giá ---
       if (priceRange) {
-        if (priceRange === '0-500') query += ` AND p.price < 500000`;
+        if (priceRange === '0-500') whereClauses += ` AND p.price < 500000`;
         else if (priceRange === '500-1000')
-          query += ` AND p.price BETWEEN 500000 AND 1000000`;
+          whereClauses += ` AND p.price BETWEEN 500000 AND 1000000`;
         else if (priceRange === '1000-2000')
-          query += ` AND p.price BETWEEN 1000000 AND 2000000`;
-        else if (priceRange === '2000+') query += ` AND p.price > 2000000`;
+          whereClauses += ` AND p.price BETWEEN 1000000 AND 2000000`;
+        else if (priceRange === '2000+')
+          whereClauses += ` AND p.price > 2000000`;
       }
 
-      // --- Filter tìm kiếm theo tên ---
       if (search && search.trim() !== '') {
-        query += ` AND LOWER(p.name) LIKE LOWER($${index++})`;
-        values.push(`%${search.toString().trim()}%`);
+        whereClauses += ` AND LOWER(p.name) LIKE LOWER($${index++})`;
+        whereValues.push(`%${search.toString().trim()}%`);
       }
 
-      // --- Tách query đếm tổng ---
-      let countQuery = `
-        SELECT COUNT(*) AS total
-        FROM products p
-        JOIN categories c ON p.category_id = c.id
-        WHERE 1=1
-      `;
-      const countValues = [];
-      let countIndex = 1;
+      // --- Kết thúc xây dựng WHERE clause ---
 
-      if (category_type && category_type.toLowerCase() !== 'tất cả') {
-        countQuery += ` AND LOWER(c.type) = LOWER($${countIndex++})`;
-        countValues.push(category_type.toString());
-      }
-      if (status && status.toLowerCase() !== 'tất cả') {
-        if (status.toLowerCase() === 'is_new')
-          countQuery += ` AND p.is_new = true`;
-        else if (status.toLowerCase() === 'is_best_seller')
-          countQuery += ` AND p.is_best_seller = true`;
-      }
-      if (priceRange) {
-        if (priceRange === '0-500') countQuery += ` AND p.price < 500000`;
-        else if (priceRange === '500-1000')
-          countQuery += ` AND p.price BETWEEN 500000 AND 1000000`;
-        else if (priceRange === '1000-2000')
-          countQuery += ` AND p.price BETWEEN 1000000 AND 2000000`;
-        else if (priceRange === '2000+') countQuery += ` AND p.price > 2000000`;
-      }
-      if (search && search.trim() !== '') {
-        countQuery += ` AND LOWER(p.name) LIKE LOWER($${countIndex++})`;
-        countValues.push(`%${search.toString().trim()}%`);
+      // *************************************************************
+      // 1. TRUY VẤN ĐẾM (COUNT QUERY) - Chỉ chạy khi có yêu cầu phân trang
+      // *************************************************************
+
+      let total = 0;
+      let totalPages = 1;
+
+      if (hasPagination) {
+        // Sử dụng logic WHERE và values đã xây dựng
+        const countQuery = `
+                SELECT COUNT(*) AS total
+                FROM products p
+                JOIN categories c ON p.category_id = c.id
+                ${whereClauses}
+            `;
+        // Mảng tham số cho COUNT chỉ là whereValues
+        const countResult = await pool.query(countQuery, whereValues);
+
+        total = parseInt(countResult.rows[0].total, 10);
+        totalPages = Math.ceil(total / actualLimit);
       }
 
-      const countResult = await pool.query(countQuery, countValues);
-      const total = parseInt(countResult.rows[0].total, 10);
-      const totalPages = Math.ceil(total / limit);
+      // *************************************************************
+      // 2. TRUY VẤN DATA CHÍNH (MAIN QUERY)
+      // *************************************************************
 
-      // --- GROUP BY và phân trang ---
-      query += ` GROUP BY p.id, c.type, c.name ORDER BY p.created_at DESC`;
-      query += ` LIMIT $${index++} OFFSET $${index++}`;
-      values.push(limit);
-      values.push((page - 1) * limit);
+      let query = `
+            SELECT 
+                p.*,
+                c.type AS category_type, c.name AS category_name,
+                COALESCE(
+                    json_agg(
+                        json_build_object(
+                            'url', pi.image_url,
+                            'is_main', pi.is_main
+                        )
+                    ) FILTER (WHERE pi.image_url IS NOT NULL),
+                    '[]'
+                ) AS images
+            FROM products p
+            JOIN categories c ON p.category_id = c.id
+            LEFT JOIN product_images pi ON pi.product_id = p.id
+            ${whereClauses}
+            GROUP BY p.id, c.type, c.name 
+            ORDER BY p.created_at DESC
+        `;
 
-      const result = await pool.query(query, values);
+      // Khởi tạo mảng tham số cho truy vấn chính (bắt đầu bằng whereValues)
+      const queryValues = [...whereValues];
+
+      // 💡 Sửa đổi quan trọng: Chỉ thêm LIMIT/OFFSET nếu có phân trang
+      if (hasPagination) {
+        const offset = (actualPage - 1) * actualLimit;
+
+        // index đã được cập nhật từ bước WHERE clause, tiếp tục sử dụng
+        query += ` LIMIT $${index++} OFFSET $${index++}`;
+        queryValues.push(actualLimit);
+        queryValues.push(offset);
+      }
+
+      const result = await pool.query(query, queryValues);
+
+      // Nếu không có phân trang, tính tổng dựa trên kết quả trả về
+      if (!hasPagination) {
+        total = result.rows.length;
+        totalPages = 1;
+      }
 
       return {
         products: result.rows,
         total,
         totalPages,
-        currentPage: page,
-        pageSize: limit,
+        currentPage: actualPage,
+        pageSize: hasPagination ? actualLimit : result.rows.length,
       };
     } catch (err) {
       throw err;

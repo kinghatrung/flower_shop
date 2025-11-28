@@ -3,10 +3,13 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
+  SelectGroup,
+  SelectLabel
 } from '~/components/ui/select'
 
 function FilterSelect({
+  label,
   value,
   onChange,
   placeholder = 'Chọn...',
@@ -20,14 +23,17 @@ function FilterSelect({
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {options.map((opt, index) => {
-          const key = getKey ? (opt.value, index) : opt.value
-          return (
-            <SelectItem key={key} className='cursor-pointer' value={opt.value}>
-              {opt.label}
-            </SelectItem>
-          )
-        })}
+        <SelectGroup>
+          <SelectLabel>{label}</SelectLabel>
+          {options.map((opt, index) => {
+            const key = getKey ? (opt.value, index) : opt.value
+            return (
+              <SelectItem key={key} className='cursor-pointer' value={opt.value}>
+                {opt.label}
+              </SelectItem>
+            )
+          })}
+        </SelectGroup>
       </SelectContent>
     </Select>
   )

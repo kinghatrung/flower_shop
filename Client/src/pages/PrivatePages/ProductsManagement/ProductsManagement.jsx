@@ -180,12 +180,13 @@ function ProductsManagement() {
           <FilterInput placeholder='Tìm kiếm theo tên...' value={search} onChange={setSearch} />
 
           <FilterSelect
+            label='Giá sản phẩm'
             getKey
             placeholder='Lọc theo giá...'
             value={productPriceFilter}
             onChange={setProductPriceFilter}
             options={[
-              { label: 'Lọc theo giá...', value: '0-10000000' },
+              { label: 'Tất cả', value: '0-10000000' },
               { label: 'Dưới 500k', value: '0-500000' },
               { label: '500k - 1tr', value: '500000-1000000' },
               { label: '1tr - 2tr', value: '1000000-2000000' },
@@ -194,11 +195,12 @@ function ProductsManagement() {
           />
 
           <FilterSelect
+            label='Trạng thái'
             placeholder='Lọc theo trạng thái...'
             value={productStatusFilter}
             onChange={setProductStatusFilter}
             options={[
-              { label: 'Lọc trạng thái...', value: 'all' },
+              { label: 'Tất cả', value: 'all' },
               { label: 'Bán chạy', value: 'is_best_seller' },
               { label: 'Sản phẩm mới', value: 'is_new' }
             ]}
