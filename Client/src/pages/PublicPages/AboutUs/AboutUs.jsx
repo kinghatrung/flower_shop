@@ -44,7 +44,7 @@ function AboutUs() {
           className={`space-y-6 ${contactInfoVisible ? 'animate-slide-in-right' : 'opacity-0'}`}
         >
           <div className='space-y-8'>
-            <Card className='border-0 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card/80 backdrop-blur-sm'>
+            <Card className='border-0 shadow-lg hover-lift transition-shadow duration-300 bg-card/80 backdrop-blur-sm'>
               <CardContent className='p-8 md:p-10 space-y-6'>
                 <div className='space-y-4'>
                   <h2 className='font-serif text-3xl font-bold text-foreground'>

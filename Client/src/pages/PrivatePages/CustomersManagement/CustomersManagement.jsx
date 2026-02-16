@@ -3,6 +3,7 @@ import { MoreVertical } from 'lucide-react'
 import dayjs from 'dayjs'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
+import { queryKeys } from '~/config/queryConfig'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -55,7 +56,7 @@ function CustomersManagement() {
   }
 
   const { data, isLoading } = useQuery({
-    queryKey: ['users', page, filters],
+    queryKey: queryKeys.users.list({ page, ...filters }),
     queryFn: () => getUsers(page, limit, filters),
     keepPreviousData: true
   })
@@ -66,7 +67,7 @@ function CustomersManagement() {
 
   const handleAddUser = async (userData) => {
     await registerUser(userData)
-    await queryClient.invalidateQueries(['users'])
+    await queryClient.invalidateQueries({ queryKey: queryKeys.users.lists() })
     setIsAddDialogOpen(!isAddDialogOpen)
   }
 
@@ -75,7 +76,7 @@ function CustomersManagement() {
       Object.entries(userData).filter(([_, value]) => value !== '' && value !== undefined)
     )
     await updateUser(selectedUser.user_id, cleanedData)
-    await queryClient.invalidateQueries(['users'])
+    await queryClient.invalidateQueries({ queryKey: queryKeys.users.lists() })
     setIsEditDialogOpen(false)
     setSelectedUser(null)
   }
@@ -87,7 +88,7 @@ function CustomersManagement() {
 
   const handleDeleteUser = async (email) => {
     await deleteUser(email)
-    await queryClient.invalidateQueries(['users'])
+    await queryClient.invalidateQueries({ queryKey: queryKeys.users.lists() })
   }
 
   const handlePageChange = (newPage) => {

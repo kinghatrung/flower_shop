@@ -3,14 +3,45 @@ import { Link, useParams } from 'react-router-dom'
 import { Star, Heart, ShoppingCart, Minus, Plus, Truck, Shield, RotateCcw } from 'lucide-react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
+import { Card } from '~/components/ui/card'
 import { Button } from '~/components/ui/button'
 import { Badge } from '~/components/ui/badge'
 import ProductCard from '~/components/common/products/ProductCard'
 import { ROUTES } from '~/constants'
-import { getProduct, getProductsByCategoryId, createProductCartUser } from '~/api'
+import {
+  getProduct,
+  getProductsByCategoryId,
+  createProductCartUser,
+  getReviewByProductId
+} from '~/api'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/slices/authSlice'
 import useTimeoutLoading from '~/hooks/useTimeoutLoading'
+import CardReview from '~/components/common/CardReview'
+import WriteReviewForm from '~/components/common/WriteReviewForm'
+import { queryKeys } from '~/config/queryConfig'
+
+const reviews = [
+  {
+    id: '1',
+    author: 'Nguyễn Văn A',
+    rating: 5,
+    title: 'Sản phẩm tuyệt vời!',
+    content:
+      'Chất lượng vượt mong đợi, giao hàng nhanh chóng và đóng gói cẩn thận. Tôi rất hài lòng với mua sắm này.',
+    date: '2 tuần trước',
+    helpful: 142,
+    avatar: '👩‍💼'
+  }
+]
+
+const ratingDistribution = [
+  { stars: 5, count: 1240, percentage: 68 },
+  { stars: 4, count: 385, percentage: 21 },
+  { stars: 3, count: 112, percentage: 6 },
+  { stars: 2, count: 35, percentage: 2 },
+  { stars: 1, count: 28, percentage: 3 }
+]
 
 function Product() {
   const { slug } = useParams()
@@ -18,28 +49,35 @@ function Product() {
   const queryClient = useQueryClient()
   const [pureSlug, idPart] = slug.split(/-i\./)
   const [isLoading, startLoading] = useTimeoutLoading(1000)
+  const [showWriteReview, setShowWriteReview] = useState(false)
+  const [quantity, setQuantity] = useState(1)
+  const [isLiked, setIsLiked] = useState(false)
 
   const { data } = useQuery({
-    queryKey: ['product', idPart],
+    queryKey: queryKeys.products.detail(idPart),
     queryFn: () => getProduct(idPart)
   })
 
   const product = data?.data
 
   const { data: products } = useQuery({
-    queryKey: ['products', product?.category_id],
+    queryKey: queryKeys.products.list({ category: product?.category_id }),
     queryFn: () => getProductsByCategoryId(product?.category_id),
     enabled: !!product?.category_id
   })
+
+  const { data: reviewsData } = useQuery({
+    queryKey: queryKeys.reviews.byProduct(product?.id),
+    queryFn: () => getReviewByProductId(product?.id)
+  })
+
+  const reviews = reviewsData?.data || []
 
   const productItems = products?.data
   const allImages = product?.images || []
   const mainIndex = allImages.findIndex((img) => img.is_main) ?? 0
   const [selectedImage, setSelectedImage] = useState(mainIndex >= 0 ? mainIndex : 0)
   const mainProductImage = allImages[selectedImage]?.url
-
-  const [quantity, setQuantity] = useState(1)
-  const [isLiked, setIsLiked] = useState(false)
 
   const relatedProducts = productItems?.filter((p) => p.id !== product.id)
 
@@ -57,14 +95,14 @@ function Product() {
       productId: product?.id,
       quantity: quantity
     }
+    setQuantity(1)
     await createProductCartUser(payload)
-    await queryClient.invalidateQueries(['cart', user?.user_id])
+    await queryClient.invalidateQueries({ queryKey: queryKeys.cart.byUser(user?.user_id) })
   }
 
   return (
     <div className='pt-24 pb-16 px-4'>
       <div className='max-w-7xl mx-auto'>
-        {/* Breadcrumb */}
         <div className='flex items-center gap-2 text-sm text-muted-foreground mb-8'>
           <Link to={ROUTES.HOME} className='hover:text-primary'>
             Trang chủ
@@ -226,8 +264,90 @@ function Product() {
           </div>
         </div>
 
+        {/* Product Reviews */}
+        <div className='mt-16'>
+          <h2 className='font-serif text-2xl font-bold text-foreground mb-8'>Đánh giá sản phẩm</h2>
+
+          {showWriteReview && (
+            <div className='mb-12'>
+              <WriteReviewForm
+                onClose={() => setShowWriteReview(false)}
+                // onSubmit={handleReviewSubmit}
+              />
+            </div>
+          )}
+
+          <div className='grid lg:grid-cols-3 gap-8'>
+            <div className='lg:col-span-1'>
+              <Card className='p-8 sticky top-24'>
+                <div className='text-center mb-2'>
+                  <div className='flex justify-center'>
+                    <div className='text-5xl font-bold'>{product?.rating}</div>
+                    <div className='flex flex-col justify-center ml-2'>
+                      <div className='flex gap-1'>
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            size={20}
+                            className={
+                              i < Math.round(product?.rating)
+                                ? 'fill-yellow-400 text-yellow-400'
+                                : 'text-gray-300'
+                            }
+                          />
+                        ))}
+                      </div>
+
+                      <p className='text-xs text-muted-foreground mt-2'>
+                        {product?.reviews.toLocaleString()} đánh giá
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className='space-y-3 mb-2'>
+                  {ratingDistribution.map((rating) => (
+                    <div key={rating.stars} className='flex items-center gap-3'>
+                      <button className='flex items-center gap-1 hover:text-primary transition-colors'>
+                        <span className='text-sm font-medium'>{rating.stars}</span>
+                        <Star size={16} className='fill-yellow-400 text-yellow-400' />
+                      </button>
+                      <div className='flex-1 h-2 bg-muted rounded-full overflow-hidden'>
+                        <div
+                          className='h-full bg-yellow-400 rounded-full'
+                          style={{ width: `${rating.percentage}%` }}
+                        />
+                      </div>
+                      <span className='text-sm text-muted-foreground w-12 text-right'>
+                        {rating.percentage}%
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <Button
+                  onClick={() => setShowWriteReview(!showWriteReview)}
+                  className='w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground cursor-pointer'
+                >
+                  {showWriteReview ? 'Ẩn form' : 'Viết đánh giá'}
+                </Button>
+              </Card>
+            </div>
+
+            <div className='lg:col-span-2 space-y-4'>
+              {reviews.length > 0
+                ? reviews.map((review) => <CardReview key={review.id} review={review} />)
+                : 'Không có đánh giá nào cho sản phẩm này.'}
+
+              <Button className='w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground cursor-pointer'>
+                Xem thêm đánh giá
+              </Button>
+            </div>
+          </div>
+        </div>
+
         {/* Related Products */}
-        <div className='mt-30'>
+        <div className='mt-16'>
           <h2 className='font-serif text-2xl font-bold text-foreground mb-8'>Sản phẩm liên quan</h2>
           {relatedProducts?.length > 0 ? (
             <div className='grid sm:grid-cols-2 lg:grid-cols-4 gap-6'>

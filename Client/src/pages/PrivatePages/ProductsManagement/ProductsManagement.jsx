@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import numeral from 'numeral'
 import { useNavigate } from 'react-router-dom'
+import { queryKeys } from '~/config/queryConfig'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -54,7 +55,7 @@ function ProductsManagement() {
   }
 
   const { data, isLoading } = useQuery({
-    queryKey: ['products', page, filter],
+    queryKey: queryKeys.products.list({ page, ...filter }),
     queryFn: () => getProducts(page, limit, filter),
     keepPreviousData: true
   })
@@ -79,7 +80,7 @@ function ProductsManagement() {
       price,
       original_price
     })
-    await queryClient.invalidateQueries(['products'])
+    await queryClient.invalidateQueries({ queryKey: queryKeys.products.lists() })
     setIsEditDialogOpen(!isEditDialogOpen)
     setSelectedProduct(null)
   }
@@ -87,7 +88,7 @@ function ProductsManagement() {
   const handleAddProduct = async (productData) => {
     await createProduct(productData)
     setIsAddDialogOpen(!isAddDialogOpen)
-    await queryClient.invalidateQueries(['products'])
+    await queryClient.invalidateQueries({ queryKey: queryKeys.products.lists() })
   }
 
   const handlePageChange = (newPage) => {
@@ -98,7 +99,7 @@ function ProductsManagement() {
 
   const handleDeleteProductById = async (productId) => {
     await deleteProductById(productId)
-    await queryClient.invalidateQueries(['products'])
+    await queryClient.invalidateQueries({ queryKey: queryKeys.products.lists() })
   }
 
   const columns = [

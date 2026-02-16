@@ -5,13 +5,9 @@ let client;
 const initRedis = async () => {
   if (client) return client;
 
+  // Connect to Redis
   client = createClient({
-    username: process.env.REDIS_USERNAME,
-    password: process.env.REDIS_PASSWORD,
-    socket: {
-      host: process.env.REDIS_HOST,
-      port: process.env.REDIS_PORT,
-    },
+    url: process.env.REDIS_URL,
   });
 
   client.on('connect', () => console.log('REDIS CONNECTED'));

@@ -116,3 +116,9 @@ export const getOrders = async () => {
   const res = await authorizedAxiosInstance.get(`${API_URL}/api/orders`)
   return res.data
 }
+
+// REVIEWS
+export const getReviewByProductId = async (product_id) => {
+  const res = await authorizedAxiosInstance.get(`${API_URL}/api/reviews/${product_id}`)
+  return res.data
+}

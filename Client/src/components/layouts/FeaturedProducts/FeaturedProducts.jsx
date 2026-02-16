@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import { queryKeys } from '~/config/queryConfig'
 
 import { Button } from '~/components/ui/button'
 import { Badge } from '~/components/ui/badge'
@@ -11,7 +12,7 @@ import { useScrollAnimation } from '~/hooks/useScrollAnimationOptions'
 
 function FeaturedProducts() {
   const { data } = useQuery({
-    queryKey: ['products'],
+    queryKey: queryKeys.products.list({ featured: true }),
     queryFn: () => getProductsAll()
   })
 

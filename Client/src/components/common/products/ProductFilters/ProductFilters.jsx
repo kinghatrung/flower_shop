@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Search, Filter, X } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
+import { queryKeys } from '~/config/queryConfig'
 
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
@@ -20,7 +21,7 @@ function ProductFilters({
   const [showFilters, setShowFilters] = useState(false)
 
   const { data } = useQuery({
-    queryKey: ['categories'],
+    queryKey: queryKeys.categories.lists(),
     queryFn: () => getCategories()
   })
 

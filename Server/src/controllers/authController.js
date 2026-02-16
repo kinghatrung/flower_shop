@@ -15,7 +15,7 @@ const authController = {
         httpOnly: true,
         secure: true,
         sameSite: 'none',
-        maxAge: ms('14 days'),
+        maxAge: ms('15 minutes'),
       });
 
       res.cookie('refreshToken', refreshToken, {
@@ -30,7 +30,7 @@ const authController = {
         data: userWithoutToken,
       });
     } catch (err) {
-      res.status(401).json({ message: err.message });
+      res.status(500).json({ message: err.message });
     }
   },
 
@@ -45,7 +45,7 @@ const authController = {
         httpOnly: true,
         secure: true,
         sameSite: 'none',
-        maxAge: ms('14 days'),
+        maxAge: ms('15 minutes'),
       });
 
       res.cookie('refreshToken', refreshToken, {
@@ -60,7 +60,7 @@ const authController = {
         data: userWithoutToken,
       });
     } catch (err) {
-      res.status(401).json({ message: err.message });
+      res.status(500).json({ message: err.message });
     }
   },
 
@@ -74,7 +74,7 @@ const authController = {
         httpOnly: true,
         secure: true,
         sameSite: 'none',
-        maxAge: ms('14 days'),
+        maxAge: ms('15 minutes'),
       });
 
       res.cookie('refreshToken', refreshToken, {
@@ -89,7 +89,7 @@ const authController = {
         data: userWithoutToken,
       });
     } catch (err) {
-      res.status(401).json({ message: err.message });
+      res.status(500).json({ message: err.message });
     }
   },
 
@@ -147,7 +147,7 @@ const authController = {
         httpOnly: true,
         secure: true,
         sameSite: 'none',
-        maxAge: ms('14 days'),
+        maxAge: ms('15 minutes'),
       });
 
       res

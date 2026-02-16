@@ -56,7 +56,7 @@ function Contact() {
         <div className='grid lg:grid-cols-2 gap-12'>
           {/* Contact Form */}
           <div ref={formRef} className={formVisible ? 'animate-slide-in-left' : 'opacity-0'}>
-            <Card>
+            <Card className='hover-lift mb-6'>
               <CardHeader>
                 <CardTitle className='flex items-center gap-2'>
                   <MessageCircle className='h-5 w-5' />
@@ -135,6 +135,23 @@ function Contact() {
                 )}
               </CardContent>
             </Card>
+
+            {/* Quick Contact */}
+            <Card className='hover-lift'>
+              <CardContent className='p-6'>
+                <div className='text-center space-y-4'>
+                  <h3 className='font-semibold text-lg'>Cần tư vấn ngay?</h3>
+                  <p className='text-muted-foreground'>Gọi hotline để được hỗ trợ trực tiếp</p>
+                  <Button
+                    onClick={() => (window.location.href = 'tel:0123456789')}
+                    className='bg-secondary hover:bg-secondary/90 text-secondary-foreground cursor-pointer'
+                  >
+                    <Phone className='h-4 w-4 mr-2' />
+                    Gọi ngay: 0123 456 789
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Contact Information */}
@@ -205,23 +222,6 @@ function Contact() {
                       referrerPolicy='no-referrer-when-downgrade'
                     ></iframe>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Quick Contact */}
-            <Card className='bg-primary/5 border-primary/20 hover-scale'>
-              <CardContent className='p-6'>
-                <div className='text-center space-y-4'>
-                  <h3 className='font-semibold text-lg'>Cần tư vấn ngay?</h3>
-                  <p className='text-muted-foreground'>Gọi hotline để được hỗ trợ trực tiếp</p>
-                  <Button
-                    onClick={() => (window.location.href = 'tel:0123456789')}
-                    className='bg-secondary hover:bg-secondary/90 text-secondary-foreground cursor-pointer'
-                  >
-                    <Phone className='h-4 w-4 mr-2' />
-                    Gọi ngay: 0123 456 789
-                  </Button>
                 </div>
               </CardContent>
             </Card>

@@ -5,6 +5,7 @@ import clsx from 'clsx'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { useQuery } from '@tanstack/react-query'
+import { queryKeys } from '~/config/queryConfig'
 
 import {
   Dialog,
@@ -49,19 +50,19 @@ function Header() {
     search: debouncedSearch?.trim()
   }
 
-  const { data } = useQuery({
-    queryKey: ['cart', user?.user_id],
+  const { data: productsCardData } = useQuery({
+    queryKey: queryKeys.cart.byUser(user?.user_id),
     queryFn: () => getProductCart(user?.user_id)
   })
 
   const { data: productsData } = useQuery({
-    queryKey: ['products', page, filter],
+    queryKey: queryKeys.products.list({ page, ...filter }),
     queryFn: () => getProducts(page, limit, filter),
     keepPreviousData: true
   })
 
   const products = productsData?.data
-  const productsCard = data?.productsCard
+  const productsCard = productsCardData?.data
   const totalProductsCard = productsCard?.reduce((total, product) => total + product.quantity, 0)
 
   useEffect(() => {

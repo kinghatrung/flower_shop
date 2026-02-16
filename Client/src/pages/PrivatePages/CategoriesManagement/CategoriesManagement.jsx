@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { MoreVertical, Plus } from 'lucide-react'
 import dayjs from 'dayjs'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { queryKeys } from '~/config/queryConfig'
 
 import { Button } from '~/components/ui/button'
 import {
@@ -34,7 +35,7 @@ function CategoriesManagement() {
   }
 
   const { data, isLoading } = useQuery({
-    queryKey: ['categories', filters],
+    queryKey: queryKeys.categories.list(filters),
     queryFn: () => getCategories(filters),
     keepPreviousData: true
   })
@@ -48,7 +49,7 @@ function CategoriesManagement() {
 
   const handleAddCategory = async (data) => {
     await createCategory(data)
-    await queryClient.invalidateQueries(['categories'])
+    await queryClient.invalidateQueries({ queryKey: queryKeys.categories.lists() })
     setIsAddDialogOpen(!isAddDialogOpen)
   }
 
@@ -56,14 +57,14 @@ function CategoriesManagement() {
     const { name, type, description } = data
 
     await editCategory(selectedCategory.id, { name, type, description })
-    await queryClient.invalidateQueries(['categories'])
+    await queryClient.invalidateQueries({ queryKey: queryKeys.categories.lists() })
     setIsEditDialogOpen(!isEditDialogOpen)
     setSelectedCategory(null)
   }
 
   const handleDeleteCategory = async (type) => {
     await deleteCategory(type)
-    await queryClient.invalidateQueries(['categories'])
+    await queryClient.invalidateQueries({ queryKey: queryKeys.categories.lists() })
   }
 
   const columns = [

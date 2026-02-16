@@ -3,6 +3,7 @@ import { Minus, Plus, Trash2, ArrowLeft, ShoppingBag } from 'lucide-react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useSelector } from 'react-redux'
 import numeral from 'numeral'
+import { queryKeys } from '~/config/queryConfig'
 
 import { Button } from '~/components/ui/button'
 import { Card, CardContent } from '~/components/ui/card'
@@ -18,7 +19,7 @@ function Cart() {
   const navigate = useNavigate()
 
   const { data, isLoading } = useQuery({
-    queryKey: ['cart', user?.user_id],
+    queryKey: queryKeys.cart.byUser(user?.user_id),
     queryFn: () => getProductCart(user?.user_id)
   })
 
@@ -31,12 +32,12 @@ function Cart() {
       quantity: quantity
     }
     await updateProductCartUser(payload)
-    await queryClient.invalidateQueries(['cart'])
+    await queryClient.invalidateQueries({ queryKey: queryKeys.cart.all })
   }
 
   const removeItem = async (product) => {
     await deleteProductCartUser(user?.user_id, product?.product_id)
-    await queryClient.invalidateQueries(['cart'])
+    await queryClient.invalidateQueries({ queryKey: queryKeys.cart.all })
   }
 
   if (products?.length === 0) {
@@ -98,7 +99,7 @@ function Cart() {
                   </Card>
                 ))
               : products?.map((product) => (
-                  <Card key={product.id}>
+                  <Card className='hover-lift' key={product.id}>
                     <CardContent className='p-6'>
                       <div className='flex gap-4'>
                         <div className='w-24 h-24 rounded-lg overflow-hidden bg-muted flex-shrink-0'>

@@ -30,6 +30,7 @@ let refreshTokenPromise = null
 // Cam thiệp vào giữa những cái response API
 authorizedAxiosInstance.interceptors.response.use(
   (response) => {
+    console.log(response.data)
     // Những status code trong khoảng 2xx sẽ nằm ở trong này
     if (response.data?.message) {
       toast.success(response.data.message)
@@ -39,14 +40,14 @@ authorizedAxiosInstance.interceptors.response.use(
   (error) => {
     // Những status code ngoài khoảng 2xx sẽ nằm ở trong này - Là lỗi
     // Xử lý accessToken hết hạn
-    // TH1: Nhận mã 401 từ BE, thì gọi API đăng xuất
-    if (error.response?.status === 401) {
+    // TH1: Nhận mã 410 từ BE, thì gọi API đăng xuất
+    if (error.response?.status === 410) {
       axiosReduxStore.dispatch(logoutUser(false))
     }
 
-    // TH2: Nhận mã 410 từ BE, thì gọi API refresh Token
+    // TH2: Nhận mã 401 từ BE, thì gọi API refresh Token
     const originalRequests = error.config
-    if (error.response?.status === 410 && !originalRequests._retry) {
+    if (error.response?.status === 401 && !originalRequests._retry) {
       originalRequests._retry = true
       if (!refreshTokenPromise) {
         refreshTokenPromise = refreshToken()
@@ -71,8 +72,8 @@ authorizedAxiosInstance.interceptors.response.use(
       })
     }
 
-    if (error.response?.status !== 410 || error.response?.status !== 401) {
-      toast.error(error.response?.data?.message)
+    if (error.response?.status !== 410 && error.response?.status !== 401) {
+      toast.error(error.response?.data?.message || 'Đã có lỗi xảy ra')
     }
 
     return Promise.reject(error)

@@ -3,6 +3,7 @@ import dayjs from 'dayjs'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import numeral from 'numeral'
 import { MoreVertical } from 'lucide-react'
+import { queryKeys } from '~/config/queryConfig'
 
 import HeaderTable from '~/components/common/HeaderTable'
 import DataTable from '~/components/common/DataTable'
@@ -21,7 +22,7 @@ function OrdersManagement() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
 
   const { data, isLoading } = useQuery({
-    queryKey: ['orders'],
+    queryKey: queryKeys.orders.lists(),
     queryFn: () => getOrders()
   })
 

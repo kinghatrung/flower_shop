@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useInfiniteQuery } from '@tanstack/react-query'
+import { queryKeys } from '~/config/queryConfig'
 
 import ProductCard from '~/components/common/products/ProductCard'
 import ProductFilters from '~/components/common/products/ProductFilters'
@@ -43,7 +44,7 @@ function Products() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
     useInfiniteQuery({
-      queryKey: ['products', filter],
+      queryKey: queryKeys.products.list(filter),
       queryFn: ({ pageParam = 1 }) => getProducts(pageParam, limit, filter),
       getNextPageParam: (lastPage) => {
         if (lastPage.pagination?.hasNext) {

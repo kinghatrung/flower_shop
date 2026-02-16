@@ -1,5 +1,5 @@
 import { Fragment } from 'react'
-import { Routes, Route, Outlet, Navigate } from 'react-router-dom'
+import { Routes, Route, Outlet, BrowserRouter } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import { ROUTES } from '~/constants'
@@ -54,12 +54,8 @@ const Wrapper = ({ layout }) => {
 function App() {
   const currentUser = useSelector(selectCurrentUser)
 
-  // if (auth.loading) {
-  //   return <Loading />
-  // }
-
   return (
-    <div className='App'>
+    <BrowserRouter basename='/'>
       <ScrollToTop />
       <Toaster richColors position='bottom-right' />
       <ButtonZalo
@@ -107,13 +103,14 @@ function App() {
             </Route>
           </Route>
         </Route>
+
         {/* Common */}
         <Route path={ROUTES.PRIVACY} element={<Privacy />} />
         <Route path={ROUTES.TERMS} element={<Terms />} />
         <Route path={ROUTES.ACCESS_DENIED} element={<AccessDenied />} />
         <Route path={ROUTES.NOTFOUND} element={<NotFound />} />
       </Routes>
-    </div>
+    </BrowserRouter>
   )
 }
 

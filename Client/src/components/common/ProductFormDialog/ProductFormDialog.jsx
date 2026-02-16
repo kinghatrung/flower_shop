@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { queryKeys } from '~/config/queryConfig'
 
 import {
   FormDialog,
@@ -13,7 +14,7 @@ import { getCategories } from '~/api'
 
 function ProductFormDialog({ open, onOpenChange, initialData, onSubmit }) {
   const { data } = useQuery({
-    queryKey: ['categories'],
+    queryKey: queryKeys.categories.lists(),
     queryFn: () => getCategories()
   })
 

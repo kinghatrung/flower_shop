@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useSelector } from 'react-redux'
 import numeral from 'numeral'
 import { useForm } from 'react-hook-form'
+import { queryKeys } from '~/config/queryConfig'
 
 import { Button } from '~/components/ui/button'
 import { Label } from '~/components/ui/label'
@@ -21,7 +22,7 @@ function Checkout() {
   const navigate = useNavigate()
   const user = useSelector(selectCurrentUser)
   const { data } = useQuery({
-    queryKey: ['cart', user?.user_id],
+    queryKey: queryKeys.cart.byUser(user?.user_id),
     queryFn: () => getProductCart(user?.user_id)
   })
 

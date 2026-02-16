@@ -63,11 +63,12 @@ function Login() {
               Đăng nhập vào tài khoản Nuvexa của bạn
             </CardDescription>
           </CardHeader>
-          <div className='px-6 opacity-70'>
+          {/* Tài khoản để test */}
+          {/* <div className='px-6 opacity-70'>
             <p>Tài khoản admin</p>
             <p>Email: admin@gmail.com</p>
             <p>Password: 123412341234</p>
-          </div>
+          </div> */}
           <CardContent className='space-y-6'>
             <form className='space-y-4' onSubmit={(e) => handleSubmit(e)}>
               <div className='space-y-2'>
