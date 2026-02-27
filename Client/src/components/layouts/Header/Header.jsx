@@ -131,8 +131,17 @@ function Header() {
               }
               to={ROUTES.HOME}
             >
-              Trang chủ
-              <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full group-focus-within:w-full'></span>
+              {({ isActive }) => (
+                <>
+                  Trang chủ
+                  <span
+                    className={clsx(
+                      'absolute -bottom-1 left-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full',
+                      isActive ? 'w-full' : 'w-0'
+                    )}
+                  ></span>
+                </>
+              )}
             </NavLink>
             <NavLink
               to={ROUTES.PRODUCTS}
@@ -143,8 +152,17 @@ function Header() {
                 )
               }
             >
-              Bộ sưu tập
-              <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full group-focus-within:w-full'></span>
+              {({ isActive }) => (
+                <>
+                  Bộ sưu tập
+                  <span
+                    className={clsx(
+                      'absolute -bottom-1 left-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full',
+                      isActive ? 'w-full' : 'w-0'
+                    )}
+                  ></span>
+                </>
+              )}
             </NavLink>
             <NavLink
               to={ROUTES.SERVICES}
@@ -155,8 +173,17 @@ function Header() {
                 )
               }
             >
-              Dịch vụ
-              <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full group-focus-within:w-full'></span>
+              {({ isActive }) => (
+                <>
+                  Dịch vụ
+                  <span
+                    className={clsx(
+                      'absolute -bottom-1 left-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full',
+                      isActive ? 'w-full' : 'w-0'
+                    )}
+                  ></span>
+                </>
+              )}
             </NavLink>
             <NavLink
               to={ROUTES.CONTACT}
@@ -167,8 +194,17 @@ function Header() {
                 )
               }
             >
-              Liên hệ
-              <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full group-focus-within:w-full'></span>
+              {({ isActive }) => (
+                <>
+                  Liên hệ
+                  <span
+                    className={clsx(
+                      'absolute -bottom-1 left-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full',
+                      isActive ? 'w-full' : 'w-0'
+                    )}
+                  ></span>
+                </>
+              )}
             </NavLink>
             <NavLink
               to={ROUTES.QAA}
@@ -179,8 +215,17 @@ function Header() {
                 )
               }
             >
-              Hỏi đáp
-              <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full group-focus-within:w-full'></span>
+              {({ isActive }) => (
+                <>
+                  Hỏi đáp
+                  <span
+                    className={clsx(
+                      'absolute -bottom-1 left-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full',
+                      isActive ? 'w-full' : 'w-0'
+                    )}
+                  ></span>
+                </>
+              )}
             </NavLink>
             <NavLink
               to={ROUTES.ABOUTUS}
@@ -191,8 +236,17 @@ function Header() {
                 )
               }
             >
-              Về chúng tôi
-              <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full group-focus-within:w-full'></span>
+              {({ isActive }) => (
+                <>
+                  Về chúng tôi
+                  <span
+                    className={clsx(
+                      'absolute -bottom-1 left-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full',
+                      isActive ? 'w-full' : 'w-0'
+                    )}
+                  ></span>
+                </>
+              )}
             </NavLink>
           </nav>
 
@@ -208,7 +262,7 @@ function Header() {
                 <Button
                   variant='ghost'
                   size='icon'
-                  className='hover:bg-accent/10 hover:text-primary hover:scale-110 transition-all duration-300 relative cursor-pointer'
+                  className='hover:bg-accent/10 hover:text-primary transition-all duration-300 relative cursor-pointer'
                   aria-label='Tìm kiếm'
                 >
                   <Search className='h-5 w-5' />
@@ -299,7 +353,7 @@ function Header() {
               <Button
                 variant='ghost'
                 size='icon'
-                className='hover:bg-accent/10 hover:text-primary hover:scale-110 transition-all duration-300 relative cursor-pointer'
+                className='hover:bg-accent/10 hover:text-primary transition-all duration-300 relative cursor-pointer'
                 aria-label={`Giỏ hàng (${productsCard?.length} sản phẩm)`}
               >
                 <ShoppingCart className='h-5 w-5' />
@@ -317,7 +371,7 @@ function Header() {
                   <Button
                     variant='ghost'
                     size='icon'
-                    className='hover:bg-accent/10 hover:text-primary hover:scale-110 transition-all duration-300 cursor-pointer'
+                    className='hover:bg-accent/10 hover:text-primary transition-all duration-300 cursor-pointer'
                     aria-label='Tài khoản'
                   >
                     {user?.isauth ? (

@@ -28,6 +28,7 @@ function ProductFilters({
   const categories = data?.data
 
   const clearFilters = () => {
+    onSearchSubmit('')
     onSearchChange('')
     onCategoryChange('all')
     onPriceRangeChange([0, 10000000])

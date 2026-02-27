@@ -130,144 +130,108 @@ export const sendEmailContact = async (data) => {
     from: email,
     to: process.env.CONTACT_EMAIL_RECIPIENT || 'info@bloomflowers.vn',
     replyTo: email,
-    subject: `Tin nhắn liên hệ từ ${name} - Nuvexa Luxury Flowers`,
+    subject: `🌸 Tin nhắn liên hệ từ ${name} - Nuvexa Luxury Flowers`,
     text: `Tên: ${name}\nEmail: ${email}\nSố điện thoại: ${phone}\nChủ đề: ${subject}\n\nTin nhắn:\n${message}`,
     html: `
-      <!DOCTYPE html>
-      <html lang="vi">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Tin nhắn liên hệ - Nuvexa Luxury Flowers</title>
-        </head>
-        <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #fef3f5 0%, #f5e6f8 100%); min-height: 100vh;">
-          <table role="presentation" style="width: 100%; border-collapse: collapse; background: linear-gradient(135deg, #fef3f5 0%, #f5e6f8 100%); padding: 40px 20px;">
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tin nhắn liên hệ - Nuvexa Luxury Flowers</title>
+  </head>
+  <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fdf9fb;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse; padding: 40px 20px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" style="max-width: 620px; width: 100%; border-collapse: collapse; background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 40px rgba(240, 160, 200, 0.2);">
+            
+            <!-- Header -->
             <tr>
-              <td align="center">
-                <table role="presentation" style="max-width: 600px; width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 60px rgba(139, 92, 246, 0.15);">
-                  <tr>
-                    <td style="background: linear-gradient(135deg, #f8c8d3 0%, #c084fc 100%); padding: 40px 30px; text-align: center;">
-                      <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.1); letter-spacing: -0.5px;">
-                        🌸 Nuvexa Luxury Flowers
-                      </h1>
-                      <p style="margin: 10px 0 0 0; color: rgba(255,255,255,0.95); font-size: 16px; font-weight: 500;">
-                        Nơi mỗi bông hoa kể một câu chuyện
-                      </p>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td style="padding: 50px 40px;">
-                      <h2 style="margin: 0 0 20px 0; color: #1f2937; font-size: 26px; font-weight: 700; text-align: center;">
-                        Tin nhắn liên hệ mới
-                      </h2>
-                      
-                      <p style="margin: 0 0 30px 0; color: #6b7280; font-size: 16px; line-height: 1.6; text-align: center;">
-                        Bạn đã nhận được một tin nhắn liên hệ từ khách hàng. Dưới đây là chi tiết:
-                      </p>
-
-                      <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 30px 0; background: #fef3f5; border-radius: 12px; padding: 24px;">
-                        <tr>
-                          <td style="padding: 0;">
-                            <table role="presentation" style="width: 100%; border-collapse: collapse;">
-                              <tr>
-                                <td style="padding: 12px 0; border-bottom: 1px solid #f5e6f8;">
-                                  <p style="margin: 0 0 4px 0; color: #8b5cf6; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    Tên khách hàng
-                                  </p>
-                                  <p style="margin: 0; color: #1f2937; font-size: 16px; font-weight: 600;">
-                                    ${name}
-                                  </p>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td style="padding: 12px 0; border-bottom: 1px solid #f5e6f8;">
-                                  <p style="margin: 0 0 4px 0; color: #8b5cf6; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    Email
-                                  </p>
-                                  <p style="margin: 0; color: #1f2937; font-size: 16px; font-weight: 600;">
-                                    <a href="mailto:${email}" style="color: #f8c8d3; text-decoration: none;">
-                                      ${email}
-                                    </a>
-                                  </p>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td style="padding: 12px 0; border-bottom: 1px solid #f5e6f8;">
-                                  <p style="margin: 0 0 4px 0; color: #8b5cf6; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    Số điện thoại
-                                  </p>
-                                  <p style="margin: 0; color: #1f2937; font-size: 16px; font-weight: 600;">
-                                    <a href="tel:${phone}" style="color: #f8c8d3; text-decoration: none;">
-                                      ${phone}
-                                    </a>
-                                  </p>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td style="padding: 12px 0;">
-                                  <p style="margin: 0 0 4px 0; color: #8b5cf6; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    Chủ đề
-                                  </p>
-                                  <p style="margin: 0; color: #1f2937; font-size: 16px; font-weight: 600;">
-                                    ${subject}
-                                  </p>
-                                </td>
-                              </tr>
-                            </table>
-                          </td>
-                        </tr>
-                      </table>
-
-                      <table role="presentation" style="width: 100%; border-collapse: collapse; background: #fef3f5; border-left: 4px solid #f8c8d3; border-radius: 8px; padding: 20px; margin: 0 0 30px 0;">
-                        <tr>
-                          <td>
-                            <p style="margin: 0 0 10px 0; color: #1f2937; font-size: 15px; font-weight: 600;">
-                              💬 Tin nhắn:
-                            </p>
-                            <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.8; white-space: pre-wrap; word-wrap: break-word;">
-                              ${message}
-                            </p>
-                          </td>
-                        </tr>
-                      </table>
-
-                      <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6; text-align: center;">
-                        Vui lòng phản hồi khách hàng trong thời gian sớm nhất. Bạn có thể trả lời trực tiếp qua email hoặc liên hệ qua số điện thoại được cung cấp.
-                      </p>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td style="background: linear-gradient(135deg, #1f2937 0%, #374151 100%); padding: 30px 40px; text-align: center;">
-                      <p style="margin: 0 0 15px 0; color: #ffffff; font-size: 16px; font-weight: 600;">
-                        Nuvexa Luxury Flowers
-                      </p>
-                      
-                      <p style="margin: 0 0 15px 0; color: #d1d5db; font-size: 14px; line-height: 1.6;">
-                        📍 Mễ Trì Thượng, Quận Từ Liêm, Hà Nội<br>
-                        📞 0961 753 837 | 📧 myzlucky2706@gmail.com
-                      </p>
-
-                      <div style="margin: 20px 0 0 0;">
-                        <a href="#" style="display: inline-block; margin: 0 8px; color: #f8c8d3; text-decoration: none; font-size: 24px;">📘</a>
-                        <a href="#" style="display: inline-block; margin: 0 8px; color: #f8c8d3; text-decoration: none; font-size: 24px;">📷</a>
-                        <a href="#" style="display: inline-block; margin: 0 8px; color: #f8c8d3; text-decoration: none; font-size: 24px;">🐦</a>
-                      </div>
-
-                      <p style="margin: 20px 0 0 0; color: #9ca3af; font-size: 12px;">
-                        © 2025 Nuvexa Luxury Flowers. All rights reserved.
-                      </p>
-                    </td>
-                  </tr>
-
-                </table>
+              <td style="background: linear-gradient(135deg, #f8e1ea 0%, #e6ccff 100%); padding: 40px 30px; text-align: center;">
+                <h1 style="margin: 0; color: #4a044e; font-size: 30px; font-weight: 700; letter-spacing: -0.5px;">
+                  🌸 Nuvexa Luxury Flowers
+                </h1>
+                <p style="margin: 10px 0 0 0; color: #4a044e; font-size: 16px;">
+                  Nơi mỗi bông hoa thắp sáng cảm xúc
+                </p>
               </td>
             </tr>
+
+            <!-- Content -->
+            <tr>
+              <td style="padding: 50px 40px;">
+                <h2 style="margin: 0 0 20px 0; color: #1f2937; font-size: 24px; font-weight: 700; text-align: center;">
+                  💌 Thông tin liên hệ mới từ khách hàng
+                </h2>
+
+                <p style="margin: 0 0 30px 0; color: #6b7280; font-size: 15px; line-height: 1.6; text-align: center;">
+                  Một khách hàng vừa gửi tin nhắn liên hệ đến Nuvexa. Thông tin chi tiết được trình bày bên dưới:
+                </p>
+
+                <!-- Contact Information -->
+                <table role="presentation" style="width: 100%; border-collapse: collapse; background: #fff7f9; border-radius: 12px; padding: 20px;">
+                  <tr><td style="padding: 10px 0;">
+                    <p style="margin: 0; color: #9d174d; font-size: 13px; font-weight: 700; text-transform: uppercase;">Tên khách hàng</p>
+                    <p style="margin: 4px 0; color: #1f2937; font-size: 16px; font-weight: 600;">${name}</p>
+                  </td></tr>
+                  <tr><td style="padding: 10px 0;">
+                    <p style="margin: 0; color: #9d174d; font-size: 13px; font-weight: 700; text-transform: uppercase;">Email</p>
+                    <a href="mailto:${email}" style="color: #db2777; text-decoration: none; font-size: 15px;">${email}</a>
+                  </td></tr>
+                  <tr><td style="padding: 10px 0;">
+                    <p style="margin: 0; color: #9d174d; font-size: 13px; font-weight: 700; text-transform: uppercase;">Số điện thoại</p>
+                    <a href="tel:${phone}" style="color: #db2777; text-decoration: none; font-size: 15px;">${phone}</a>
+                  </td></tr>
+                  <tr><td style="padding: 10px 0;">
+                    <p style="margin: 0; color: #9d174d; font-size: 13px; font-weight: 700; text-transform: uppercase;">Chủ đề</p>
+                    <p style="margin: 4px 0; color: #1f2937; font-size: 16px; font-weight: 600;">${subject}</p>
+                  </td></tr>
+                </table>
+
+                <!-- Message -->
+                <div style="margin: 30px 0; background: #fff7fa; border-left: 4px solid #db2777; border-radius: 8px; padding: 22px;">
+                  <p style="margin: 0 0 10px 0; color: #1f2937; font-size: 15px; font-weight: 600;">💬 Tin nhắn:</p>
+                  <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.8; white-space: pre-wrap;">${message}</p>
+                </div>
+
+                <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6; text-align: center;">
+                  Vui lòng phản hồi cho khách hàng trong thời gian sớm nhất 🌷
+                </p>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td style="background: #faf5ff; padding: 30px 40px; text-align: center; border-top: 1px solid #f3e8ff;">
+                <p style="margin: 0 0 15px 0; color: #4a044e; font-size: 16px; font-weight: 600;">
+                  Nuvexa Luxury Flowers
+                </p>
+
+                <p style="margin: 0 0 12px 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
+                  📍 Mễ Trì Thượng, Quận Từ Liêm, Hà Nội<br />
+                  📞 0961 753 837 | 📧 myzlucky2706@gmail.com
+                </p>
+
+                <div style="margin-top: 14px;">
+                  <a href="#" style="margin: 0 8px; color: #db2777; text-decoration: none; font-size: 20px;">📷</a>
+                  <a href="#" style="margin: 0 8px; color: #db2777; text-decoration: none; font-size: 20px;">🌸</a>
+                  <a href="#" style="margin: 0 8px; color: #db2777; text-decoration: none; font-size: 20px;">💐</a>
+                </div>
+
+                <p style="margin: 20px 0 0 0; color: #9ca3af; font-size: 12px;">
+                  © 2026 Nuvexa Luxury Flowers. Tất cả các quyền được bảo lưu.
+                </p>
+              </td>
+            </tr>
+
           </table>
-        </body>
-      </html>
-    `,
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+`,
   };
 
   await transporter.sendMail(sendEmailOption);
