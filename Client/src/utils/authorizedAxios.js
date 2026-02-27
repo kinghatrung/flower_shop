@@ -33,7 +33,19 @@ authorizedAxiosInstance.interceptors.response.use(
     console.log(response.data)
     // Những status code trong khoảng 2xx sẽ nằm ở trong này
     if (response.data?.message) {
-      toast.success(response.data.message)
+      toast.success(response.data.message, {
+        description: 'Thao tác thành công',
+        duration: 1500,
+        style: {
+          background: '#fff0f5',
+          color: '#5c3a47',
+          border: '1px solid #f4c2d8',
+          borderLeft: '4px solid #e8a0bf',
+          borderRadius: '10px',
+          boxShadow: '0 4px 16px rgba(232, 160, 191, 0.25)',
+          fontFamily: 'inherit'
+        }
+      })
     }
     return response
   },
@@ -73,7 +85,19 @@ authorizedAxiosInstance.interceptors.response.use(
     }
 
     if (error.response?.status !== 410 && error.response?.status !== 401) {
-      toast.error(error.response?.data?.message || 'Đã có lỗi xảy ra')
+      toast.error(error.response?.data?.message || 'Đã có lỗi xảy ra', {
+        description: 'Vui lòng thử lại sau',
+        duration: 4000,
+        style: {
+          background: '#fff5f5',
+          color: '#7a2020',
+          border: '1px solid #fecaca',
+          borderLeft: '4px solid #f87171',
+          borderRadius: '10px',
+          boxShadow: '0 4px 16px rgba(248, 113, 113, 0.2)',
+          fontFamily: 'inherit'
+        }
+      })
     }
 
     return Promise.reject(error)
