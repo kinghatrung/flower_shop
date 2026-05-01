@@ -27,6 +27,7 @@ import SystemSettings from '~/pages/PrivatePages/SystemSettings'
 import OrdersManagement from '~/pages/PrivatePages/OrdersManagement'
 import ContentWebsiteManagement from './pages/PrivatePages/ContentWebsiteManagement'
 import Success from '~/pages/PrivatePages/Checkout/Success'
+import MyAccount from '~/pages/PrivatePages/MyAccount'
 
 import ForgotPassword from '~/pages/PublicPages/Auth/ForgotPassword'
 import Login from '~/pages/PublicPages/Auth/Login'
@@ -89,6 +90,7 @@ function App() {
               <Route path={ROUTES.CART} element={<Cart />} />
               <Route path={ROUTES.CHECKOUT} element={<Checkout />} />
               <Route path={ROUTES.SUCCESS} element={<Success />} />
+              <Route path={ROUTES.MY_ACCOUNT} element={<MyAccount />} />
             </Route>
           </Route>
           <Route element={<Wrapper layout={AdminLayout} user={currentUser} />}>

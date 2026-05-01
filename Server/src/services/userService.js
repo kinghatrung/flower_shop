@@ -26,6 +26,14 @@ const userService = {
     }
   },
 
+  getUserById: async (userId) => {
+    try {
+      return await userRepository.getUserById(userId);
+    } catch (err) {
+      throw err;
+    }
+  },
+
   getUser: async (email) => {
     try {
       const user = await userRepository.getUserByEmail(email);

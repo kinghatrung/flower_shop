@@ -17,6 +17,7 @@ import uploadRouter from './routes/uploadRouter.js';
 import cartRouter from './routes/cartRouter.js';
 import orderRouter from './routes/orderRouter.js';
 import reviewRouter from './routes/reviewRouter.js';
+import statsRouter from './routes/statsRouter.js';
 import '../src/cron/cleanupImages.cron.js';
 
 dotenv.config();
@@ -64,6 +65,7 @@ app.use('/api/upload', uploadRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/orders', orderRouter);
 app.use('/api/reviews', reviewRouter);
+app.use('/api/stats', statsRouter);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../Client/dist')));

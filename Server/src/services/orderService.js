@@ -4,11 +4,46 @@ import cartRepository from '../repositories/cartRepository.js';
 import { sendOrderSuccessEmail } from '../utils/mailer.js';
 
 const orderService = {
-  getOrders: async () => {
+  getOrders: async (filters, page, limit) => {
     try {
-      const orders = await orderRepository.getAllOrders();
+      const result = await orderRepository.getAllOrdersPaginated(
+        filters,
+        page,
+        limit
+      );
+      return result;
+    } catch (err) {
+      throw err;
+    }
+  },
 
-      return orders;
+  getOrderById: async (id) => {
+    try {
+      return await orderRepository.getOrderById(id);
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  getOrdersByUserId: async (userId) => {
+    try {
+      return await orderRepository.getOrdersByUserId(userId);
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  updateOrderStatus: async (id, status) => {
+    try {
+      return await orderRepository.updateOrderStatus(id, status);
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  deleteOrder: async (id) => {
+    try {
+      return await orderRepository.deleteOrder(id);
     } catch (err) {
       throw err;
     }
@@ -19,19 +54,15 @@ const orderService = {
     try {
       await client.query('BEGIN');
 
-      // 1️⃣ Tính tổng tiền
       const totalAmount = cartItems.reduce(
         (sum, item) => sum + item.price * item.quantity,
         0
       );
 
-      // 2️⃣ Tạo mã đơn hàng
       const orderCode = `ORD-${Date.now()}`;
 
-      // 3️⃣ (Tuỳ chọn) Xoá giỏ hàng sau khi đặt hàng
       await cartRepository.clearCart(client, orderData.user_id);
 
-      // 4️⃣ Lưu đơn hàng
       const order = await orderRepository.createOrder(
         client,
         orderData,

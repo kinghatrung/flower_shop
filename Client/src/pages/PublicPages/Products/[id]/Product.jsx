@@ -12,28 +12,16 @@ import {
   getProduct,
   getProductsByCategoryId,
   createProductCartUser,
-  getReviewByProductId
+  getReviewByProductId,
+  createReview
 } from '~/api'
+import { toast } from 'sonner'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/slices/authSlice'
 import useTimeoutLoading from '~/hooks/useTimeoutLoading'
 import CardReview from '~/components/common/CardReview'
 import WriteReviewForm from '~/components/common/WriteReviewForm'
 import { queryKeys } from '~/config/queryConfig'
-
-const reviews = [
-  {
-    id: '1',
-    author: 'Nguyễn Văn A',
-    rating: 5,
-    title: 'Sản phẩm tuyệt vời!',
-    content:
-      'Chất lượng vượt mong đợi, giao hàng nhanh chóng và đóng gói cẩn thận. Tôi rất hài lòng với mua sắm này.',
-    date: '2 tuần trước',
-    helpful: 142,
-    avatar: '👩‍💼'
-  }
-]
 
 const ratingDistribution = [
   { stars: 5, count: 1240, percentage: 68 },
@@ -98,6 +86,27 @@ function Product() {
     setQuantity(1)
     await createProductCartUser(payload)
     await queryClient.invalidateQueries({ queryKey: queryKeys.cart.byUser(user?.user_id) })
+  }
+
+  const handleReviewSubmit = async ({ rating, title, content }) => {
+    if (!user) {
+      toast.error('Bạn cần đăng nhập để viết đánh giá')
+      return
+    }
+    try {
+      await createReview({
+        userId: user.user_id,
+        productId: product?.id,
+        rating,
+        title,
+        comment: content
+      })
+      await queryClient.invalidateQueries({ queryKey: queryKeys.reviews.byProduct(product?.id) })
+      toast.success('Đánh giá của bạn đã được gửi!')
+      setShowWriteReview(false)
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Có lỗi xảy ra khi gửi đánh giá')
+    }
   }
 
   return (
@@ -272,7 +281,7 @@ function Product() {
             <div className='mb-12'>
               <WriteReviewForm
                 onClose={() => setShowWriteReview(false)}
-                // onSubmit={handleReviewSubmit}
+                onSubmit={handleReviewSubmit}
               />
             </div>
           )}

@@ -14,6 +14,7 @@ export const ROUTES = {
   CART: '/cart',
   CHECKOUT: '/checkout',
   SUCCESS: '/checkout/success/',
+  MY_ACCOUNT: '/my-account',
   // admin
   ADMIN_DASHBOARD: '/admin/dashboard',
   ADMIN_CUSTOMERS: '/admin/customers',

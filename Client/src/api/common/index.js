@@ -17,6 +17,21 @@ export const updateUser = async (userId, updatedFields) => {
   return await authorizedAxiosInstance.patch(`${API_URL}/api/users/edit/${userId}`, updatedFields)
 }
 
+export const getMe = async () => {
+  const res = await authorizedAxiosInstance.get(`${API_URL}/api/users/me`)
+  return res.data
+}
+
+export const updateMe = async (data) => {
+  const res = await authorizedAxiosInstance.patch(`${API_URL}/api/users/me`, data)
+  return res.data
+}
+
+export const changePassword = async (data) => {
+  const res = await authorizedAxiosInstance.patch(`${API_URL}/api/users/me/password`, data)
+  return res.data
+}
+
 // PRODUCTS
 export const getProducts = async (page, limit, filters = {}) => {
   const params = new URLSearchParams({ page, limit, ...filters }).toString()
@@ -112,13 +127,68 @@ export const createOrder = async (payload) => {
   return res.data
 }
 
-export const getOrders = async () => {
-  const res = await authorizedAxiosInstance.get(`${API_URL}/api/orders`)
+export const getOrders = async (page = 1, limit = 10, filters = {}) => {
+  const params = new URLSearchParams({ page, limit, ...filters }).toString()
+  const res = await authorizedAxiosInstance.get(`${API_URL}/api/orders?${params}`)
   return res.data
+}
+
+export const getOrderById = async (id) => {
+  const res = await authorizedAxiosInstance.get(`${API_URL}/api/orders/${id}`)
+  return res.data
+}
+
+export const getMyOrders = async (userId) => {
+  const res = await authorizedAxiosInstance.get(`${API_URL}/api/orders/user/${userId}`)
+  return res.data
+}
+
+export const updateOrderStatus = async (id, status) => {
+  const res = await authorizedAxiosInstance.patch(`${API_URL}/api/orders/${id}/status`, { status })
+  return res.data
+}
+
+export const deleteOrder = async (id) => {
+  return await authorizedAxiosInstance.delete(`${API_URL}/api/orders/${id}`)
 }
 
 // REVIEWS
 export const getReviewByProductId = async (product_id) => {
   const res = await authorizedAxiosInstance.get(`${API_URL}/api/reviews/${product_id}`)
+  return res.data
+}
+
+export const createReview = async (data) => {
+  const res = await authorizedAxiosInstance.post(`${API_URL}/api/reviews`, data)
+  return res.data
+}
+
+export const updateReview = async (id, data) => {
+  const res = await authorizedAxiosInstance.patch(`${API_URL}/api/reviews/${id}`, data)
+  return res.data
+}
+
+export const deleteReview = async (id, userId) => {
+  return await authorizedAxiosInstance.delete(`${API_URL}/api/reviews/${id}`, { data: { userId } })
+}
+
+// STATS (Admin Dashboard)
+export const getStatsOverview = async () => {
+  const res = await authorizedAxiosInstance.get(`${API_URL}/api/stats/overview`)
+  return res.data
+}
+
+export const getRevenueChart = async () => {
+  const res = await authorizedAxiosInstance.get(`${API_URL}/api/stats/revenue-chart`)
+  return res.data
+}
+
+export const getTopProducts = async () => {
+  const res = await authorizedAxiosInstance.get(`${API_URL}/api/stats/top-products`)
+  return res.data
+}
+
+export const getRecentOrders = async () => {
+  const res = await authorizedAxiosInstance.get(`${API_URL}/api/stats/recent-orders`)
   return res.data
 }

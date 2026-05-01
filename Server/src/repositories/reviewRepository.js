@@ -21,7 +21,55 @@ const reviewRepository = {
     }
   },
 
-  createReview: async () => {},
+  createReview: async (userId, productId, rating, title, comment) => {
+    try {
+      const query = `
+        INSERT INTO reviews (user_id, product_id, rating, title, comment)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING *
+      `;
+      const result = await pool.query(query, [
+        userId,
+        productId,
+        rating,
+        title,
+        comment,
+      ]);
+      return result.rows[0];
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  updateReview: async (id, userId, rating, title, comment) => {
+    try {
+      const query = `
+        UPDATE reviews
+        SET rating = $1, title = $2, comment = $3, updated_at = NOW()
+        WHERE id = $4 AND user_id = $5
+        RETURNING *
+      `;
+      const result = await pool.query(query, [
+        rating,
+        title,
+        comment,
+        id,
+        userId,
+      ]);
+      return result.rows[0];
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  deleteReview: async (id, userId) => {
+    try {
+      const query = `DELETE FROM reviews WHERE id = $1 AND user_id = $2`;
+      await pool.query(query, [id, userId]);
+    } catch (err) {
+      throw err;
+    }
+  },
 };
 
 export default reviewRepository;

@@ -72,6 +72,18 @@ const userRepository = {
     }
   },
 
+  getUserById: async (userId) => {
+    try {
+      const result = await pool.query(
+        'SELECT * FROM users WHERE user_id = $1',
+        [userId]
+      );
+      return result.rows[0];
+    } catch (err) {
+      throw err;
+    }
+  },
+
   editUser: async (data, id) => {
     const query = `
       UPDATE users
@@ -82,8 +94,9 @@ const userRepository = {
         password_hash = COALESCE($4, password_hash),
         phone = COALESCE($5, phone),
         is_verified = COALESCE($6, is_verified),
-        is_active = COALESCE($7, is_active)
-      WHERE user_id = $8
+        is_active = COALESCE($7, is_active),
+        avatar_url = COALESCE($8, avatar_url)
+      WHERE user_id = $9
       RETURNING *;
     `;
     try {
@@ -95,6 +108,7 @@ const userRepository = {
         data.phone,
         data.is_verified,
         data.is_active,
+        data.avatar_url,
         id,
       ]);
       return result.rows[0];
